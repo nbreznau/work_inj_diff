@@ -1,4 +1,4 @@
-# work_inj_diff
+# Work-Injury Policy Diffusion, Breznau and Lanver
 
 This is the code from the M. Windzio workshop, 11. Sept. The code has been converted into an Rmd file and the main dependent variable has been replaced by the first law of work-injury by country (project A02). 
 
