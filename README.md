@@ -13,7 +13,7 @@ The .Rmd file works best if you install GitHub Desktop and clone this repository
 
 
 
-<table style="text-align:center"><caption><strong>Global Network Diffusion of Compulsory Education</strong></caption>
+<table style="text-align:center"><caption><strong>Global Network Diffusion of First Work-Injury Laws</strong></caption>
 <tr><td colspan="3" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left"></td><td colspan="2"><em>Dependent variable:</em></td></tr>
 <tr><td></td><td colspan="2" style="border-bottom: 1px solid black"></td></tr>
 <tr><td style="text-align:left"></td><td colspan="2">Introduction of Work-Injury Law</td></tr>
