@@ -33,7 +33,7 @@ pacman::p_load('netdiffuseR','stargazer','tidyverse','dplyr','countrycode')
 # set up a working directory
 # Recommended to set up in C:/GitHub/work_inj_diffuse/
 
-wd <- "C:/GitHub/work_inj_diffuse"
+wd <- "C:/GitHub/work_inj_diff"
 
 
 # this is a function to load and save files from the working directory
@@ -157,8 +157,6 @@ download.file("http://www.barkhof.uni-bremen.de/~mwindzio/capital_distance_edgel
 capital_distance_edgelist <- read.csv(unz(temp, "capital_distance_edgelist.csv"))
 unlink(temp)
 
-capital_distance_edgelist <- read.csv(wdir("capital_distance_edgelist.csv"))
-head(capital_distance_edgelist)
 
 # --  we use log of proximity
 capital_distance_edgelist$log_dist <- log(capital_distance_edgelist$capdist)
