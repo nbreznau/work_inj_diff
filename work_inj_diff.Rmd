@@ -21,7 +21,7 @@ output: html_notebook
 
 ```{r setup}
 
-# Clean up environment
+# Clean up environment 123
 rm(list = ls(all = T))
 
 # note you must have pacman installed for this to run
