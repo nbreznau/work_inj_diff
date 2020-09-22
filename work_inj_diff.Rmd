@@ -388,7 +388,7 @@ plot(diffnet_culture)
 summary(diffnet_culture)
 
 # -------------------------------------------------------------------------
-# -- 5. get the respective exposure variables and time-of-adoption (toa)
+# -- 5. get the respective exposure variables and time-of-adoption (toa) f
 # -- generate exposure and add to diffnet object
 diffnet_culture[["lag_w_expo_culture"]] <- exposure(diffnet_culture, valued = T, lags = 1)#
 diffnet_culture[["lag_expo_culture"]] <- exposure(diffnet_culture, valued = F, lags = 1)
