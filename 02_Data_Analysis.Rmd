@@ -629,10 +629,10 @@ oldpar <- par(no.readonly = T)
 coords <- set.seed(s);plot(diffnet_culture, main="culture & education")
 
 
-bmp(filename = "results/culture_edu.bmp") # - create folder, mac users adjust
+# bmp(filename = "results/culture_edu.bmp") # - create folder, mac users adjust
 plot_diffnet(diffnet_culture, 
              slices = c(1,50,100,130), layout=coords)
-dev.off()
+#dev.off()
 
 plot_adopters(diffnet_culture, 
               include.legend = FALSE, what = c("adopt", "cumadopt"))
