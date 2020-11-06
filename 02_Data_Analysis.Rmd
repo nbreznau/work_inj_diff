@@ -1,27 +1,13 @@
 ---
-title: "Diffusion of Work Injury Law"
+title: "R Notebook"
 output: html_notebook
 ---
 
-*overview: steps in this script*
 
-1. read networks. All data should already be standardized
-       a) cultural spheres 
-       b) trade networks
-       c) colonial ties (cross-sectional) => will be changed?
-       b) distance/prox. between capitals (cross-sectional)
-
- 2. read explanatory variables, basics
- 3. read years of >social policy introduction< for each project
- 4. create netdiffuseR objects => generate plots if you like#      repeat 4. for each network!
- 5. get the respective exposure variables and time-of-adoption (toa)
- 6. create process-time control
- 7. combine the relevant information into one data frame
- 8. !! estimate discrete-time logistic hazard model !!
 
 ```{r setup}
 
-# Clean up environment 123
+# Clean up
 rm(list = ls(all = T))
 
 # note you must have pacman installed for this to run
@@ -30,15 +16,30 @@ rm(list = ls(all = T))
 
 pacman::p_load('netdiffuseR','stargazer','tidyverse','dplyr','countrycode')
 
-# set up a working directory
-# Recommended to set up in C:/GitHub/work_inj_diffuse/
+# stargazer 3 (define manually to make code faster)
+# source("http://www.barkhof.uni-bremen.de/~mwindzio/modified_stargazer.R")
 
-wd <- "C:/GitHub/work_inj_diff"
-
-
-# this is a function to load and save files from the working directory
-wdir <- function(x){
-  paste(wd,x, sep = "/")
+stargazer3 <- function(model, odds.ratios = F, origin_model = NULL, ...) {
+  if(!("list" %in% class(model))) model <- list(model)
+  if(!("list" %in% class(origin_model))) origin_model <- list(origin_model) 
+  if (odds.ratios) {
+    coefOR2 <- lapply(model, function(x) exp(x[,1]))
+    #seOR2 <- lapply(model, function(x) exp(x[,1]) * exp(x[,2]))
+    p2 <- lapply(model, function(x) x[,4])
+    obs <- lapply(origin_model, function(x) nobs(x))
+    LL <- lapply(origin_model, function(x) round(logLik(x),3))
+    AIC <- lapply(origin_model, function(x) round(AIC(x),3))
+    stargazer(model, coef = coefOR2,  p = p2,
+              star.char = c("+", "*", "**", "***"),
+              star.cutoffs = c(.1, .05, .01, .001),
+              notes = "+ p < 0.1; * p < 0.05; ** p < 0.01; *** p < 0.001",
+              notes.append = FALSE,
+              add.lines=list(c("Observations", unlist(obs)),
+                             c("Log Likelihood", unlist(LL)),
+                             c("Akaike Inf. Crit.", unlist(AIC))), ...)
+  } else {
+    stargazer(model, ...)
+  }
 }
 
 ```
@@ -54,11 +55,13 @@ http://www.barkhof.uni-bremen.de/~mwindzio/capital_distance_edgelist.zip
 http://www.barkhof.uni-bremen.de/~mwindzio/vdem_gdp_pc_INTERPOLATED_consolidated.csv
 http://www.barkhof.uni-bremen.de/~mwindzio/vdem_regime__INTERPOLATED_consolidated.csv
 
+This one stays zipped as GitHub has a 100 MB max filesize
+http://www.barkhof.uni-bremen.de/~mwindzio/capital_distance_edgelist.zip
 
 
 ### 1. Network Data
 
-```{r windzio_data}
+```{r windzio_data, warning=F, message=F}
 
 
 #--- 1. Networks here ---------------
@@ -66,23 +69,23 @@ http://www.barkhof.uni-bremen.de/~mwindzio/vdem_regime__INTERPOLATED_consolidate
 
 #----- 1a) cultural spheres ---------
 
-edgelist_cultural_spheres <- read.csv(wdir("edgelist_cultural_spheres.csv"))
-head(edgelist_cultural_spheres)
+edgelist_cultural_spheres <- read.csv("data/edgelist_cultural_spheres.csv")
+# head(edgelist_cultural_spheres)
 dim(edgelist_cultural_spheres)
 
 # - ids should be factor variables
 edgelist_cultural_spheres$ego_id <- as.factor(edgelist_cultural_spheres$ego_id)
 edgelist_cultural_spheres$alter_id <- as.factor(edgelist_cultural_spheres$alter_id)
-head(edgelist_cultural_spheres)
+# head(edgelist_cultural_spheres)
 
 
 #----- 1b) trade network -----------------------------------
 
-trade_dyadic_consolidated <- read.csv(wdir("COW_trade_consolidated.csv"))
+trade_dyadic_consolidated <- read.csv("data/COW_trade_consolidated.csv")
 
 trade_dyadic <- trade_dyadic_consolidated
 dim(trade_dyadic)
-head(trade_dyadic)
+# head(trade_dyadic)
 
 summary(trade_dyadic$smoothtotrade)
 
@@ -94,7 +97,7 @@ polygon(d, col="red", border="blue")
 
 names(trade_dyadic)[names(trade_dyadic)=="iso3_ego"] <- "ego_id"
 names(trade_dyadic)[names(trade_dyadic)=="iso3_alter"] <- "alter_id"
-head(trade_dyadic)
+# head(trade_dyadic)
 
 # - ids should be factor variables
 trade_dyadic$ego_id <- as.factor(trade_dyadic$ego_id)
@@ -106,9 +109,14 @@ trade_dyadic$smoothtotrade[trade_dyadic$smoothtotrade < 0] <- 0
 trade_dyadic$smoothtotrade[is.na(trade_dyadic$smoothtotrade)] <- 0
 
 summary(trade_dyadic$smoothtotrade)
-head(trade_dyadic)
+# head(trade_dyadic)
 
 trade_dyadic$log_value <- ifelse(trade_dyadic$smoothtotrade > 0, log(trade_dyadic$smoothtotrade), 0)
+summary(trade_dyadic$log_value)
+
+# We realized that with only using a log function to smooth out the much skewed trade values we created negative values. That in itself would be not such a huge problem, however since we are dealing with network weights a negative weight does not only make no sense theoretically, it actually distorts the calculation of the exposure variable a lot. We end up with values outside the range of 0 – 1. To circumvent that we changed the script in line 109 in a way that we make sure to not end up with negative log_values:
+
+trade_dyadic$log_value <- ifelse(trade_dyadic$smoothtotrade > 0, log(trade_dyadic$smoothtotrade + 1), 0) 
 summary(trade_dyadic$log_value)
 
 # -- distribution is still extreme  
@@ -119,8 +127,8 @@ trade_edgelist <- trade_dyadic
 
 # -- trade: is country non-existent in a particular moment? 
 # regime type from vdem data
-existence <- read.csv(wdir("trade_existence_dummy.csv"), header = TRUE) # actor attributes
-head(existence) 
+existence <- read.csv("data/trade_existence_dummy.csv", header = TRUE) # actor attributes
+# head(existence) 
 names(existence)[names(existence)=="iso3_ego"] <- "iso3"
 
 
@@ -132,7 +140,7 @@ names(existence)[names(existence)=="iso3_ego"] <- "iso3"
 # - if so, you will have to switch to "undirected=FALSE"
 # - when creating the diffnet object. But don't care at the moment! 
 
-colonial_ties_edgelist <- read.csv(wdir("colonial_ties_edgelist.csv"))
+colonial_ties_edgelist <- read.csv("data/colonial_ties_edgelist.csv")
 head(colonial_ties_edgelist)
 
 names(colonial_ties_edgelist)[names(colonial_ties_edgelist)=="iso_o"] <- "ego_id"
@@ -141,21 +149,20 @@ names(colonial_ties_edgelist)[names(colonial_ties_edgelist)=="iso_d"] <- "alter_
 # - ids should be factor variables
 colonial_ties_edgelist$ego_id <- as.factor(colonial_ties_edgelist$ego_id)
 colonial_ties_edgelist$alter_id <- as.factor(colonial_ties_edgelist$alter_id)
-head(colonial_ties_edgelist)
+# head(colonial_ties_edgelist)
 unique(colonial_ties_edgelist$ego_id)
 unique(colonial_ties_edgelist$year)
 table(colonial_ties_edgelist$colony)
-head(colonial_ties_edgelist)
+# head(colonial_ties_edgelist)
 
 #----------------------------------------------------------
 #----- 1d) spatial distance/ prox. of capitals from CEPI --
 #----------------------------------------------------------
 # - this is only a cross-sectional network ! 
 
-temp <- tempfile()
-download.file("http://www.barkhof.uni-bremen.de/~mwindzio/capital_distance_edgelist.zip",temp)
-capital_distance_edgelist <- read.csv(unz(temp, "capital_distance_edgelist.csv"))
-unlink(temp)
+
+capital_distance_edgelist <- read.csv(unz("data/capital_distance_edgelist.zip", "capital_distance_edgelist.csv"))
+
 
 
 # --  we use log of proximity
@@ -163,7 +170,7 @@ capital_distance_edgelist$log_dist <- log(capital_distance_edgelist$capdist)
 log(7593.042) # => 8.934988, ok
 capital_distance_edgelist$log_proximity <- 1/(capital_distance_edgelist$log_dist)
 1/8.934988 # => 0.1119196,  ok
-head(capital_distance_edgelist)
+# head(capital_distance_edgelist)
 # capital_distance_edgelist <- subset(capital_distance_edgelist, select = -c(log_proximity) )
 capital_distance_edgelist$proximity <- 1/(capital_distance_edgelist$capdist)
 
@@ -189,97 +196,82 @@ capital_distance_edgelist$alter_id <- as.factor(capital_distance_edgelist$alter_
 # --- we just use gdp and regime-type in this introduction
 
 # GDP from vdem data
-gdp <- read.csv(wdir("vdem_gdp_pc_INTERPOLATED_consolidated.csv"), header = TRUE) # actor attributes
-head(gdp) 
+gdp <- read.csv("data/vdem_gdp_pc_INTERPOLATED_consolidated.csv", header = TRUE) # actor attributes
+# head(gdp) 
 
 names(gdp)[names(gdp)=="filled_vdem_gdp_interpol"] <- "gdp" # it's just gdp
 
 # regime type from vdem data
-regime <- read.csv(wdir("vdem_regime__INTERPOLATED_consolidated.csv"), header = TRUE) # actor attributes
-head(regime) 
+regime <- read.csv("data/vdem_regime__INTERPOLATED_consolidated.csv", header = TRUE) # actor attributes
+# head(regime) 
 regime <- subset(regime, select=c(iso3, year,regime))
 
 #-- merge here ----
 covar_base <- subset(gdp, select=c(iso3, year,gdp)) 
-head(covar_base)  
+# head(covar_base)  
 
 covar_base <- merge(covar_base, regime,by=c("iso3","year")) 
-head(covar_base)
+# head(covar_base)
 
-table(covar_base$year) # - every year on board, for 164 countries
-table(covar_base$iso3) # - every country on board, for 131 years
+# table(covar_base$year) # - every year on board, for 164 countries
+# table(covar_base$iso3) # - every country on board, for 131 years
 ```
 
 ### 3. Policy Variables (SFB 1342)
 
-#### SFB Project sources
+#### GWIP ([Breznau and Lanver, 2020](https://doi.org/10.7910/DVN/IVKYIE))
 
-http://www.barkhof.uni-bremen.de/~mwindzio/A02_unemployment_new.csv
-http://www.barkhof.uni-bremen.de/~mwindzio/A03_data.csv
-http://www.barkhof.uni-bremen.de/~mwindzio/A04_HCS_toa.csv
-http://www.barkhof.uni-bremen.de/~mwindzio/A04_sickness_toa.csv
-http://www.barkhof.uni-bremen.de/~mwindzio/A05_edu_intro_comp_schooling.csv
-http://www.barkhof.uni-bremen.de/~mwindzio/a06_int.csv
+Data are converted into longitudinal format (all years for all countries)
+
+There were some discrepancies with the data so we update that which the team prepared for us
+
+Fill in former Serbian republics at some point (basically as 'Serbia' in the GWIP), for now they need to be dropped
 
 ```{r sfb_vars}
 
 # ----- Project A 02 -----------------
 
-# Introduction of unemployment programme
-A02_unemployment <- read.csv(wdir("A02_unemployment_new.csv"), header = TRUE) 
-
 # Introduction of work regulations
-A02_workinj <- read.csv(wdir("A02_workinj.csv"), header = TRUE)
+A02_workinj <- read.csv("data/A02_workinj.csv", header = TRUE)
 
-#This frame only starts in 1880 so we trim our data 
-# for now but need to expand the range later
+# These data have missing cases, fix by using the empty frame
+A02_workinj <- select(A02_workinj, country_name, cow_code, iso3, year)
+
+# Replace missing cow_codes
+A02_workinj$cow2 <- countrycode(A02_workinj$iso3, 'iso3c','cown')
+
+# Find mismatches
+# A02_workinj2 <- subset(A02_workinj, A02_workinj$cow_code != A02_workinj$cow2)
+# Fix
+A02_workinj <- A02_workinj %>%
+  mutate(cow_code = ifelse(cow2==817, 816, cow_code),
+         cow_code = ifelse(is.na(cow_code), cow2, cow_code),
+         cow_code = ifelse(country_name == "Serbia", 345, cow_code))
+
+# unique(A02_workinj$cow_code) 165 OK!
+
+# Import 'correct' GWIP data
+gwip <- read.csv("data/gwip_v1.csv")
+gwip <- select(gwip, -c(country_name))
+
+A02_workinj <- left_join(A02_workinj, gwip, by = "cow_code")
+
+# Drop missing countries
+A02_workinj <- subset(A02_workinj, !is.na(labor_workinjury_firstlaw))
+
+# Merge
+
+# Start with 1880
 
 A02_workinj <- A02_workinj %>%
 mutate(labor_workinjury_firstlaw = ifelse(labor_workinjury_firstlaw < 1880, 1880, labor_workinjury_firstlaw))
 
-#       year = ifelse(year > max(labor_workinjury_firstlaw), NA, year)
-#)
-
-#A02_workinj <- subset(A02_workinj, year < 2005)
-
-# ----- Project A 03 -----------------
-
-# ILO convention ratification data
-A03_data <- read.csv(wdir("A03_data.csv"), header = TRUE) 
-
-
-# ----- Project A 04 -----------------
-
-# Introduction of health care system
-A04_HCS_toa <- read.csv("A04_HCS_toa.csv", header = TRUE) 
-
-
-# Introduction of sickness legislation
-A04_sickness_toa <- read.csv(wdir("A04_sickness_toa.csv"), header = TRUE) 
-
-
-# ----- Project A 05 -----------------
-
-# ---- Introduction of compulsary education
-
-A05_edu_intro_comp_schooling <- read.csv(wdir("A05_edu_intro_comp_schooling.csv"), header = TRUE) 
-
 
 # ----- Project A 06 -----------------
-
-# Introduction of family legislation
-A06_int <- read.csv(wdir("a06_int.csv"), header = TRUE) # actor attributes
-
 
 
 covar_ <- data.frame(covar_base)
 head(covar_)
-
-A02 <- data.frame(subset(  A02_unemployment, select = c(iso3,unemp_firstlaw,year)  ))
-covar_ <- merge(covar_, A02,by=c("iso3","year")) 
-head(covar_)
-names(covar_)[names(covar_)=="unemp_firstlaw"] <- "toa_unemp_A02"
-# head(covar_)
 
 A02_2 <- data.frame(subset(  A02_workinj, select = c(iso3,labor_workinjury_firstlaw,year)  ))
 covar_ <- merge(covar_, A02_2,by=c("iso3","year")) 
@@ -287,44 +279,9 @@ covar_ <- merge(covar_, A02_2,by=c("iso3","year"))
 names(covar_)[names(covar_)=="labor_workinjury_firstlaw"] <- "toa_workinj_A02"
 # head(covar_)
 
-A03 <- data.frame(subset(  A03_data, select = c(iso3,toa,year)  ))
-covar_ <- merge(covar_, A03,by=c("iso3","year")) 
-names(covar_)[names(covar_)=="toa"] <- "toa_ILO_A03"
-# head(covar_)
-
-A04 <- data.frame(subset(  A04_HCS_toa, select = c(iso3,toa,year)  ))
-covar_ <- merge(covar_, A04,by=c("iso3","year")) 
-# head(covar_)
-names(covar_)[names(covar_)=="toa"] <- "toa_HCS_A04"
-# head(covar_)
-
-A04 <- data.frame(subset(  A04_sickness_toa, select = c(iso3,toa,year)  ))
-covar_ <- merge(covar_, A04,by=c("iso3","year")) 
-# head(covar_)
-names(covar_)[names(covar_)=="toa"] <- "toa_sickn_A04"
-# head(covar_)
-
-
-A05 <- data.frame(subset(  A05_edu_intro_comp_schooling, select = c(iso3,toa,year)  ))
-covar_ <- merge(covar_, A05,by=c("iso3","year")) 
-# head(covar_)
-names(covar_)[names(covar_)=="toa"] <- "toa_comp_edu_A05"
-# head(covar_)
-
-A06 <- data.frame(subset(  A06_int, select = c(iso3,toa_ml,year)  ))
-covar_ <- merge(covar_, A06,by=c("iso3","year")) 
-# head(covar_)
-names(covar_)[names(covar_)=="toa_ml"] <- "toa_ml_A06"
-# head(covar_)
-
-A06 <- data.frame(subset(  A06_int, select = c(iso3,toa_fa,year)  ))
-covar_ <- merge(covar_, A06,by=c("iso3","year")) 
-# head(covar_)
-names(covar_)[names(covar_)=="toa_fa"] <- "toa_fa_A06"
-# head(covar_)
 
 covar_ <- merge(covar_, existence,by=c("iso3","year")) 
-head(covar_)
+# head(covar_)
 
 covar <- covar_
 dim(covar)
@@ -332,7 +289,7 @@ unique(covar$iso3)
 unique(covar$year)
 unique(edgelist_cultural_spheres$year)
 
-head(covar)
+# head(covar)
 # - combined covar object for all explanatory variables
 # - covar$gdp & covar$regime
 
@@ -340,19 +297,10 @@ head(covar)
 
 ```
 
-
 ## 4. netdiffuseR setup
   
 
 
-keep in mind what we have for each project
-  -     >>toas<<:
-  - A 01:
-  - A 02: toa_unemp_A02
-  - A 03: toa_ILO_A03
-  - A 04: toa_HCS_A04 and toa_sickn_A04
-  - A 05: toa_comp_edu_A05
-  - A 06: toa_ml_A06 and toa_fa_A06
 
 keep in mind which networks we have
   -     >>edgelists<<: 
@@ -364,12 +312,12 @@ keep in mind which networks we have
   - begin with cultural spheres
   
 
-```{r 4_netdiff}
+```{r 4_netdiff, warning = F, message = F}
 # -------------------------
 # - 4a) cultural spheres --
 # -------------------------
 # - here comes the core: creating the diffnet object
-head(edgelist_cultural_spheres)
+#head(edgelist_cultural_spheres)
 dim(edgelist_cultural_spheres)
 diffnet_culture <- edgelist_to_diffnet(
   edgelist = edgelist_cultural_spheres[,1:2], # As usual, a two column dataset [,1:2]
@@ -383,8 +331,8 @@ diffnet_culture <- edgelist_to_diffnet(
   timevar  = "year",
   keep.isolates = TRUE    # Keeping isolates (if there's any)
 )
-diffnet_culture
-plot(diffnet_culture)
+# diffnet_culture
+# plot(diffnet_culture)
 summary(diffnet_culture)
 
 # -------------------------------------------------------------------------
@@ -396,30 +344,30 @@ diffnet_culture[["adopted"]]  <- toa_mat(diffnet_culture)$cumadopt
 
 table(data.frame(diffnet_culture)$adopted) # don't care about no. adopted here
 summary(data.frame(diffnet_culture)$lag_w_expo_culture)
-head(data.frame(diffnet_culture)) # exposure is NA for 1st 164 cases => 1880
-tail(data.frame(diffnet_culture))
+# head(data.frame(diffnet_culture)) # exposure is NA for 1st 164 cases => 1880
+# tail(data.frame(diffnet_culture))
 
 
 # -------------------------
 # - 4b) colonial ties -----
 # -------------------------
 # - here comes the core: creating the diffnet object
-head(colonial_ties_edgelist)
+#head(colonial_ties_edgelist)
 dim(colonial_ties_edgelist)
 diffnet_colony <- edgelist_to_diffnet(
   edgelist = colonial_ties_edgelist[,1:2], # As usual, a two column dataset [,1:2]
-  w        = colonial_ties_edgelist$colony,
+  w        = colonial_ties_edgelist$weight_decay_exp,
   t0       = colonial_ties_edgelist$year,  # An integer vector with starting point of spell
   t1       = colonial_ties_edgelist$year,  # An integer vector with the endpoint of spell
-  undirected = TRUE,        # !!! change for >directed< network !!! => we provide it later
+  undirected = FALSE,        # !!! change for >directed< network !!! => we provide it later
   dat      = covar,         # Attributes dataset
   idvar    = "iso3",                  
   toavar   = "toa_workinj_A02",          # -- !! here just change time-of-adoption !! -- #
   timevar  = "year",
   keep.isolates = TRUE    # Keeping isolates (if there's any)
 )
-diffnet_colony
-plot(diffnet_colony)
+# diffnet_colony
+# plot(diffnet_colony)
 summary(diffnet_colony)
 
 # -------------------------------------------------------------------------
@@ -430,15 +378,15 @@ diffnet_colony[["lag_expo_colony"]] <- exposure(diffnet_colony, valued = F, lags
 
 diffnet_colony[["adopted"]]  <- toa_mat(diffnet_colony)$cumadopt
 
-diffnet_colony
-summary(diffnet_colony)
+# diffnet_colony
+# summary(diffnet_colony)
 summary(data.frame(diffnet_colony)$lag_w_expo_colony)
 
 # -------------------------
 # - 4c) trade network -----
 # -------------------------
 # - here comes the core: creating the diffnet object
-head(trade_edgelist)
+# head(trade_edgelist)
 dim(trade_edgelist)
 diffnet_trade <- edgelist_to_diffnet(
   edgelist = trade_edgelist[,1:2], # As usual, a two column dataset [,1:2]
@@ -452,8 +400,8 @@ diffnet_trade <- edgelist_to_diffnet(
   timevar  = "year",
   keep.isolates = TRUE    # Keeping isolates (if there's any)
 )
-diffnet_trade
-plot(diffnet_trade)
+# diffnet_trade
+# plot(diffnet_trade)
 summary(diffnet_trade)
 
 
@@ -465,8 +413,8 @@ diffnet_trade[["lag_expo_trade"]] <- exposure(diffnet_trade, valued = F, lags = 
 
 diffnet_trade[["adopted"]]  <- toa_mat(diffnet_trade)$cumadopt
 
-head(data.frame(diffnet_trade))
-tail(data.frame(diffnet_trade))
+# head(data.frame(diffnet_trade))
+# tail(data.frame(diffnet_trade))
 summary(data.frame(diffnet_trade)$lag_w_expo_trade)
 
 
@@ -474,7 +422,7 @@ summary(data.frame(diffnet_trade)$lag_w_expo_trade)
 # - 4d) spatial proximity -----
 # -----------------------------
 # - here comes the core: creating the diffnet object
-head(capital_distance_edgelist)
+# head(capital_distance_edgelist)
 dim(capital_distance_edgelist)
 diffnet_proximity <- edgelist_to_diffnet(
   edgelist = capital_distance_edgelist[,1:2], # As usual, a two column dataset [,1:2]
@@ -488,8 +436,10 @@ diffnet_proximity <- edgelist_to_diffnet(
   timevar  = "year",
   keep.isolates = TRUE    # Keeping isolates (if there's any)
 )
-diffnet_proximity
-plot(diffnet_proximity)
+# diffnet_proximity
+
+# plot(diffnet_proximity)
+
 summary(diffnet_proximity) # - moran's I seems to be insignificant regarding
                            # - >unweighted< geodesic distance in network.
                            # - Unweighted network density is 100% => it's not a variable
@@ -502,16 +452,27 @@ diffnet_proximity[["lag_expo_proximity"]] <- exposure(diffnet_proximity, valued 
 
 diffnet_proximity[["adopted"]]  <- toa_mat(diffnet_proximity)$cumadopt
 
-diffnet_proximity
+# diffnet_proximity
+
 summary(data.frame(diffnet_proximity)$lag_expo_proximity)
-head(data.frame(diffnet_proximity))
+# head(data.frame(diffnet_proximity))
 
 # - save first diffnet object as data as data frame
 diff_data_culture <- as.data.frame(diffnet_culture)
-head(diff_data_culture)
+# head(diff_data_culture)
+
 table(diff_data_culture$adopted) # don't care about n. of cases
 
 ```
+
+```{r adoption plot, warning = F, message = F}
+plot1 <- classify(diffnet_trade, include_censored = TRUE)
+ftable(plot1)
+
+
+```
+
+
 ```{r six}
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
@@ -558,9 +519,23 @@ d <- subset(  diffnet_trade, select = c(id,per,lag_w_expo_trade, lag_expo_trade)
 diff_data <- merge(diff_data, d,by=c("id","per")) 
 d <- subset(  diffnet_proximity, select = c(id,per,lag_w_expo_proximity, lag_expo_proximity)  )
 diff_data <- merge(diff_data, d,by=c("id","per")) 
+```
 
-head(diff_data)
+Original datafile source
 
+http://www.barkhof.uni-bremen.de/~mwindzio/clusterID_n.csv
+
+
+```{r cluster_id}
+cluster_id <- read.csv("data/clusterID_n.csv", header = TRUE)
+# head(cluster_id) 
+cluster_id <- cluster_id[,c(1,2,5)]
+
+names(cluster_id) <- c("id", "per", "cluster_id")
+
+```
+
+```{r fix}
 # - distribution of network, range and "density/edge weight" => 164 NAs for 1880
 summary(diff_data$lag_w_expo_culture)
 summary(diff_data$lag_w_expo_colony)
@@ -569,10 +544,10 @@ summary(diff_data$lag_w_expo_proximity)
 
 summary(diff_data$adopted) # - create new for each project specific-toa
 diff_data$gdp10000 <- diff_data$gdp/10000 # in 10,000 USD
-
 ```
 
-```{r }
+
+```{r main_models}
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
 # - 8. !! estimate discrete-time logistic hazard model !!
@@ -640,7 +615,7 @@ stargazer(model1,model2,
                              "GDP per capita / 10000 USD",
                              "democratization" 
                              ),
-          out=wdir("model_work_inj_A02.htm")) # - create folder, mac users adjust
+          out="data/model_work_inj_A02.htm") # - create folder, mac users adjust
 
 
 # ---------------------------------------------
@@ -654,7 +629,7 @@ oldpar <- par(no.readonly = T)
 coords <- set.seed(s);plot(diffnet_culture, main="culture & education")
 
 
-bmp(filename = "c:/data/culture_edu.bmp") # - create folder, mac users adjust
+bmp(filename = "results/culture_edu.bmp") # - create folder, mac users adjust
 plot_diffnet(diffnet_culture, 
              slices = c(1,50,100,130), layout=coords)
 dev.off()
@@ -694,5 +669,125 @@ ids <- sort(ids)
 # Adopter types and threshols combined
 thresholds <- cbind(as.data.frame(classify(diffnet_culture)), diffnet_culture$toa, ids)
 head(thresholds)
+```
+
+```{r se_corrections}
+# ---------------------------------------------
+# --- Calculate the  corrected standard errors
+# --- the cultural spheres network
+# ---------------------------------------------
+
+# Standard error correction: Huber-White standard errors are calculated AFTER the model
+# and used to re-calculate the significance
+
+# step 1: calculate corrected standard errors and save output as an object: 
+
+
+m1 <- coeftest(model1, vcov = vcovCL(model1, type="HC3", cluster=~ cluster_id))
+               
+m1
+
+m2 <- coeftest(model2, vcov = vcovCL(model2, type="HC3", cluster=~ cluster_id))
+
+m2
+
+m3 <- coeftest(model3, vcov = vcovCL(model3, type="HC3", cluster=~ cluster_id))
+
+m3
+
+m4 <- coeftest(model4, vcov = vcovCL(model4, type="HC3", cluster=~ cluster_id))
+
+m4
+
+# step 2: run stargazer3 with the following specification: 
+
+# 1. odds.rations = T !SPELLING! 
+
+# 2. stargazer3(list(m1, m2)...) this is the output of the coeftest function with the corrected
+# standard erors!! NOT THE GLM OUTPUT !!
+
+# 3. origin_model: GLM output. This is nessesary to add the model fit statistics to the table.
+
+
+# BEWARE of the covariate label order!! All your models need the independent variables
+# in the same order. If you have multiple models, add the ALL independent variable names to the function call below under covariate.labels!!
+# If one model has less variables, this space will be empty only for that model.
+
+# cheatsheets for starger modification: https://www.jakeruss.com/cheatsheets/stargazer/
+# these work with stargazer 3 as well. 
+
+# change the title, the dep.var.labels and the covariate.labels accordingly
+
+stargazer3(list(m1, m2, m3, m4), odds.ratios = T, origin_model = list(model1, model2, model3, model4), type = "html", se = list(NA, NA, NA, NA),
+           title = "Diffusion of Work-Inury Law - Cultural Spheres Network",
+           dep.var.labels=c("Introduction of Compulsory Schooling"),
+           covariate.labels=c("rate t(0-24)", 
+                              "rate t(25-49)",
+                              "rate t(50-74)",
+                              "rate t(75-99)",
+                              "rate t(100-130)",
+                              "state existed (=1,else=0)", 
+                              "GDP per capita / 10000 USD",
+                              "democratization" ,
+                              "cultural spheres netw.: w. exposure (lag 1 year)",
+                              "colonies netw.: exposure ",
+                              "trade net: w. exposure (lag 1 year)",
+                              "spatial proximity netw.: w. exposure "
+                              ),
+           out="results/models_final2.htm")
+
+# ---------------------------------------------
+# --- some functions of netdiffuseR, here for 
+# --- the cultural spheres network
+# ---------------------------------------------
+
+s <- 12345
+cols <- c("lightblue","green", "blue")
+oldpar <- par(no.readonly = T)
+coords <- set.seed(s);plot(diffnet_culture, main="culture & education")
+
+
+bmp(filename = "results/culture_edu.bmp") # - create folder, mac users adjust
+plot_diffnet(diffnet_culture, 
+             slices = c(1,50,100,130), layout=coords)
+dev.off()
+
+plot_adopters(diffnet_culture, 
+              include.legend = FALSE, what = c("adopt", "cumadopt"))
+plot_hazard(diffnet_culture, ylim=c(0,1))
+plot_infectsuscep(diffnet_culture)
+
+# network threshold: required proportion or number of neighbors that leads you to adopt
+plot_threshold(diffnet_culture, undirected = FALSE, vertex.size = 1/5)
+
+# Classify Adopters
+diffnet.toa(diffnet_culture)[diffnet_culture$toa==max(diffnet_culture$toa, na.rm = TRUE)] <- NA
+out <- classify_adopters(diffnet_culture)
+out
+
+# This is one way to combine adopters ad thresholds in one object
+round(
+  with(out, ftable(toa, thr, dnn=c("Time of Adoption", "Threshold")))/
+    nnodes(diffnet_culture[!is.na(diffnet_culture$toa)])*100, digits=2)
+ftable(out)
+
+ids <- unique(edgelist_cultural_spheres$ego_id) 
+ids <- as.data.frame(ids)
+
+ids1 <- unique(edgelist_cultural_spheres$alter_id) 
+ids1 <- as.data.frame(ids1)
+
+colnames(ids1)[1] <- "ids"
+ids <- rbind(ids, ids1)
+ids <- unique(ids)
+ids$ids <- as.character(ids$ids)
+
+ids <- sort(ids)
+
+# Adopter types and threshols combined
+thresholds <- cbind(as.data.frame(classify(diffnet_culture)), diffnet_culture$toa, ids)
+head(thresholds)
+
+
 ```
 

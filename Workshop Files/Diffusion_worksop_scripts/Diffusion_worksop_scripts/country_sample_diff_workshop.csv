@@ -1,0 +1,169 @@
+iso3;cow_code;country_name
+USA;2;United States of America
+CAN;20;Canada
+CUB;40;Cuba
+HTI;41;Haiti
+DOM;42;Dominican Republic
+JAM;51;Jamaica
+TTO;52;Trinidad and Tobago
+MEX;70;Mexico
+GTM;90;Guatemala
+HND;91;Honduras
+SLV;92;El Salvador
+NIC;93;Nicaragua
+CRI;94;Costa Rica
+PAN;95;Panama
+COL;100;Colombia
+VEN;101;Venezuela
+GUY;110;Guyana
+SUR;115;Suriname
+ECU;130;Ecuador
+PER;135;Peru
+BRA;140;Brazil
+BOL;145;Bolivia
+PRY;150;Paraguay
+CHL;155;Chile
+ARG;160;Argentina
+URY;165;Uruguay
+GBR;200;United Kingdom
+IRL;205;Ireland
+NLD;210;Netherlands
+BEL;211;Belgium
+LUX;212;Luxembourg
+FRA;220;France
+CHE;225;Switzerland
+ESP;230;Spain
+PRT;235;Portugal
+DEU;255;Germany
+DDR;265;German Democratic Republic
+POL;290;Poland
+AUT;305;Austria
+HUN;310;Hungary
+CZE;316;Czech Republic
+SVK;317;Slovakia
+ITA;325;Italy
+ALB;339;Albania
+MNE;341;Montenegro
+MKD;343;Macedonia
+HRV;344;Croatia
+SRB;345;Serbia
+BIH;346;Bosnia and Herzegovina
+KOS;347;Kosovo
+SVN;349;Slovenia
+GRC;350;Greece
+CYP;352;Cyprus
+BGR;355;Bulgaria
+MDA;359;Moldova
+ROU;360;Romania
+RUS;365;Russia
+EST;366;Estonia
+LVA;367;Latvia
+LTU;368;Lithuania
+UKR;369;Ukraine
+BLR;370;Belarus
+ARM;371;Armenia
+GEO;372;Georgia
+AZE;373;Azerbaijan
+FIN;375;Finland
+SWE;380;Sweden
+NOR;385;Norway
+DNK;390;Denmark
+CPV;402;Cape Verde
+GNB;404;Guinea-Bissau
+GNQ;411;Equatorial Guinea
+GMB;420;Gambia
+MLI;432;Mali
+SEN;433;Senegal
+BEN;434;Benin
+MRT;435;Mauritania
+NER;436;Niger
+CIV;437;Ivory Coast
+GIN;438;Guinea
+BFA;439;Burkina Faso
+LBR;450;Liberia
+SLE;451;Sierra Leone
+GHA;452;Ghana
+TGO;461;Togo
+CMR;471;Cameroon
+NGA;475;Nigeria
+GAB;481;Gabon
+CAF;482;Central African Republic
+TCD;483;Chad
+COG;484;Congo
+COD;490;Democratic Republic of the Congo
+UGA;500;Uganda
+KEN;501;Kenya
+TZA;510;Tanzania
+BDI;516;Burundi
+RWA;517;Rwanda
+SOM;520;Somalia
+DJI;522;Djibouti
+ETH;530;Ethiopia
+AGO;540;Angola
+MOZ;541;Mozambique
+ZMB;551;Zambia
+ZWE;552;Zimbabwe
+MWI;553;Malawi
+ZAF;560;South Africa
+NAM;565;Namibia
+LSO;570;Lesotho
+BWA;571;Botswana
+SWZ;572;Swaziland
+MDG;580;Madagascar
+COM;581;Comoros
+MUS;590;Mauritius
+MAR;600;Morocco
+DZA;615;Algeria
+TUN;616;Tunisia
+LBY;620;Libya
+SDN;625;Sudan
+SSD;626;South Sudan
+IRN;630;Iran
+TUR;640;Turkey
+IRQ;645;Iraq
+EGY;651;Egypt
+SYR;652;Syria
+LBN;660;Lebanon
+JOR;663;Jordan
+ISR;666;Israel
+SAU;670;Saudi Arabia
+YEM;679;Yemen
+KWT;690;Kuwait
+BHR;692;Bahrain
+QAT;694;Qatar
+ARE;696;United Arab Emirates
+OMN;698;Oman
+AFG;700;Afghanistan
+TKM;701;Turkmenistan
+TJK;702;Tajikistan
+KGZ;703;Kyrgyzstan
+UZB;704;Uzbekistan
+KAZ;705;Kazakhstan
+CHN;710;China
+MNG;712;Mongolia
+TWN;713;Taiwan
+PRK;731;North Korea
+KOR;732;South Korea
+JPN;740;Japan
+IND;750;India
+BTN;760;Bhutan
+PAK;770;Pakistan
+BGD;771;Bangladesh
+MMR;775;Myanmar
+LKA;780;Sri Lanka
+KHM;811;Cambodia
+LAO;812;Laos
+VNM;816;Vietnam
+MYS;820;Malaysia
+SGP;830;Singapore
+PHL;840;Philippines
+TLS;860;East Timor
+AUS;900;Australia
+PNG;910;Papua New Guinea
+NZL;920;New Zealand
+SLB;940;Solomon Islands
+FJI;950;Fiji
+NPL;790;Nepal
+THA;800;Thailand
+IDN;850;Indonesia
+
