@@ -14,7 +14,7 @@ rm(list = ls(all = T))
 # install.packages('pacman')
 # library('pacman')
 
-pacman::p_load('netdiffuseR','stargazer','tidyverse','dplyr','countrycode')
+pacman::p_load('netdiffuseR','stargazer','tidyverse','dplyr','countrycode','sandwich','lmtest')
 
 # stargazer 3 (define manually to make code faster)
 # source("http://www.barkhof.uni-bremen.de/~mwindzio/modified_stargazer.R")
@@ -267,7 +267,7 @@ A02_workinj <- A02_workinj %>%
 mutate(labor_workinjury_firstlaw = ifelse(labor_workinjury_firstlaw < 1880, 1880, labor_workinjury_firstlaw))
 
 
-# ----- Project A 06 -----------------
+
 
 
 covar_ <- data.frame(covar_base)
@@ -299,8 +299,6 @@ unique(edgelist_cultural_spheres$year)
 
 ## 4. netdiffuseR setup
   
-
-
 
 keep in mind which networks we have
   -     >>edgelists<<: 
@@ -465,13 +463,18 @@ table(diff_data_culture$adopted) # don't care about n. of cases
 
 ```
 
+
+#### Threshold Adoption comparison
+
 ```{r adoption plot, warning = F, message = F}
 plot1 <- classify(diffnet_trade, include_censored = TRUE)
 ftable(plot1)
 
+plot2 <- classify(diffnet_colony, include_censored = TRUE)
+ftable(plot2)
 
 ```
-
+So for trade this suggests that 55 % adopt at a low threshold, but there is no relationship with time, this happens early, mid and late in the process.
 
 ```{r six}
 # -----------------------------------------------------------------
@@ -630,12 +633,12 @@ coords <- set.seed(s);plot(diffnet_culture, main="culture & education")
 
 
 # bmp(filename = "results/culture_edu.bmp") # - create folder, mac users adjust
-plot_diffnet(diffnet_culture, 
-             slices = c(1,50,100,130), layout=coords)
+# plot_diffnet(diffnet_culture, 
+#             slices = c(1,50,100,130), layout=coords)
 #dev.off()
 
-plot_adopters(diffnet_culture, 
-              include.legend = FALSE, what = c("adopt", "cumadopt"))
+# plot_adopters(diffnet_culture, 
+#              include.legend = FALSE, what = c("adopt", "cumadopt"))
 plot_hazard(diffnet_culture, ylim=c(0,1))
 plot_infectsuscep(diffnet_culture)
 
@@ -670,6 +673,14 @@ ids <- sort(ids)
 thresholds <- cbind(as.data.frame(classify(diffnet_culture)), diffnet_culture$toa, ids)
 head(thresholds)
 ```
+```{r thresholdplot_trade}
+
+
+
+
+plot_threshold(diffnet_trade, undirected = FALSE, vertex.size = 1/5)
+
+```
 
 ```{r se_corrections}
 # ---------------------------------------------
@@ -683,9 +694,12 @@ head(thresholds)
 # step 1: calculate corrected standard errors and save output as an object: 
 
 
-m1 <- coeftest(model1, vcov = vcovCL(model1, type="HC3", cluster=~ cluster_id))
-               
-m1
+m1 <- lmtest::coeftest(model1, vcov = vcovCL(model1, type="HC3", cluster=~ cluster_id))
+# unclear error taking place here
+
+
+m1               
+summary(model1)
 
 m2 <- coeftest(model2, vcov = vcovCL(model2, type="HC3", cluster=~ cluster_id))
 
