@@ -6,14 +6,14 @@ output: html_notebook
 ```{r setup}
 rm(list = ls(all = T))
 
-pacman::p_load('netdiffuseR','stargazer','tidyverse','dplyr','countrycode','sandwich','lmtest')
+pacman::p_load('netdiffuseR','stargazer','tidyverse','dplyr','countrycode','sandwich','lmtest','jtools','ragg')
 
 load("data/.Rdata")
 ```
 
 
 
-```{r main_models}
+```{r main_models, warning = F, message = F}
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
 # - 8. !! estimate discrete-time logistic hazard model !!
@@ -88,7 +88,7 @@ knitr::include_graphics("results/Tbl1.htm")
 ```
 
 
-```{r Tbl1_OR}
+```{r Tbl1_OR, warning = F, message = F}
 #we add a command to present odd-ratios
 
 stargazer(model1,model2,
@@ -112,6 +112,22 @@ stargazer(model1,model2,
           out="results/Tbl1_OR.htm")
 
 knitr::include_graphics("results/Tbl1_OR.htm")
+```
+
+```{r coefplots}
+agg_png(filename = "results/Fig1.png", height = 600, width = 1000, res = 144)
+plot_coefs(model1,model2, coefs = c("Network Exposure: Culture (t-1)" = "lag_w_expo_culture",
+                                    "Network Exposure: Colonial" = "lag_w_expo_colony",
+                                    "Network Exposure: Trade (t-1)" = "lag_w_expo_trade",
+                                    "Network Exposrue: Spatial Proximity" = "lag_w_expo_proximity", 
+                                    "State Existed" = "existence",
+                                    "GDPpc 10k USD" = "gdp10000", 
+                                    "Democratization" = "regime"), colors = "Qual3", title = "Logit Coefficients for Work-Injury Law Models")
+dev.off()
+
+knitr::include_graphics("results/Fig1.png")
+
+# omit.coefs = c("t0_25","t25_49","t50_74","t75_99","t100_130")
 ```
 
 
@@ -149,7 +165,10 @@ plot_infectsuscep(diffnet_culture)
 # network threshold: required proportion or number of neighbors that leads you to adopt
 plot_threshold(diffnet_culture, undirected = FALSE, vertex.size = 1/5)
 ```
-
+```{r net3}
+# network threshold: required proportion or number of neighbors that leads you to adopt
+plot_threshold(diffnet_trade, undirected = FALSE, vertex.size = 1/5)
+```
 
 ```{r net4}
 # Classify Adopters
