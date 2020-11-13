@@ -507,19 +507,20 @@ diff_data_culture$t100_130 <- ifelse(diff_data_culture$t >= 100, 1, 0)
 diff_data <- diff_data_culture
 
 head(diff_data)
-diffnet_colony <- data.frame(diffnet_colony)
-diffnet_trade <- data.frame(diffnet_trade)
-diffnet_proximity <- data.frame(diffnet_proximity)
+diffnet_colony_df <- data.frame(diffnet_colony)
+diffnet_trade_df <- data.frame(diffnet_trade)
+diffnet_proximity_df <- data.frame(diffnet_proximity)
+diffnet_culture_df <- data.frame(diffnet_culture)
 
 # -------------------------------------------------------
 # -------------- merge everthing together ---------------
 # -------------------------------------------------------
 # --- merge id is now "id",  automatically generated in netdiffuseR objects
-d <- subset(  diffnet_colony, select = c(id,per,lag_w_expo_colony, lag_expo_colony)  )
+d <- subset(  diffnet_colony_df, select = c(id,per,lag_w_expo_colony, lag_expo_colony)  )
 diff_data <- merge(diff_data, d,by=c("id","per")) 
-d <- subset(  diffnet_trade, select = c(id,per,lag_w_expo_trade, lag_expo_trade)  )
+d <- subset(  diffnet_trade_df, select = c(id,per,lag_w_expo_trade, lag_expo_trade)  )
 diff_data <- merge(diff_data, d,by=c("id","per")) 
-d <- subset(  diffnet_proximity, select = c(id,per,lag_w_expo_proximity, lag_expo_proximity)  )
+d <- subset(  diffnet_proximity_df, select = c(id,per,lag_w_expo_proximity, lag_expo_proximity)  )
 diff_data <- merge(diff_data, d,by=c("id","per")) 
 ```
 
