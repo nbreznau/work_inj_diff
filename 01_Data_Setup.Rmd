@@ -243,7 +243,10 @@ A02_workinj <- A02_workinj %>%
 # unique(A02_workinj$cow_code) 165 OK!
 
 # Import unemployment data (from Carina 19.11.2020)
+<<<<<<< HEAD
 # original file name "UI_Laws_UploadWesis_incl Sources.xlsx" (in SeaFile)
+=======
+>>>>>>> b3e29e83905a651065b413e721c91541a76ef524
 
 unemp <- read.csv("data/A02_unemp.csv", header = T)
 unemp <- select(unemp, cow_code, unemp_firstlaw)
