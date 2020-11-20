@@ -1,7 +1,9 @@
 ---
-title: "Data Preparation - Timing, Development and Diffusion of Work-Injury Laws Globally: Industrialization, Nation States and Institutions"
+title: "Data Preparation - Unemployment First Law Introduciton"
 output: html_notebook
 ---
+
+
 
 
 ```{r setup}
@@ -43,19 +45,9 @@ stargazer3 <- function(model, odds.ratios = F, origin_model = NULL, ...) {
 
 ```
 
-## Get Data
+## Get Data 
 
-#### Networkdata sources
-
-http://www.barkhof.uni-bremen.de/~mwindzio/edgelist_cultural_spheres.zip
-http://www.barkhof.uni-bremen.de/~mwindzio/COW_trade_consolidated.zip
-http://www.barkhof.uni-bremen.de/~mwindzio/trade_existence_dummy.csv
-http://www.barkhof.uni-bremen.de/~mwindzio/capital_distance_edgelist.zip
-http://www.barkhof.uni-bremen.de/~mwindzio/vdem_gdp_pc_INTERPOLATED_consolidated.csv
-http://www.barkhof.uni-bremen.de/~mwindzio/vdem_regime__INTERPOLATED_consolidated.csv
-
-This one stays zipped as GitHub has a 100 MB max filesize
-http://www.barkhof.uni-bremen.de/~mwindzio/capital_distance_edgelist.zip
+see main branch for sources
 
 
 ### 1. Network Data
@@ -230,7 +222,8 @@ Fill in former Serbian republics at some point (basically as 'Serbia' in the GWI
 
 # ----- Project A 02 -----------------
 
-# Introduction of work regulations
+# Introduction of unemployment data, use this template for conversion
+
 A02_workinj <- read.csv("data/A02_workinj.csv", header = TRUE)
 
 # These data have missing cases, fix by using the empty frame
@@ -249,21 +242,23 @@ A02_workinj <- A02_workinj %>%
 
 # unique(A02_workinj$cow_code) 165 OK!
 
-# Import 'correct' GWIP data
-gwip <- read.csv("data/gwip_v1.csv")
-gwip <- select(gwip, -c(country_name))
+# Import unemployment data (from Carina 19.11.2020)
+# original file name "UI_Laws_UploadWesis_incl Sources.xlsx" (in SeaFile)
 
-A02_workinj <- left_join(A02_workinj, gwip, by = "cow_code")
+unemp <- read.csv("data/A02_unemp.csv", header = T)
+unemp <- select(unemp, cow_code, unemp_firstlaw)
+
+A02_unemp <- left_join(A02_workinj, unemp, by = "cow_code")
 
 # Drop missing countries
-A02_workinj <- subset(A02_workinj, !is.na(labor_workinjury_firstlaw))
+A02_unemp <- subset(A02_unemp, !is.na(unemp_firstlaw))
 
 # Merge
 
 # Start with 1880
 
-A02_workinj <- A02_workinj %>%
-mutate(labor_workinjury_firstlaw = ifelse(labor_workinjury_firstlaw < 1880, 1880, labor_workinjury_firstlaw))
+A02_unemp <- A02_unemp %>%
+mutate(unemp_firstlaw = ifelse(unemp_firstlaw < 1880, 1880, unemp_firstlaw))
 
 
 
@@ -272,10 +267,10 @@ mutate(labor_workinjury_firstlaw = ifelse(labor_workinjury_firstlaw < 1880, 1880
 covar_ <- data.frame(covar_base)
 head(covar_)
 
-A02_2 <- data.frame(subset(  A02_workinj, select = c(iso3,labor_workinjury_firstlaw,year)  ))
+A02_2 <- data.frame(subset(  A02_unemp, select = c(iso3,unemp_firstlaw,year)  ))
 covar_ <- merge(covar_, A02_2,by=c("iso3","year")) 
 # head(covar_)
-names(covar_)[names(covar_)=="labor_workinjury_firstlaw"] <- "toa_workinj_A02"
+names(covar_)[names(covar_)=="unemp_firstlaw"] <- "toa_unemp_A02"
 # head(covar_)
 
 
@@ -324,7 +319,7 @@ diffnet_culture <- edgelist_to_diffnet(
   undirected = TRUE,        # undirected network
   dat      = covar,         # Attributes dataset
   idvar    = "iso3",                  
-  toavar   = "toa_workinj_A02",          # -- !! here just change time-of-adoption !! -- #
+  toavar   = "toa_unemp_A02",          # -- !! here just change time-of-adoption !! -- #
   timevar  = "year",
   keep.isolates = TRUE    # Keeping isolates (if there's any)
 )
@@ -359,7 +354,7 @@ diffnet_colony <- edgelist_to_diffnet(
   undirected = FALSE,        # !!! change for >directed< network !!! => we provide it later
   dat      = covar,         # Attributes dataset
   idvar    = "iso3",                  
-  toavar   = "toa_workinj_A02",          # -- !! here just change time-of-adoption !! -- #
+  toavar   = "toa_unemp_A02",          # -- !! here just change time-of-adoption !! -- #
   timevar  = "year",
   keep.isolates = TRUE    # Keeping isolates (if there's any)
 )
@@ -393,7 +388,7 @@ diffnet_trade <- edgelist_to_diffnet(
   undirected = TRUE,        # undirected network
   dat      = covar,         # Attributes dataset
   idvar    = "iso3",                  
-  toavar   = "toa_workinj_A02",          # -- !! here just change time-of-adoption !! -- #
+  toavar   = "toa_unemp_A02",          # -- !! here just change time-of-adoption !! -- #
   timevar  = "year",
   keep.isolates = TRUE    # Keeping isolates (if there's any)
 )
@@ -429,7 +424,7 @@ diffnet_proximity <- edgelist_to_diffnet(
   undirected = TRUE,        # undirected network
   dat      = covar,         # Attributes dataset
   idvar    = "iso3",                  
-  toavar   = "toa_workinj_A02",          # -- !! here just change time-of-adoption !! -- #
+  toavar   = "toa_unemp_A02",          # -- !! here just change time-of-adoption !! -- #
   timevar  = "year",
   keep.isolates = TRUE    # Keeping isolates (if there's any)
 )
