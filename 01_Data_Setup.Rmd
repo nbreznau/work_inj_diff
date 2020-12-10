@@ -370,14 +370,14 @@ summary(diffnet_colony)
 # -------------------------------------------------------------------------
 # -- 5. get the respective exposure variables and time-of-adoption (toa)
 # compute exposure: Netdiffuser automatically identifies whether the input is dynamic or not.
-diffnet_colony[["lag_w_expo_colony"]] <- exposure(diffnet_colony, valued = T, lags = 1)
-diffnet_colony[["lag_expo_colony"]] <- exposure(diffnet_colony, valued = F, lags = 1)
+diffnet_colony[["w_expo_colony"]] <- exposure(diffnet_colony, valued = T)
+diffnet_colony[["lag_expo_colony"]] <- exposure(diffnet_colony, valued = F)
 
 diffnet_colony[["adopted"]]  <- toa_mat(diffnet_colony)$cumadopt
 
 # diffnet_colony
 # summary(diffnet_colony)
-summary(data.frame(diffnet_colony)$lag_w_expo_colony)
+summary(data.frame(diffnet_colony)$w_expo_colony)
 
 # -------------------------
 # - 4c) trade network -----
@@ -516,7 +516,7 @@ diffnet_culture_df <- data.frame(diffnet_culture)
 # -------------- merge everthing together ---------------
 # -------------------------------------------------------
 # --- merge id is now "id",  automatically generated in netdiffuseR objects
-d <- subset(  diffnet_colony_df, select = c(id,per,lag_w_expo_colony, lag_expo_colony)  )
+d <- subset(  diffnet_colony_df, select = c(id,per,w_expo_colony, lag_expo_colony)  )
 diff_data <- merge(diff_data, d,by=c("id","per")) 
 d <- subset(  diffnet_trade_df, select = c(id,per,lag_w_expo_trade, lag_expo_trade)  )
 diff_data <- merge(diff_data, d,by=c("id","per")) 
@@ -541,7 +541,7 @@ names(cluster_id) <- c("id", "per", "cluster_id")
 ```{r fix}
 # - distribution of network, range and "density/edge weight" => 164 NAs for 1880
 summary(diff_data$lag_w_expo_culture)
-summary(diff_data$lag_w_expo_colony)
+summary(diff_data$w_expo_colony)
 summary(diff_data$lag_w_expo_trade)
 summary(diff_data$lag_w_expo_proximity)
 
