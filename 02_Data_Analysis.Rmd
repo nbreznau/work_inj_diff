@@ -1,12 +1,15 @@
 ---
-title: "Data Analysis - Timing, Development and Diffusion of Work-Injury Laws Globally: Industrialization, Nation States and Institutions"
-output: html_notebook
+title: 'Data Analysis - Timing, Development and Diffusion of Work-Injury Laws Globally:
+  Industrialization, Nation States and Institutions'
+output:
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup}
 rm(list = ls(all = T))
 
-pacman::p_load('netdiffuseR','stargazer','tidyverse','dplyr','countrycode','sandwich','lmtest','jtools','ragg','webshot')
+pacman::p_load('netdiffuseR','stargazer','tidyverse','dplyr','countrycode','sandwich','lmtest','jtools','ragg','webshot','kableExtra','knitr')
 
 load("data/unemp.Rdata")
 ```
@@ -35,7 +38,7 @@ model1 <- glm(adopted ~
               + t100_130  
               + existence
               + lag_w_expo_culture 
-              + lag_w_expo_colony
+              + w_expo_colony
               + lag_w_expo_trade
               + gdp10000
               + regime
@@ -55,7 +58,7 @@ model2 <- glm(adopted ~
               + t100_130  
               + existence
               + lag_w_expo_culture 
-              + lag_w_expo_colony
+              + w_expo_colony
               + lag_w_expo_trade
               + lag_w_expo_proximity
               + gdp10000
@@ -83,13 +86,14 @@ stargazer(model1,model2,
                              "Network Exposrue: Spatial Proximity",
                              "GDPpc 10k USD",
                              "Democratization",
-                             "At war(t-2)"
+                             "War(t thru t-2)"
                              ),
           out="results/Tbl1.htm")
 
 webshot("results/Tbl1.htm", file = "results/Tbl1.png")
 
 knitr::include_graphics("results/Tbl1.png")
+
 ```
 
 
@@ -98,8 +102,8 @@ knitr::include_graphics("results/Tbl1.png")
 
 stargazer(model1,model2,
           type = "html", 
-          title = "Discrete Time Hazard/Diffusion Models of /nWork-Injury Law, 1880-2010 in 173 countries",
-          dep.var.labels=c("First Work-Injury Law"),
+          title = "Discrete Time Hazard/Diffusion Models of /nUnemployment, 1880-2010 in 173 countries",
+          dep.var.labels=c("Introduction Unemployment Law"),
           covariate.labels=c("(1880-1912)", 
                              "(1912-1929)",
                              "(1930-1954)",
@@ -112,16 +116,18 @@ stargazer(model1,model2,
                              "Network Exposrue: Spatial Proximity",
                              "GDPpc 10k USD",
                              "Democratization",
-                             "At War (t-2)"
+                             "War (t thru t-2)"
                              ),
           apply.coef=exp, t.auto=F, p.auto=F, report = "vct*",
           out="results/Tbl1_OR.htm")
 
-knitr::include_graphics("results/Tbl1_OR.htm")
+webshot("results/Tbl1_OR.htm", file = "results/Tbl1_OR.png")
+
+knitr::include_graphics("results/Tbl1_OR.png")
 ```
 
 ```{r coefplots}
-agg_png(filename = "results/Fig1.png", height = 600, width = 1000, res = 144)
+agg_png(filename = "results/Fig1_coeff.png", height = 600, width = 1000, res = 144)
 plot_coefs(model1,model2, coefs = c("Network Exposure: Culture (t-1)" = "lag_w_expo_culture",
                                     "Network Exposure: Colonial" = "lag_w_expo_colony",
                                     "Network Exposure: Trade (t-1)" = "lag_w_expo_trade",
@@ -129,15 +135,81 @@ plot_coefs(model1,model2, coefs = c("Network Exposure: Culture (t-1)" = "lag_w_e
                                     "State Existed" = "existence",
                                     "GDPpc 10k USD" = "gdp10000", 
                                     "Democratization" = "regime",
-                                    "At War (t-2"),
+                                    "War (t thru t-2)" = "atwar"),
            colors = "Qual3", title = "Logit Coefficients for Unemployment Law Models")
 dev.off()
 
-knitr::include_graphics("results/Fig1.png")
+knitr::include_graphics("results/Fig1_coeff.png")
 
 # omit.coefs = c("t0_25","t25_49","t50_74","t75_99","t100_130")
 ```
 
+As the model is quite overloaded with variables, I remove culture, colonial ties and spatial proximity and re-run the analysis (model3), an then again with GDP removed (model4).
+```{r m3m4}
+model3 <- glm(adopted ~ 
+              + t0_33 
+              + t33_49 
+              + t50_74 
+              + t75_99 
+              + t100_130  
+              + existence
+              + lag_w_expo_trade
+              + gdp10000
+              + regime
+              + atwar
+              + 0,
+      dat    = diff_data, 
+      subset = (per <= toa), # - extremely important !
+      family = binomial(link="logit"))
+# summary(model3)
+exp(coef(model3))
+
+model4 <- glm(adopted ~ 
+              + t0_33 
+              + t33_49 
+              + t50_74 
+              + t75_99 
+              + t100_130  
+              + existence
+              + lag_w_expo_trade
+              + regime
+              + atwar
+              + 0,
+      dat    = diff_data, 
+      subset = (per <= toa), # - extremely important !
+      family = binomial(link="logit"))
+# summary(model4)
+exp(coef(model4))
+
+stargazer(model4,model3,model1,model2,
+          type = "html", 
+          title = "Discrete Time Hazard/Diffusion Models of /nUnemployment Law, 1880-2010 in 173 countries",
+          dep.var.labels=c("Introduction Unemployment Law"),
+          covariate.labels=c("(1880-1912)", 
+                             "(1912-1929)",
+                             "(1930-1954)",
+                             "(1955-1979)",
+                             "(1980-2010)",
+                             "State Existed", 
+                             "Network Exposure: Culture (t-1)",
+                             "Network Exposure: Colonial",
+                             "Network Exposure: Trade (t-1)",
+                             "Network Exposrue: Spatial Proximity",
+                             "GDPpc 10k USD",
+                             "Democratization",
+                             "War (t thru t-2)"
+                             ),
+          apply.coef=exp, t.auto=F, p.auto=F, report = "vct*",
+          out="results/Tbl2_OR.htm")
+
+webshot("results/Tbl2_OR.htm", file = "results/Tbl2_OR.png")
+
+knitr::include_graphics("results/Tbl2_OR.png")
+
+```
+
+
+Everthing below here is just 'playing around' with visualizations. Except the very end where I try to apply robust standard errors, but for some reason it does not run. 
 
 ```{r net2}
 # ---------------------------------------------
@@ -148,7 +220,7 @@ knitr::include_graphics("results/Fig1.png")
 s <- 12345
 cols <- c("lightblue","green", "blue")
 oldpar <- par(no.readonly = T)
-coords <- set.seed(s);plot(diffnet_culture, main="Culture and Work-Injury Law")
+coords <- set.seed(s);plot(diffnet_trade, main="Trade and Unemployment")
 ```
 
 
@@ -160,62 +232,27 @@ coords <- set.seed(s);plot(diffnet_culture, main="Culture and Work-Injury Law")
 
 # plot_adopters(diffnet_culture, 
 #              include.legend = FALSE, what = c("adopt", "cumadopt"))
-plot_hazard(diffnet_culture, ylim=c(0,1))
+plot_hazard(diffnet_trade, ylim=c(0,1))
 ```
 
 
 ```{r net2b}
-plot_infectsuscep(diffnet_culture)
+plot_infectsuscep(diffnet_trade)
 ```
 
 
 ```{r net3}
 # network threshold: required proportion or number of neighbors that leads you to adopt
-plot_threshold(diffnet_culture, undirected = FALSE, vertex.size = 1/5)
+plot_threshold(diffnet_trade
+               , undirected = FALSE, vertex.size = 1/5)
 ```
 ```{r net3a}
 # network threshold: required proportion or number of neighbors that leads you to adopt
 plot_threshold(diffnet_trade, undirected = FALSE, vertex.size = 1/5)
 ```
 
-```{r net4}
-# Classify Adopters
-diffnet.toa(diffnet_culture)[diffnet_culture$toa==max(diffnet_culture$toa, na.rm = TRUE)] <- NA
-out <- classify_adopters(diffnet_culture)
 
 
-# This is one way to combine adopters ad thresholds in one object
-round(
-  with(out, ftable(toa, thr, dnn=c("Time of Adoption", "Threshold")))/
-    nnodes(diffnet_culture[!is.na(diffnet_culture$toa)])*100, digits=2)
-# ftable(out)
-
-ids <- unique(edgelist_cultural_spheres$ego_id) 
-ids <- as.data.frame(ids)
-
-ids1 <- unique(edgelist_cultural_spheres$alter_id) 
-ids1 <- as.data.frame(ids1)
-
-colnames(ids1)[1] <- "ids"
-ids <- rbind(ids, ids1)
-ids <- unique(ids)
-ids$ids <- as.character(ids$ids)
-
-ids <- sort(ids)
-
-# Adopter types and threshols combined
-thresholds <- cbind(as.data.frame(classify(diffnet_culture)), diffnet_culture$toa, ids)
-head(thresholds)
-```
-
-```{r net1_trade}
-
-
-
-
-plot_threshold(diffnet_trade, undirected = FALSE, vertex.size = 1/5)
-
-```
 
 ```{r se_corrections}
 # ---------------------------------------------
@@ -269,9 +306,9 @@ m4
 
 stargazer3(list(m1, m2, m3, m4), odds.ratios = T, origin_model = list(model1, model2, model3, model4), type = "html", se = list(NA, NA, NA, NA),
            title = "Diffusion of Work-Inury Law - Cultural Spheres Network",
-           dep.var.labels=c("Introduction of Compulsory Schooling"),
-           covariate.labels=c("rate t(0-24)", 
-                              "rate t(25-49)",
+           dep.var.labels=c("Introduction of Unemployment"),
+           covariate.labels=c("rate t(0-33)", 
+                              "rate t(33-49)",
                               "rate t(50-74)",
                               "rate t(75-99)",
                               "rate t(100-130)",

@@ -252,10 +252,12 @@ war_ts <- select(war_ts, iso3, atwar, year)
 
 # add zeros for not at war, make two years after war the time that matters (exclude the war itself)
 war_ts <- war_ts %>%
-  arrange(iso3, year) %>%
+arrange(iso3, year) %>%
   mutate(atwar2 = lag(atwar),
          atwar3 = lag(atwar, 2L),
-         atwar = ifelse(!is.na(atwar2), 1, ifelse(!is.na(atwar3), 1, 0)))
+         atwar_n = ifelse(!is.na(atwar2), 1, ifelse(!is.na(atwar3), 1, 0)),
+         atwar = ifelse(atwar_n == 1, 1, atwar),
+         atwar = ifelse(is.na(atwar), 0, atwar))
 
 
 # regime type from vdem data
@@ -551,7 +553,7 @@ diffnet_culture_df <- data.frame(diffnet_culture)
 # -------------- merge everthing together ---------------
 # -------------------------------------------------------
 # --- merge id is now "id",  automatically generated in netdiffuseR objects
-d <- subset(  diffnet_colony_df, select = c(id,per,w_expo_colony, lag_expo_colony)  )
+d <- subset(  diffnet_colony_df, select = c(id,per,w_expo_colony, expo_colony)  )
 diff_data <- merge(diff_data, d,by=c("id","per")) 
 d <- subset(  diffnet_trade_df, select = c(id,per,lag_w_expo_trade, lag_expo_trade)  )
 diff_data <- merge(diff_data, d,by=c("id","per")) 
