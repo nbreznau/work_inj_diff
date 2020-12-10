@@ -3,7 +3,9 @@ title: "Data Preparation - Unemployment First Law Introduciton"
 output: html_notebook
 ---
 
-
+Carina Schmitt
+Herbert Obinger
+University of Bremen
 
 
 ```{r setup}
@@ -222,7 +224,7 @@ Fill in former Serbian republics at some point (basically as 'Serbia' in the GWI
 
 # ----- Project A 02 -----------------
 
-# Introduction of unemployment data, use this template for conversion
+# Introduction of unemployment data, use the work-injury template for conversion
 
 A02_workinj <- read.csv("data/A02_workinj.csv", header = TRUE)
 
@@ -238,15 +240,16 @@ A02_workinj$cow2 <- countrycode(A02_workinj$iso3, 'iso3c','cown')
 A02_workinj <- A02_workinj %>%
   mutate(cow_code = ifelse(cow2==817, 816, cow_code),
          cow_code = ifelse(is.na(cow_code), cow2, cow_code),
-         cow_code = ifelse(country_name == "Serbia", 345, cow_code))
+         cow_code = ifelse(country_name == "Serbia", 345, cow_code)) 
+
+
 
 # unique(A02_workinj$cow_code) 165 OK!
 
 # Import unemployment data (from Carina 19.11.2020)
-<<<<<<< HEAD
+
 # original file name "UI_Laws_UploadWesis_incl Sources.xlsx" (in SeaFile)
-=======
->>>>>>> b3e29e83905a651065b413e721c91541a76ef524
+
 
 unemp <- read.csv("data/A02_unemp.csv", header = T)
 unemp <- select(unemp, cow_code, unemp_firstlaw)
@@ -263,9 +266,7 @@ A02_unemp <- subset(A02_unemp, !is.na(unemp_firstlaw))
 A02_unemp <- A02_unemp %>%
 mutate(unemp_firstlaw = ifelse(unemp_firstlaw < 1880, 1880, unemp_firstlaw))
 
-
-
-
+# Must end at 2010 (network data limitation)
 
 covar_ <- data.frame(covar_base)
 head(covar_)
@@ -289,9 +290,6 @@ unique(edgelist_cultural_spheres$year)
 # head(covar)
 # - combined covar object for all explanatory variables
 # - covar$gdp & covar$regime
-
-
-
 ```
 
 ## 4. netdiffuseR setup
@@ -550,5 +548,5 @@ diff_data$gdp10000 <- diff_data$gdp/10000 # in 10,000 USD
 ```{r savepoint}
 rm(trade_dyadic, trade_dyadic_consolidated, trade_edgelist, diff_data_culture, capital_distance_edgelist, d, ddat, edgelist_cultural_spheres, existence, gdp, regime, colonial_ties_edgelist)
 
-save.image(file = "data/.Rdata")
+save.image(file = "data_unemp/.Rdata")
 ```
