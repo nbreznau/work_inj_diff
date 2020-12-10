@@ -6,12 +6,12 @@ output: html_notebook
 ```{r setup}
 rm(list = ls(all = T))
 
-pacman::p_load('netdiffuseR','stargazer','tidyverse','dplyr','countrycode','sandwich','lmtest','jtools','ragg')
+pacman::p_load('netdiffuseR','stargazer','tidyverse','dplyr','countrycode','sandwich','lmtest','jtools','ragg','webshot')
 
-load("data/.Rdata")
+load("data/unemp.Rdata")
 ```
 
-
+1918 is the first adoption, so the first time-dummy should capture most years before that. All countries that are non-adopters, plus those that adopted after 2010 are recoded to 3000
 
 ```{r main_models, warning = F, message = F}
 # -----------------------------------------------------------------
@@ -28,8 +28,8 @@ load("data/.Rdata")
 diff_data$toa[is.na(diff_data$toa)] <- 3000
 
 model1 <- glm(adopted ~ 
-              + t0_25 
-              + t25_49 
+              + t0_33 
+              + t33_49 
               + t50_74 
               + t75_99 
               + t100_130  
@@ -39,6 +39,7 @@ model1 <- glm(adopted ~
               + lag_w_expo_trade
               + gdp10000
               + regime
+              + atwar
               + 0,
       dat    = diff_data, 
       subset = (per <= toa), # - extremely important !
@@ -47,8 +48,8 @@ summary(model1)
 exp(coef(model1))
 
 model2 <- glm(adopted ~ 
-                + t0_25 
-              + t25_49 
+                + t0_33 
+              + t33_49 
               + t50_74 
               + t75_99 
               + t100_130  
@@ -59,6 +60,7 @@ model2 <- glm(adopted ~
               + lag_w_expo_proximity
               + gdp10000
               + regime
+              + atwar
               + 0,
               dat    = diff_data, 
               subset = (per <= toa),
@@ -69,8 +71,8 @@ stargazer(model1,model2,
           type = "html", 
           title = "Discrete Time Hazard/Diffusion Models of /nWork-Injury Law, 1880-2010 in 173 countries",
           dep.var.labels=c("First Work-Injury Law"),
-          covariate.labels=c("(1880-1904)", 
-                             "(1905-1929)",
+          covariate.labels=c("(1880-1912)", 
+                             "(1912-1929)",
                              "(1930-1954)",
                              "(1955-1979)",
                              "(1980-2010)",
@@ -80,11 +82,14 @@ stargazer(model1,model2,
                              "Network Exposure: Trade (t-1)",
                              "Network Exposrue: Spatial Proximity",
                              "GDPpc 10k USD",
-                             "Democratization" 
+                             "Democratization",
+                             "At war(t-2)"
                              ),
           out="results/Tbl1.htm")
 
-knitr::include_graphics("results/Tbl1.htm")
+webshot("results/Tbl1.htm", file = "results/Tbl1.png")
+
+knitr::include_graphics("results/Tbl1.png")
 ```
 
 
@@ -95,8 +100,8 @@ stargazer(model1,model2,
           type = "html", 
           title = "Discrete Time Hazard/Diffusion Models of /nWork-Injury Law, 1880-2010 in 173 countries",
           dep.var.labels=c("First Work-Injury Law"),
-          covariate.labels=c("(1880-1904)", 
-                             "(1905-1929)",
+          covariate.labels=c("(1880-1912)", 
+                             "(1912-1929)",
                              "(1930-1954)",
                              "(1955-1979)",
                              "(1980-2010)",
@@ -106,7 +111,8 @@ stargazer(model1,model2,
                              "Network Exposure: Trade (t-1)",
                              "Network Exposrue: Spatial Proximity",
                              "GDPpc 10k USD",
-                             "Democratization" 
+                             "Democratization",
+                             "At War (t-2)"
                              ),
           apply.coef=exp, t.auto=F, p.auto=F, report = "vct*",
           out="results/Tbl1_OR.htm")
@@ -122,7 +128,9 @@ plot_coefs(model1,model2, coefs = c("Network Exposure: Culture (t-1)" = "lag_w_e
                                     "Network Exposrue: Spatial Proximity" = "lag_w_expo_proximity", 
                                     "State Existed" = "existence",
                                     "GDPpc 10k USD" = "gdp10000", 
-                                    "Democratization" = "regime"), colors = "Qual3", title = "Logit Coefficients for Work-Injury Law Models")
+                                    "Democratization" = "regime",
+                                    "At War (t-2"),
+           colors = "Qual3", title = "Logit Coefficients for Unemployment Law Models")
 dev.off()
 
 knitr::include_graphics("results/Fig1.png")
@@ -131,7 +139,7 @@ knitr::include_graphics("results/Fig1.png")
 ```
 
 
-```{r net1}
+```{r net2}
 # ---------------------------------------------
 # --- some functions of netdiffuseR, here for 
 # --- the cultural spheres network
@@ -144,7 +152,7 @@ coords <- set.seed(s);plot(diffnet_culture, main="Culture and Work-Injury Law")
 ```
 
 
-```{r net2}
+```{r net2a}
 # bmp(filename = "results/culture_edu.bmp") # - create folder, mac users adjust
 # plot_diffnet(diffnet_culture, 
 #             slices = c(1,50,100,130), layout=coords)
@@ -156,7 +164,7 @@ plot_hazard(diffnet_culture, ylim=c(0,1))
 ```
 
 
-```{r net2}
+```{r net2b}
 plot_infectsuscep(diffnet_culture)
 ```
 
@@ -165,7 +173,7 @@ plot_infectsuscep(diffnet_culture)
 # network threshold: required proportion or number of neighbors that leads you to adopt
 plot_threshold(diffnet_culture, undirected = FALSE, vertex.size = 1/5)
 ```
-```{r net3}
+```{r net3a}
 # network threshold: required proportion or number of neighbors that leads you to adopt
 plot_threshold(diffnet_trade, undirected = FALSE, vertex.size = 1/5)
 ```
