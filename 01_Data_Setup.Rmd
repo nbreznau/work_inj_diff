@@ -1,7 +1,13 @@
 ---
 title: "Data Preparation - Timing, Development and Diffusion of Work-Injury Laws Globally: Industrialization, Nation States and Institutions"
-output: html_notebook
+output: html_document
 ---
+
+Nate Breznau
+Felix Lanver
+University of Bremen
+
+We setup the data to analyze both the first law (often employer liability), and the first social insurance law (with the suffix *_socins*)
 
 
 ```{r setup}
@@ -9,9 +15,6 @@ output: html_notebook
 # Clean up
 rm(list = ls(all = T))
 
-# note you must have pacman installed for this to run
-# install.packages('pacman')
-# library('pacman')
 
 pacman::p_load('netdiffuseR','stargazer','tidyverse','dplyr','countrycode','sandwich','lmtest')
 
@@ -45,7 +48,7 @@ stargazer3 <- function(model, odds.ratios = F, origin_model = NULL, ...) {
 
 ## Get Data
 
-#### Networkdata sources
+**Networkdata sources**
 
 http://www.barkhof.uni-bremen.de/~mwindzio/edgelist_cultural_spheres.zip
 http://www.barkhof.uni-bremen.de/~mwindzio/COW_trade_consolidated.zip
@@ -58,7 +61,7 @@ This one stays zipped as GitHub has a 100 MB max filesize
 http://www.barkhof.uni-bremen.de/~mwindzio/capital_distance_edgelist.zip
 
 
-### 1. Network Data
+## 1. Network Data
 
 ```{r windzio_data, warning=F, message=F}
 
@@ -185,7 +188,7 @@ capital_distance_edgelist$alter_id <- as.factor(capital_distance_edgelist$alter_
 
 ```
 
-### 2. Explanatory Variables
+## 2. Explanatory Variables
 
 ```{r explanatory_vars}
 
@@ -216,9 +219,9 @@ covar_base <- merge(covar_base, regime,by=c("iso3","year"))
 # table(covar_base$iso3) # - every country on board, for 131 years
 ```
 
-### 3. Policy Variables (SFB 1342)
+## 3. Wor-Injury Policy
 
-#### GWIP ([Breznau and Lanver, 2020](https://doi.org/10.7910/DVN/IVKYIE))
+From GWIP ([Breznau and Lanver, 2020](https://doi.org/10.7910/DVN/IVKYIE))
 
 Data are converted into longitudinal format (all years for all countries)
 
@@ -260,22 +263,29 @@ A02_workinj <- subset(A02_workinj, !is.na(labor_workinjury_firstlaw))
 
 # Merge
 
-# Start with 1880
+
 
 A02_workinj <- A02_workinj %>%
-mutate(labor_workinjury_firstlaw = ifelse(labor_workinjury_firstlaw < 1880, 1880, labor_workinjury_firstlaw))
-
-
+mutate(labor_workinjury_firstlaw = ifelse(labor_workinjury_firstlaw < 1880, 1880, labor_workinjury_firstlaw), # Start with 1880 for FIRST LAW
+       labor_workinjury_first_socins = ifelse(labor_workinjury_first_socins < 1884, 1884, labor_workinjury_first_socins), # Start with 1884 for FIRST SOCINS
+       labor_workinjury_first_socins = ifelse(labor_workinjury_first_socins < labor_workinjury_firstlaw_bluecollar_fullcoverage, labor_workinjury_firstlaw_bluecollar_fullcoverage, labor_workinjury_first_socins), # ensure that the social insurance law being coded applies to all blue-collar sectors (measured with error, but best possible approximation combining information from these two variables)
+       labor_workinjury_first_socins = ifelse(labor_workinjury_first_socins > 2010, 2010, labor_workinjury_first_socins) # trim to end of series at 2010
+       )
 
 
 
 covar_ <- data.frame(covar_base)
 head(covar_)
 
-A02_2 <- data.frame(subset(  A02_workinj, select = c(iso3,labor_workinjury_firstlaw,year)  ))
+A02_2 <- data.frame(subset(  A02_workinj, select = c(iso3,labor_workinjury_firstlaw,labor_workinjury_first_socins,year)  ))
 covar_ <- merge(covar_, A02_2,by=c("iso3","year")) 
 # head(covar_)
+
+# FIRST LAW
 names(covar_)[names(covar_)=="labor_workinjury_firstlaw"] <- "toa_workinj_A02"
+
+# FIRST SOC INSURANCE
+names(covar_)[names(covar_)=="labor_workinjury_first_socins"] <- "toa_workinj_A02_socins"
 # head(covar_)
 
 
@@ -307,9 +317,10 @@ keep in mind which networks we have
   - capital_distance_edgelist    => d = distance , prox. = 1/d
   - make netdiffuse object: combine edgelist with covariate object
   - begin with cultural spheres
-  
 
-```{r 4_netdiff, warning = F, message = F}
+### FIRST LAW
+
+```{r 4_netdiff_culture, warning = F, message = F}
 # -------------------------
 # - 4a) cultural spheres --
 # -------------------------
@@ -330,7 +341,7 @@ diffnet_culture <- edgelist_to_diffnet(
 )
 # diffnet_culture
 # plot(diffnet_culture)
-summary(diffnet_culture)
+# summary(diffnet_culture)
 
 # -------------------------------------------------------------------------
 # -- 5. get the respective exposure variables and time-of-adoption (toa) f
@@ -343,8 +354,10 @@ table(data.frame(diffnet_culture)$adopted) # don't care about no. adopted here
 summary(data.frame(diffnet_culture)$lag_w_expo_culture)
 # head(data.frame(diffnet_culture)) # exposure is NA for 1st 164 cases => 1880
 # tail(data.frame(diffnet_culture))
+```
 
 
+```{r 4_netdiff_colonial, warning = F, message = F}
 # -------------------------
 # - 4b) colonial ties -----
 # -------------------------
@@ -365,7 +378,7 @@ diffnet_colony <- edgelist_to_diffnet(
 )
 # diffnet_colony
 # plot(diffnet_colony)
-summary(diffnet_colony)
+# summary(diffnet_colony)
 
 # -------------------------------------------------------------------------
 # -- 5. get the respective exposure variables and time-of-adoption (toa)
@@ -378,7 +391,10 @@ diffnet_colony[["adopted"]]  <- toa_mat(diffnet_colony)$cumadopt
 # diffnet_colony
 # summary(diffnet_colony)
 summary(data.frame(diffnet_colony)$w_expo_colony)
+```
 
+
+```{r 4_netdiff_trade, warning = F, message = F}
 # -------------------------
 # - 4c) trade network -----
 # -------------------------
@@ -399,7 +415,7 @@ diffnet_trade <- edgelist_to_diffnet(
 )
 # diffnet_trade
 # plot(diffnet_trade)
-summary(diffnet_trade)
+# summary(diffnet_trade)
 
 
 # -------------------------------------------------------------------------
@@ -413,8 +429,10 @@ diffnet_trade[["adopted"]]  <- toa_mat(diffnet_trade)$cumadopt
 # head(data.frame(diffnet_trade))
 # tail(data.frame(diffnet_trade))
 summary(data.frame(diffnet_trade)$lag_w_expo_trade)
+```
 
 
+```{r 4_netdiff_spatial, warning = F, message = F}
 # -----------------------------
 # - 4d) spatial proximity -----
 # -----------------------------
@@ -437,12 +455,7 @@ diffnet_proximity <- edgelist_to_diffnet(
 
 # plot(diffnet_proximity)
 
-summary(diffnet_proximity) # - moran's I seems to be insignificant regarding
-                           # - >unweighted< geodesic distance in network.
-                           # - Unweighted network density is 100% => it's not a variable
-                           # - but see hazard model below with 
-                           # - with >exposure< by >weighted< distances!
-
+ # -----------------------------------------------------------------------
 diffnet_proximity[["lag_w_expo_proximity"]] <- exposure(diffnet_proximity, valued = T, lags = 1)
 
 diffnet_proximity[["lag_expo_proximity"]] <- exposure(diffnet_proximity, valued = F, lags = 1)
@@ -453,75 +466,235 @@ diffnet_proximity[["adopted"]]  <- toa_mat(diffnet_proximity)$cumadopt
 
 summary(data.frame(diffnet_proximity)$lag_expo_proximity)
 # head(data.frame(diffnet_proximity))
+```
 
+```{r 4_culture_adoptiontable_socins, warning = F, message = F}
 # - save first diffnet object as data as data frame
 diff_data_culture <- as.data.frame(diffnet_culture)
-# head(diff_data_culture)
+diff_data_culture <- select(diff_data_culture, -c(toa_workinj_A02_socins))
 
 table(diff_data_culture$adopted) # don't care about n. of cases
 
 ```
 
 
-#### Threshold Adoption comparison
+### SOCIAL INSURANCE
 
-```{r adoption plot, warning = F, message = F}
-plot1 <- classify(diffnet_trade, include_censored = TRUE)
-ftable(plot1)
+```{r 4_netdiff_culture_socins, warning = F, message = F}
+# -------------------------
+# - 4a) cultural spheres --
+# -------------------------
 
-plot2 <- classify(diffnet_colony, include_censored = TRUE)
-ftable(plot2)
+diffnet_culture_socins <- edgelist_to_diffnet(
+  edgelist = edgelist_cultural_spheres[,1:2], # As usual, a two column dataset [,1:2]
+  w        = edgelist_cultural_spheres$weight,
+  t0       = edgelist_cultural_spheres$year,  # An integer vector with starting point of spell
+  t1       = edgelist_cultural_spheres$year,  # An integer vector with the endpoint of spell
+  undirected = TRUE,        # undirected network
+  dat      = covar,         # Attributes dataset
+  idvar    = "iso3",                  
+  toavar   = "toa_workinj_A02_socins",          
+  timevar  = "year",
+  keep.isolates = TRUE    # Keeping isolates (if there's any)
+)
+
+
+# -------------------------------------------------------------------------
+
+diffnet_culture_socins[["lag_w_expo_culture"]] <- exposure(diffnet_culture_socins, valued = T, lags = 1)#
+diffnet_culture_socins[["lag_expo_culture"]] <- exposure(diffnet_culture_socins, valued = F, lags = 1)
+diffnet_culture_socins[["adopted"]]  <- toa_mat(diffnet_culture_socins)$cumadopt
+
+table(data.frame(diffnet_culture_socins)$adopted) # don't care about no. adopted here
+summary(data.frame(diffnet_culture_socins)$lag_w_expo_culture)
 
 ```
-So for trade this suggests that 55 % adopt at a low threshold, but there is no relationship with time, this happens early, mid and late in the process.
+
+
+```{r 4_netdiff_colonial, warning = F, message = F}
+# -------------------------
+# - 4b) colonial ties -----
+# -------------------------
+
+diffnet_colony_socins <- edgelist_to_diffnet(
+  edgelist = colonial_ties_edgelist[,1:2], # As usual, a two column dataset [,1:2]
+  w        = colonial_ties_edgelist$weight_decay_exp,
+  t0       = colonial_ties_edgelist$year,  # An integer vector with starting point of spell
+  t1       = colonial_ties_edgelist$year,  # An integer vector with the endpoint of spell
+  undirected = FALSE,        # !!! change for >directed< network !!! => we provide it later
+  dat      = covar,         # Attributes dataset
+  idvar    = "iso3",                  
+  toavar   = "toa_workinj_A02_socins",          # -- !! here just change time-of-adoption !! -- #
+  timevar  = "year",
+  keep.isolates = TRUE    # Keeping isolates (if there's any)
+)
+
+
+# -------------------------------------------------------------------------
+
+diffnet_colony_socins[["w_expo_colony"]] <- exposure(diffnet_colony_socins, valued = T)
+diffnet_colony_socins[["lag_expo_colony"]] <- exposure(diffnet_colony_socins, valued = F)
+
+diffnet_colony_socins[["adopted"]]  <- toa_mat(diffnet_colony_socins)$cumadopt
+
+summary(data.frame(diffnet_colony_socins)$w_expo_colony)
+```
+
+
+```{r 4_netdiff_trade, warning = F, message = F}
+# -------------------------
+# - 4c) trade network -----
+# -------------------------
+
+diffnet_trade_socins <- edgelist_to_diffnet(
+  edgelist = trade_edgelist[,1:2], # As usual, a two column dataset [,1:2]
+  t0       = trade_edgelist$year,  # An integer vector with starting point of spell
+  t1       = trade_edgelist$year,  # An integer vector with the endpoint of spell
+  w        = trade_edgelist$log_value,
+  undirected = TRUE,        # undirected network
+  dat      = covar,         # Attributes dataset
+  idvar    = "iso3",                  
+  toavar   = "toa_workinj_A02_socins",          # -- !! here just change time-of-adoption !! -- #
+  timevar  = "year",
+  keep.isolates = TRUE    # Keeping isolates (if there's any)
+)
+
+
+
+# -------------------------------------------------------------------------
+
+diffnet_trade_socins[["lag_w_expo_trade"]] <- exposure(diffnet_trade_socins, valued = T, lags = 1)
+diffnet_trade_socins[["lag_expo_trade"]] <- exposure(diffnet_trade_socins, valued = F, lags = 1)
+
+diffnet_trade_socins[["adopted"]]  <- toa_mat(diffnet_trade_socins)$cumadopt
+
+
+summary(data.frame(diffnet_trade)$lag_w_expo_trade)
+```
+
+
+```{r 4_netdiff_spatial, warning = F, message = F}
+# -----------------------------
+# - 4d) spatial proximity -----
+# -----------------------------
+# - here comes the core: creating the diffnet object
+# head(capital_distance_edgelist)
+dim(capital_distance_edgelist)
+diffnet_proximity_socins <- edgelist_to_diffnet(
+  edgelist = capital_distance_edgelist[,1:2], # As usual, a two column dataset [,1:2]
+  t0       = capital_distance_edgelist$year,  # An integer vector with starting point of spell
+  t1       = capital_distance_edgelist$year,  # An integer vector with the endpoint of spell
+  w        = capital_distance_edgelist$proximity,
+  undirected = TRUE,        # undirected network
+  dat      = covar,         # Attributes dataset
+  idvar    = "iso3",                  
+  toavar   = "toa_workinj_A02_socins",          # -- !! here just change time-of-adoption !! -- #
+  timevar  = "year",
+  keep.isolates = TRUE    # Keeping isolates (if there's any)
+)
+# diffnet_proximity
+
+# plot(diffnet_proximity)
+
+
+ # -----------------------------------------------------------------------
+diffnet_proximity_socins[["lag_w_expo_proximity"]] <- exposure(diffnet_proximity_socins, valued = T, lags = 1)
+
+diffnet_proximity_socins[["lag_expo_proximity"]] <- exposure(diffnet_proximity_socins, valued = F, lags = 1)
+
+diffnet_proximity_socins[["adopted"]]  <- toa_mat(diffnet_proximity_socins)$cumadopt
+
+# diffnet_proximity
+
+summary(data.frame(diffnet_proximity_socins)$lag_expo_proximity)
+# head(data.frame(diffnet_proximity))
+```
+
+
+```{r 4_culture_adoptiontable_socins, warning = F, message = F}
+# - save first diffnet object as data as data frame
+diff_data_culture_socins <- as.data.frame(diffnet_culture_socins)
+diff_data_culture_socins <- select(diff_data_culture_socins, -c(toa_workinj_A02))
+
+table(diff_data_culture_socins$adopted) # don't care about n. of cases
+
+```
+
+
+
+## 5. Combine Data
+
+### Time Dummies
 
 ```{r six}
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
 # - 6. create process-time control, define the duration of episode
 # -----------------------------------------------------------------
-# -----------------------------------------------------------------
 
-diff_data_culture$t <- (diff_data_culture$per - 1880 )
-summary(diff_data_culture$t)
+# FIRST LAW
+diff_data_culture <- diff_data_culture %>%
+mutate(t = per - 1880,
+       t0_22 = ifelse(t < 25, 1, 0), # stage one Europe, emergence (1880-1902)
+       t23_48 = ifelse(t >= 25 & t < 50, 1, 0), # 2 Russian/Soviet Revolution + WWI (1903-1928)
+       t49_74 = ifelse(t >= 50 & t < 75, 1, 0), # WW2 + Marshall Plan (1929-1954)
+       t75_99 = ifelse(t >= 75 & t < 100, 1, 0),
+       t100_130 = ifelse(t >= 100, 1, 0))
 
-# -- create time periods for stepwise PC Rate model
-summary(diff_data_culture$t)
-diff_data_culture$t0_25 <- ifelse(diff_data_culture$t < 25, 1, 0)
-diff_data_culture$t25_49 <- ifelse(diff_data_culture$t >= 25 
-                                   & diff_data_culture$t < 50, 1, 0)
-diff_data_culture$t50_74 <- ifelse(diff_data_culture$t >= 50 
-                                   & diff_data_culture$t < 75, 1, 0)
-diff_data_culture$t75_99 <- ifelse(diff_data_culture$t >= 75 
-                                   & diff_data_culture$t < 100, 1, 0)
-diff_data_culture$t100_130 <- ifelse(diff_data_culture$t >= 100, 1, 0)
+
+#SOC INS
+diff_data_culture_socins <- diff_data_culture_socins %>%
+mutate(t = per - 1880,
+       t0_22 = ifelse(t < 25, 1, 0), # stage one Europe, emergence (1880-1902)
+       t23_48 = ifelse(t >= 25 & t < 50, 1, 0), # 2 Russian/Soviet Revolution + WWI (1903-1928)
+       t49_74 = ifelse(t >= 50 & t < 75, 1, 0), # WW2 + Marshall Plan (1929-1955)
+       t75_99 = ifelse(t >= 75 & t < 100, 1, 0),
+       t100_130 = ifelse(t >= 100, 1, 0))
 ```
+
+### Merge
 
 ```{r seven}
 # -----------------------------------------------------------
-# -- 7. combine the relevant information into one data frame
-# -----------------------------------------------------------
-# --- merge exposure from other networks --------------------
-# -----------------------------------------------------------
 
 diff_data <- diff_data_culture
+diff_data_socins <- diff_data_culture_socins
 
-head(diff_data)
 diffnet_colony_df <- data.frame(diffnet_colony)
 diffnet_trade_df <- data.frame(diffnet_trade)
 diffnet_proximity_df <- data.frame(diffnet_proximity)
 diffnet_culture_df <- data.frame(diffnet_culture)
 
+diffnet_colony_df_socins <- data.frame(diffnet_colony_socins)
+diffnet_trade_df_socins <- data.frame(diffnet_trade_socins)
+diffnet_proximity_df_socins <- data.frame(diffnet_proximity_socins)
+diffnet_culture_df_socins <- data.frame(diffnet_culture_socins)
+
+
 # -------------------------------------------------------
 # -------------- merge everthing together ---------------
 # -------------------------------------------------------
 # --- merge id is now "id",  automatically generated in netdiffuseR objects
+
+# FIRST LAW
 d <- subset(  diffnet_colony_df, select = c(id,per,w_expo_colony, lag_expo_colony)  )
 diff_data <- merge(diff_data, d,by=c("id","per")) 
 d <- subset(  diffnet_trade_df, select = c(id,per,lag_w_expo_trade, lag_expo_trade)  )
 diff_data <- merge(diff_data, d,by=c("id","per")) 
 d <- subset(  diffnet_proximity_df, select = c(id,per,lag_w_expo_proximity, lag_expo_proximity)  )
 diff_data <- merge(diff_data, d,by=c("id","per")) 
+
+# SOC INS
+d <- subset(  diffnet_colony_df_socins, select = c(id,per,w_expo_colony, lag_expo_colony)  )
+diff_data_socins <- merge(diff_data_socins, d,by=c("id","per")) 
+d <- subset(  diffnet_trade_df_socins, select = c(id,per,lag_w_expo_trade, lag_expo_trade)  )
+diff_data_socins <- merge(diff_data_socins, d,by=c("id","per")) 
+d <- subset(  diffnet_proximity_df_socins, select = c(id,per,lag_w_expo_proximity, lag_expo_proximity)  )
+diff_data_socins <- merge(diff_data_socins, d,by=c("id","per")) 
+
+# fix GDP
+diff_data$gdp10000 <- diff_data$gdp/10000 # in 10,000 USD
+diff_data_socins$gdp10000 <- diff_data_socins$gdp/10000 # in 10,000 USD
 ```
 
 Original datafile source
@@ -538,17 +711,39 @@ names(cluster_id) <- c("id", "per", "cluster_id")
 
 ```
 
-```{r fix}
-# - distribution of network, range and "density/edge weight" => 164 NAs for 1880
-summary(diff_data$lag_w_expo_culture)
-summary(diff_data$w_expo_colony)
-summary(diff_data$lag_w_expo_trade)
-summary(diff_data$lag_w_expo_proximity)
+## 6. Summary Stats
 
-summary(diff_data$adopted) # - create new for each project specific-toa
-diff_data$gdp10000 <- diff_data$gdp/10000 # in 10,000 USD
+### Threshold Adoption comparison
+
+```{r adoption plot, warning = F, message = F}
+plot1 <- classify(diffnet_trade, include_censored = TRUE)
+ftable(plot1)
+
+plot2 <- classify(diffnet_colony, include_censored = TRUE)
+ftable(plot2)
+
 ```
 
+### Network Distributions
+
+```{r summarydist}
+# - distribution of network, range and "density/edge weight" => 164 NAs for 1880
+summary(diff_data$lag_w_expo_culture)
+#summary(diff_data$w_expo_colony)
+#summary(diff_data$lag_w_expo_trade)
+#summary(diff_data$lag_w_expo_proximity)
+
+#summary(diff_data$adopted) # - create new for each project specific-toa
+
+
+```
+
+```{r summarydist_socins}
+summary(diff_data_socins$lag_w_expo_culture)
+```
+
+
+## 7. Save Data
 ```{r savepoint}
 rm(trade_dyadic, trade_dyadic_consolidated, trade_edgelist, diff_data_culture, capital_distance_edgelist, d, ddat, edgelist_cultural_spheres, existence, gdp, regime, colonial_ties_edgelist)
 

@@ -1,7 +1,12 @@
 ---
 title: "Data Analysis - Timing, Development and Diffusion of Work-Injury Laws Globally: Industrialization, Nation States and Institutions"
-output: html_notebook
+output: html_document
 ---
+
+Nate Breznau
+Felix Lanver
+University of Bremen
+
 
 ```{r setup}
 rm(list = ls(all = T))
@@ -11,6 +16,19 @@ pacman::p_load('netdiffuseR','stargazer','tidyverse','dplyr','countrycode','sand
 load("data/.Rdata")
 ```
 
+```{r final_cleaning, warning = F, message = F}
+# Recode non-adopters to 2500
+diff_data$toa[is.na(diff_data$toa)] <- 2500
+diff_data_socins$toa[is.na(diff_data$toa)] <- 2500
+
+# change 'state existed' to, state founded in last 3 years
+diff_data <- diff_data %>%
+  group_by(id) %>%
+  mutate(existence = ifelse(existence - lag(existence) == 1, t, 0),
+         existence = max(existence, na.rm = T),
+         existence = ifelse(existence == 0, 1880, existence),
+         existence = ifelse((t - existence) > -1 & (t - existence) < 4, 1, 0))
+```
 
 
 ```{r main_models, warning = F, message = F}
@@ -18,19 +36,15 @@ load("data/.Rdata")
 # -----------------------------------------------------------------
 # - 8. !! estimate discrete-time logistic hazard model !!
 # -----------------------------------------------------------------
-# -----------------------------------------------------------------
-# --- check cases never in risk set
-# --- check toa 1880 !!!
-# head(diff_data)
 
 
-# Recode non-adopters to 3000
-diff_data$toa[is.na(diff_data$toa)] <- 3000
+
+
 
 model1 <- glm(adopted ~ 
-              + t0_25 
-              + t25_49 
-              + t50_74 
+              + t0_22 
+              + t23_48 
+              + t49_74 
               + t75_99 
               + t100_130  
               + existence
@@ -47,9 +61,9 @@ summary(model1)
 exp(coef(model1))
 
 model2 <- glm(adopted ~ 
-                + t0_25 
-              + t25_49 
-              + t50_74 
+                + t0_22 
+              + t23_48 
+              + t49_74 
               + t75_99 
               + t100_130  
               + existence
@@ -69,12 +83,12 @@ stargazer(model1,model2,
           type = "html", 
           title = "Discrete Time Hazard/Diffusion Models of /nWork-Injury Law, 1880-2010 in 173 countries",
           dep.var.labels=c("First Work-Injury Law"),
-          covariate.labels=c("(1880-1904)", 
-                             "(1905-1929)",
-                             "(1930-1954)",
+          covariate.labels=c("(1880-1902)", 
+                             "(1903-1928)",
+                             "(1929-1954)",
                              "(1955-1979)",
                              "(1980-2010)",
-                             "State Existed", 
+                             "State Founded (last 3 years)", 
                              "Network Exposure: Culture (t-1)",
                              "Network Exposure: Colonial",
                              "Network Exposure: Trade (t-1)",
@@ -95,12 +109,12 @@ stargazer(model1,model2,
           type = "html", 
           title = "Discrete Time Hazard/Diffusion Models of /nWork-Injury Law, 1880-2010 in 173 countries",
           dep.var.labels=c("First Work-Injury Law"),
-          covariate.labels=c("(1880-1904)", 
-                             "(1905-1929)",
-                             "(1930-1954)",
+          covariate.labels=c("(1880-1902)", 
+                             "(1903-1928)",
+                             "(1929-1954)",
                              "(1955-1979)",
                              "(1980-2010)",
-                             "State Existed", 
+                             "State Founded (last 3 years)", 
                              "Network Exposure: Culture (t-1)",
                              "Network Exposure: Colonial",
                              "Network Exposure: Trade (t-1)",
@@ -120,9 +134,9 @@ plot_coefs(model1,model2, coefs = c("Network Exposure: Culture (t-1)" = "lag_w_e
                                     "Network Exposure: Colonial" = "lag_w_expo_colony",
                                     "Network Exposure: Trade (t-1)" = "lag_w_expo_trade",
                                     "Network Exposrue: Spatial Proximity" = "lag_w_expo_proximity", 
-                                    "State Existed" = "existence",
+                                    "State Founded (last 3 years)" = "existence",
                                     "GDPpc 10k USD" = "gdp10000", 
-                                    "Democratization" = "regime"), colors = "Qual3", title = "Logit Coefficients for Work-Injury Law Models")
+                                    "Democratization" = "regime"), colors = "Qual3", title = "Logit Coefficients for Work-Injury Introductory Laws Models")
 dev.off()
 
 knitr::include_graphics("results/Fig1.png")
