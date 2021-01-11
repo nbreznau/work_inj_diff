@@ -16,13 +16,26 @@ pacman::p_load('netdiffuseR','stargazer','tidyverse','dplyr','countrycode','sand
 load("data/.Rdata")
 ```
 
+## 1. Final Data Touch Ups
+
+
 ```{r final_cleaning, warning = F, message = F}
 # Recode non-adopters to 2500
 diff_data$toa[is.na(diff_data$toa)] <- 2500
-diff_data_socins$toa[is.na(diff_data$toa)] <- 2500
+diff_data_socins$toa[is.na(diff_data_socins$toa)] <- 2500
 
 # change 'state existed' to, state founded in last 3 years
+
+# FIRST LAW
 diff_data <- diff_data %>%
+  group_by(id) %>%
+  mutate(existence = ifelse(existence - lag(existence) == 1, t, 0),
+         existence = max(existence, na.rm = T),
+         existence = ifelse(existence == 0, 1880, existence),
+         existence = ifelse((t - existence) > -1 & (t - existence) < 4, 1, 0))
+
+# SOCINS
+diff_data_socins <- diff_data_socins %>%
   group_by(id) %>%
   mutate(existence = ifelse(existence - lag(existence) == 1, t, 0),
          existence = max(existence, na.rm = T),
@@ -30,6 +43,9 @@ diff_data <- diff_data %>%
          existence = ifelse((t - existence) > -1 & (t - existence) < 4, 1, 0))
 ```
 
+## 2. Main Models
+
+### First Law
 
 ```{r main_models, warning = F, message = F}
 # -----------------------------------------------------------------
@@ -49,7 +65,7 @@ model1 <- glm(adopted ~
               + t100_130  
               + existence
               + lag_w_expo_culture 
-              + lag_w_expo_colony
+              + w_expo_colony
               + lag_w_expo_trade
               + gdp10000
               + regime
@@ -68,7 +84,7 @@ model2 <- glm(adopted ~
               + t100_130  
               + existence
               + lag_w_expo_culture 
-              + lag_w_expo_colony
+              + w_expo_colony
               + lag_w_expo_trade
               + lag_w_expo_proximity
               + gdp10000
@@ -101,6 +117,73 @@ stargazer(model1,model2,
 knitr::include_graphics("results/Tbl1.htm")
 ```
 
+### Social Ins
+
+```{r main_models_socins, warning = F, message = F}
+
+model1_socins <- glm(adopted ~ 
+              + t0_22 
+              + t23_48 
+              + t49_74 
+              + t75_99 
+              + t100_130  
+              + existence
+              + lag_w_expo_culture 
+              + w_expo_colony
+              + lag_w_expo_trade
+              + gdp10000
+              + regime
+              + 0,
+      dat    = diff_data_socins, 
+      subset = (per <= toa), # - extremely important !
+      family = binomial(link="logit"))
+summary(model1_socins)
+exp(coef(model1_socins))
+
+model2_socins <- glm(adopted ~ 
+                + t0_22 
+              + t23_48 
+              + t49_74 
+              + t75_99 
+              + t100_130  
+              + existence
+              + lag_w_expo_culture 
+              + w_expo_colony
+              + lag_w_expo_trade
+              + lag_w_expo_proximity
+              + gdp10000
+              + regime
+              + 0,
+              dat    = diff_data_socins, 
+              subset = (per <= toa),
+              family = binomial(link="logit"))
+#summary(model2)
+#exp(coef(model2))
+stargazer(model1_socins,model2_socins,
+          type = "html", 
+          title = "Discrete Time Hazard/Diffusion Models of /nWork-Injury Law, 1880-2010 in 173 countries",
+          dep.var.labels=c("First Work-Injury Social Insurance Law"),
+          covariate.labels=c("(1880-1902)", 
+                             "(1903-1928)",
+                             "(1929-1954)",
+                             "(1955-1979)",
+                             "(1980-2010)",
+                             "State Founded (last 3 years)", 
+                             "Network Exposure: Culture (t-1)",
+                             "Network Exposure: Colonial",
+                             "Network Exposure: Trade (t-1)",
+                             "Network Exposrue: Spatial Proximity",
+                             "GDPpc 10k USD",
+                             "Democratization" 
+                             ),
+          out="results/Tbl2.htm")
+
+knitr::include_graphics("results/Tbl2.htm")
+```
+
+### Odd-Ratios
+
+#### First law
 
 ```{r Tbl1_OR, warning = F, message = F}
 #we add a command to present odd-ratios
@@ -128,6 +211,38 @@ stargazer(model1,model2,
 knitr::include_graphics("results/Tbl1_OR.htm")
 ```
 
+#### Social insurance
+
+```{r Tbl2_OR_socins, warning = F, message = F}
+#we add a command to present odd-ratios
+
+stargazer(model1_socins,model2_socins,
+          type = "html", 
+          title = "Discrete Time Hazard/Diffusion Models of /nWork-Injury Law, 1880-2010 in 173 countries",
+          dep.var.labels=c("First Work-Injury Social Insurance Law"),
+          covariate.labels=c("(1880-1902)", 
+                             "(1903-1928)",
+                             "(1929-1954)",
+                             "(1955-1979)",
+                             "(1980-2010)",
+                             "State Founded (last 3 years)", 
+                             "Network Exposure: Culture (t-1)",
+                             "Network Exposure: Colonial",
+                             "Network Exposure: Trade (t-1)",
+                             "Network Exposrue: Spatial Proximity",
+                             "GDPpc 10k USD",
+                             "Democratization" 
+                             ),
+          apply.coef=exp, t.auto=F, p.auto=F, report = "vct*",
+          out="results/Tbl2_OR.htm")
+
+knitr::include_graphics("results/Tbl2_OR.htm")
+```
+
+### Coef Plots
+
+#### First Law
+
 ```{r coefplots}
 agg_png(filename = "results/Fig1.png", height = 600, width = 1000, res = 144)
 plot_coefs(model1,model2, coefs = c("Network Exposure: Culture (t-1)" = "lag_w_expo_culture",
@@ -141,8 +256,29 @@ dev.off()
 
 knitr::include_graphics("results/Fig1.png")
 
-# omit.coefs = c("t0_25","t25_49","t50_74","t75_99","t100_130")
 ```
+
+#### Social insurance
+
+
+```{r coefplots_socins}
+agg_png(filename = "results/Fig2.png", height = 600, width = 1000, res = 144)
+plot_coefs(model1_socins,model2_socins, coefs = c("Network Exposure: Culture (t-1)" = "lag_w_expo_culture",
+                                    "Network Exposure: Colonial" = "lag_w_expo_colony",
+                                    "Network Exposure: Trade (t-1)" = "lag_w_expo_trade",
+                                    "Network Exposrue: Spatial Proximity" = "lag_w_expo_proximity", 
+                                    "State Founded (last 3 years)" = "existence",
+                                    "GDPpc 10k USD" = "gdp10000", 
+                                    "Democratization" = "regime"), colors = "Qual3", title = "Logit Coefficients for Work-Injury Social Insurance Laws Models")
+dev.off()
+
+knitr::include_graphics("results/Fig2.png")
+
+
+```
+
+
+
 
 
 ```{r net1}
@@ -159,13 +295,7 @@ coords <- set.seed(s);plot(diffnet_culture, main="Culture and Work-Injury Law")
 
 
 ```{r net2}
-# bmp(filename = "results/culture_edu.bmp") # - create folder, mac users adjust
-# plot_diffnet(diffnet_culture, 
-#             slices = c(1,50,100,130), layout=coords)
-#dev.off()
 
-# plot_adopters(diffnet_culture, 
-#              include.legend = FALSE, what = c("adopt", "cumadopt"))
 plot_hazard(diffnet_culture, ylim=c(0,1))
 ```
 
