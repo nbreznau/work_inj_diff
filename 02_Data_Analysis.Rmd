@@ -11,9 +11,11 @@ University of Bremen
 ```{r setup}
 rm(list = ls(all = T))
 
-pacman::p_load('netdiffuseR','stargazer','tidyverse','dplyr','countrycode','sandwich','lmtest','jtools','ragg')
+pacman::p_load('netdiffuseR','stargazer','tidyverse','dplyr','countrycode','sandwich','lmtest','jtools','ragg','ggpubr')
 
 load("data/.Rdata")
+
+knitr::opts_chunk$set(echo = T)
 ```
 
 ## 1. Final Data Touch Ups
@@ -244,17 +246,20 @@ knitr::include_graphics("results/Tbl2_OR.htm")
 #### First Law
 
 ```{r coefplots}
-agg_png(filename = "results/Fig1.png", height = 600, width = 1000, res = 144)
-plot_coefs(model1,model2, coefs = c("Network Exposure: Culture (t-1)" = "lag_w_expo_culture",
-                                    "Network Exposure: Colonial" = "lag_w_expo_colony",
-                                    "Network Exposure: Trade (t-1)" = "lag_w_expo_trade",
-                                    "Network Exposrue: Spatial Proximity" = "lag_w_expo_proximity", 
-                                    "State Founded (last 3 years)" = "existence",
-                                    "GDPpc 10k USD" = "gdp10000", 
-                                    "Democratization" = "regime"), colors = "Qual3", title = "Logit Coefficients for Work-Injury Introductory Laws Models")
-dev.off()
 
-knitr::include_graphics("results/Fig1.png")
+plot1 <- plot_coefs(model1,model2, coefs = c("A. Network Exposure:\n    Culture (t-1)" = "lag_w_expo_culture",
+                                    "B. Network Exposure:\n    Colonial" = "w_expo_colony",
+                                    "C. Network Exposure:\n    Trade (t-1)" = "lag_w_expo_trade",
+                                    "D. Network Exposure:\n    Spatial Proximity" = "lag_w_expo_proximity", 
+                                    "E. State Founded\n    (last 3 years)" = "existence",
+                                    "F. GDPpc 10k USD" = "gdp10000", 
+                                    "G. Democratization" = "regime"), colors = "Qual3") +
+  coord_cartesian(xlim = c(-0.5,5)) + 
+  theme(legend.position = "none",
+        axis.text.y = element_text(hjust = 0)) +
+  labs(title = "                          First Law") +
+  xlab(label = "Coefficient + 95%CI")
+
 
 ```
 
@@ -262,17 +267,20 @@ knitr::include_graphics("results/Fig1.png")
 
 
 ```{r coefplots_socins}
-agg_png(filename = "results/Fig2.png", height = 600, width = 1000, res = 144)
-plot_coefs(model1_socins,model2_socins, coefs = c("Network Exposure: Culture (t-1)" = "lag_w_expo_culture",
-                                    "Network Exposure: Colonial" = "lag_w_expo_colony",
-                                    "Network Exposure: Trade (t-1)" = "lag_w_expo_trade",
-                                    "Network Exposrue: Spatial Proximity" = "lag_w_expo_proximity", 
-                                    "State Founded (last 3 years)" = "existence",
-                                    "GDPpc 10k USD" = "gdp10000", 
-                                    "Democratization" = "regime"), colors = "Qual3", title = "Logit Coefficients for Work-Injury Social Insurance Laws Models")
+
+plot2 <- plot_coefs(model1_socins,model2_socins, coefs = c("A" = "lag_w_expo_culture", "B" = "w_expo_colony", "C" = "lag_w_expo_trade", "D" = "lag_w_expo_proximity", "E" = "existence", "F" = "gdp10000", "G" = "regime"), colors = "Qual3") +
+  coord_cartesian(xlim = c(-0.5,5)) + 
+  theme(legend.position = "none") +
+  labs(title = "    First Social Insurance Law") +
+  xlab(label = "Coefficient + 95%CI")
+
+
+agg_png(filename = "results/Fig1.png", height = 600, width = 1200, res = 144)
+ggarrange(plot1, plot2, widths = c(1,0.8))
+
 dev.off()
 
-knitr::include_graphics("results/Fig2.png")
+knitr::include_graphics("results/Fig1.png")
 
 
 ```
