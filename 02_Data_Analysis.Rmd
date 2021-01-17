@@ -26,7 +26,7 @@ knitr::opts_chunk$set(echo = T)
 diff_data$toa[is.na(diff_data$toa)] <- 2500
 diff_data_socins$toa[is.na(diff_data_socins$toa)] <- 2500
 
-# change 'state existed' to, state founded in last 3 years
+# change 'state existed' to, state founded in last 4 years
 
 # FIRST LAW
 diff_data <- diff_data %>%
@@ -34,15 +34,28 @@ diff_data <- diff_data %>%
   mutate(existence = ifelse(existence - lag(existence) == 1, t, 0),
          existence = max(existence, na.rm = T),
          existence = ifelse(existence == 0, 1880, existence),
-         existence = ifelse((t - existence) > -1 & (t - existence) < 4, 1, 0))
+         existence = ifelse((t - existence) > -1 & (t - existence) < 5, 1, 0))
 
 # SOCINS
 diff_data_socins <- diff_data_socins %>%
   group_by(id) %>%
-  mutate(existence = ifelse(existence - lag(existence) == 1, t, 0),
+  mutate(year_nation = ifelse(existence - lag(existence) == 1, per, 0),
+         existence = ifelse(existence - lag(existence) == 1, t, 0),
+         year_nation = max(year_nation, na.rm = T),
+         year_nation = ifelse(year_nation == 0, 1880, year_nation),
          existence = max(existence, na.rm = T),
          existence = ifelse(existence == 0, 1880, existence),
-         existence = ifelse((t - existence) > -1 & (t - existence) < 4, 1, 0))
+         formation = per - year_nation, # for treatment effect plot
+         existence = ifelse((t - existence) > -1 & (t - existence) < 5, 1, 0))
+
+treat_plot <- select(diff_data_socins, toa, id, per, formation, year_nation)
+colnames(treat_plot) <- c("socins" ,"id","per","formation","year_nation")
+treat_plot <- left_join(treat_plot, diff_data, by = c("id","per"))
+
+# create sequence variable (1= no law, 2 = liability/fund, 3 = social insurance)
+treat_plot <- treat_plot %>%
+  mutate(law_seq = ifelse(per < toa, 1, 2),
+         law_seq = ifelse(law_seq == 2 & per >= socins, 3, law_seq))
 ```
 
 ## 2. Main Models
@@ -106,7 +119,7 @@ stargazer(model1,model2,
                              "(1929-1954)",
                              "(1955-1979)",
                              "(1980-2010)",
-                             "State Founded (last 3 years)", 
+                             "State Founded (last 4 years)", 
                              "Network Exposure: Culture (t-1)",
                              "Network Exposure: Colonial",
                              "Network Exposure: Trade (t-1)",
@@ -170,7 +183,7 @@ stargazer(model1_socins,model2_socins,
                              "(1929-1954)",
                              "(1955-1979)",
                              "(1980-2010)",
-                             "State Founded (last 3 years)", 
+                             "State Founded (last 4 years)", 
                              "Network Exposure: Culture (t-1)",
                              "Network Exposure: Colonial",
                              "Network Exposure: Trade (t-1)",
@@ -227,7 +240,7 @@ stargazer(model1_socins,model2_socins,
                              "(1929-1954)",
                              "(1955-1979)",
                              "(1980-2010)",
-                             "State Founded (last 3 years)", 
+                             "State Founded (last 4 years)", 
                              "Network Exposure: Culture (t-1)",
                              "Network Exposure: Colonial",
                              "Network Exposure: Trade (t-1)",
@@ -251,7 +264,7 @@ plot1 <- plot_coefs(model1,model2, coefs = c("A. Network Exposure:\n    Culture 
                                     "B. Network Exposure:\n    Colonial" = "w_expo_colony",
                                     "C. Network Exposure:\n    Trade (t-1)" = "lag_w_expo_trade",
                                     "D. Network Exposure:\n    Spatial Proximity" = "lag_w_expo_proximity", 
-                                    "E. State Founded\n    (last 3 years)" = "existence",
+                                    "E. State Founded\n    (last 4 years)" = "existence",
                                     "F. GDPpc 10k USD" = "gdp10000", 
                                     "G. Democratization" = "regime"), colors = "Qual3") +
   coord_cartesian(xlim = c(-0.5,5)) + 
@@ -285,6 +298,49 @@ knitr::include_graphics("results/Fig1.png")
 
 ```
 
+### Treatment plot
+
+Plot sequences centered at the formation of nation states
+
+```{r nation_plot}
+
+# remove missing
+treat_plot <- subset(treat_plot, formation != "Inf")
+treat_plot$law_seq <- as.factor(as.character(treat_plot$law_seq, levels = c("1","2","3"), labels = c("None","Liability","Social Insurance")))
+
+# order by formation
+treat_plot <- treat_plot %>%
+  mutate(order = ifelse(per == socins, formation, -1000),
+         order = max(order, na.rm = T),
+         order = ifelse(order == -1000, 1000, order))
+
+treat_plot <- treat_plot[order(treat_plot$order),]
+
+treat_plot <- treat_plot %>%
+  ungroup() %>%
+  mutate(n =  row_number()) 
+
+treat_plot <- treat_plot %>%
+  group_by(id) %>%
+  mutate(n_id = max(n, na.rm =T)) %>%
+  ungroup()
+
+
+
+ggplot(treat_plot, aes(formation, n_id, fill = law_seq)) +
+  geom_tile() +
+  scale_fill_manual(breaks = c("1", "2", "3"),
+  values = c("1","2","3"),
+  labels = c("None", "Liability", "Social\nInsurance"),
+  #colors = c("Grey","Brown","Darkgreen")
+  ) +
+  ylab(label = "Country") +
+  xlab(label = "Time in Years\n(centered by year of state formation)") +
+  xlim(-50,50) +
+  theme(axis.text.y = element_blank())
+
+
+```
 
 
 
@@ -292,46 +348,43 @@ knitr::include_graphics("results/Fig1.png")
 ```{r net1}
 # ---------------------------------------------
 # --- some functions of netdiffuseR, here for 
-# --- the cultural spheres network
+# --- the trade spheres network
 # ---------------------------------------------
 
 s <- 12345
 cols <- c("lightblue","green", "blue")
 oldpar <- par(no.readonly = T)
-coords <- set.seed(s);plot(diffnet_culture, main="Culture and Work-Injury Law")
+coords <- set.seed(s);plot(diffnet_trade, main="Trade and Work-Injury Law")
 ```
 
 
 ```{r net2}
 
-plot_hazard(diffnet_culture, ylim=c(0,1))
+plot_hazard(diffnet_trade, ylim=c(0,1))
 ```
 
 
 ```{r net2}
-plot_infectsuscep(diffnet_culture)
+plot_infectsuscep(diffnet_trade)
 ```
 
 
-```{r net3}
-# network threshold: required proportion or number of neighbors that leads you to adopt
-plot_threshold(diffnet_culture, undirected = FALSE, vertex.size = 1/5)
-```
 ```{r net3}
 # network threshold: required proportion or number of neighbors that leads you to adopt
 plot_threshold(diffnet_trade, undirected = FALSE, vertex.size = 1/5)
 ```
 
+
 ```{r net4}
 # Classify Adopters
-diffnet.toa(diffnet_culture)[diffnet_culture$toa==max(diffnet_culture$toa, na.rm = TRUE)] <- NA
-out <- classify_adopters(diffnet_culture)
+diffnet.toa(diffnet_trade)[diffnet_trade$toa==max(diffnet_trade$toa, na.rm = TRUE)] <- NA
+out <- classify_adopters(diffnet_trade)
 
 
 # This is one way to combine adopters ad thresholds in one object
 round(
   with(out, ftable(toa, thr, dnn=c("Time of Adoption", "Threshold")))/
-    nnodes(diffnet_culture[!is.na(diffnet_culture$toa)])*100, digits=2)
+    nnodes(diffnet_trade[!is.na(diffnet_trade$toa)])*100, digits=2)
 # ftable(out)
 
 ids <- unique(edgelist_cultural_spheres$ego_id) 
