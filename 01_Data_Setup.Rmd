@@ -3,6 +3,7 @@ title: "Data Preparation - Unemployment First Law Introduciton"
 output: html_notebook
 ---
 
+Nate Breznau
 Carina Schmitt
 Herbert Obinger
 University of Bremen
@@ -105,12 +106,12 @@ summary(trade_dyadic$smoothtotrade)
 # head(trade_dyadic)
 
 trade_dyadic$log_value <- ifelse(trade_dyadic$smoothtotrade > 0, log(trade_dyadic$smoothtotrade), 0)
-summary(trade_dyadic$log_value)
+
 
 # We realized that with only using a log function to smooth out the much skewed trade values we created negative values. That in itself would be not such a huge problem, however since we are dealing with network weights a negative weight does not only make no sense theoretically, it actually distorts the calculation of the exposure variable a lot. We end up with values outside the range of 0 – 1. To circumvent that we changed the script in line 109 in a way that we make sure to not end up with negative log_values:
 
 trade_dyadic$log_value <- ifelse(trade_dyadic$smoothtotrade > 0, log(trade_dyadic$smoothtotrade + 1), 0) 
-summary(trade_dyadic$log_value)
+
 
 # -- distribution is still extreme  
 d <- density(trade_dyadic$log_value)
@@ -216,8 +217,29 @@ A02_workinj <- A02_workinj %>%
 
 war_ts <- A02_workinj
 
-# cow interstate war data
+# Inter-State War CoW - v4.0
 war <- read.csv("data/Cow Interstate Wars.csv", header = T, sep = ";") # CoW data
+
+# Intra-State War Cow - v5.1
+war_intra <- read_csv(file = "data/INTRA-STATE_State_participants v5.1 CSV.csv")
+
+# too much missing data on deaths, can't use
+
+war_intra <- select(war_intra, CcodeA, SideA, StartYr1, EndYr1, `Deaths A`, `Deaths B`)
+
+
+# Recode data into long
+
+war_intra <- war_intra %>%
+  mutate(SideA = car::recode(SideA, recodes = "'Ottoman Empire' = 'Turkey'; 'Prussia' = 'Germany'; 'Sardinia/Piedmont' = 'Italy'; 'Two Sicilies' = 'Italy'; 'Sardinia' = 'Italy'; 'Damascus and Aleppo' = 'Syria'; 'Maronites' = 'Lebanon'; 'Yucatan' = 'Mexico'; 'Kashgarians' = 'China'; 'Sichuan' = 'China'; 'An-Fu Faction' = 'China'; 'Soviet Russian Republic' = 'Russia'; 'Blackshirts' = 'Italy'; 'Golok Tibetans' = 'China'; 'Guominjun' = 'China'; 'GMD' = 'China'; 'Xinjiang' = 'China'; 'USSR' = 'Russia'; 'Hui' = 'China'; 'Egypt/United Arab Republic' = 'Egypt'; 'Regional Militaries' = 'China'; 'ELF'= 'Eritrea'; 'Maronite militias' = 'Lebanon'; 'Rhodesia' = 'Zimbabwe'; 'Lebanese Forces' = 'Lebanon'; 'Kampuchea' = 'Vietnam'; 'SPLA-Garang' = 'South Sudan'; 'SPLA-Nasir and Anya Nya II' = 'Sudan'; 'Tur Loyalists' = 'Somalia'; 'Somaliland' = 'Somalia'; 'Freikorps' = 'Germany'; 'Inkatha' = 'South Africa'; 'Jukun' = 'South Sudan'; 'Kashgar' = 'China'; 'Minnesota' = 'United States of America'; 'Houthi Rebels' = 'Yemen';  'Banyarwanda Militia' = 'Democratic Republic of Congo'; 'PUK' = 'Iraq'; 'Laskar Jihad' = 'Indonesia'; 'Christian Tarok' = 'Nigeria'; 'Islamic State' = 'Syria'; 'Jabhat al-Nusra' = 'Syria'; 'Ansar Allah' = 'Yemen'; 'Al-Shabaab' = 'Somalia'; 'Libyan Dawn' = 'Libya'"),
+    cow_code = countrycode(SideA, "country.name", "cown"),
+    cow_code = ifelse(is.na(cow_code), CcodeA, cow_code),
+    BatDeath = `Deaths A` + `Deaths B`,
+    year = StartYr1,
+    EndYr1 = ifelse(EndYr1 == -9 | EndYr1 > 2010, 2010, EndYr1)
+         ) %>%
+  select(cow_code, year, StartYr1, EndYr1)
+
 war <- war %>%
   mutate(StateName = ifelse(StateName == "Ottoman Empire", "Turkey", ifelse(StateName == "Prussia", "Germany", ifelse(StateName == "Sardinia/Piedmont", "Italy", StateName))),
          cow_code = countrycode(StateName, "country.name", "cown"),
@@ -226,6 +248,12 @@ war <- war %>%
 
 # get it into time-series format
 war <- war[complete.cases(war$StartYear1),]
+war_intra <- war_intra[complete.cases(war_intra$StartYr1),]
+
+# remove years after 2010, or missing end year
+war_intra <- war_intra[complete.cases(war_intra$EndYr1),]
+war_intra <- war_intra[war_intra$StartYr1 < 2011,]
+
 
 war <- war %>%
   arrange(cow_code, StartYear1) %>%
@@ -233,32 +261,65 @@ war <- war %>%
   select(-year, -StartYear1, -EndYear1) %>%
   unnest()
 
+war_intra <- war_intra %>%
+  arrange(cow_code, StartYr1) %>%
+  mutate(atwar_civil = map2(StartYr1, EndYr1, `:`)) %>%
+  select(-year, -StartYr1, -EndYr1) %>%
+  unnest()
+
 war$year <- war$atwar
+war_intra$year <- war_intra$atwar_civil
 war$atwar <- 1
+war_intra$atwar_civil <- 1
+
+# remove missing country codes
+war_intra <- war_intra[war_intra$cow_code != -8,]
+
+
 
 # remove duplicates
 
 war <- war %>% distinct()
+war_intra <- war_intra %>% distinct()
+
+
+
 
 war_ts <- left_join(A02_workinj, war, by = c("cow_code","year"))
+war_ts <- left_join(war_ts, war_intra, by = c("cow_code","year"))
 
 # change to iso3
 
 war_ts$iso3 <- countrycode(war_ts$cow_code, "cown", "iso3c")
 war_ts$iso3 <- ifelse(war_ts$cow_code == 345, "SRB", ifelse(war_ts$cow_code == 817, "VNM", war_ts$iso3))
 
-war_ts <- select(war_ts, iso3, atwar, year)
+war_ts <- select(war_ts, iso3, atwar, atwar_civil, year)
 # unique(A02_workinj$cow_code) 165 OK!
 
 # add zeros for not at war, make two years after war the time that matters (exclude the war itself)
 war_ts <- war_ts %>%
 arrange(iso3, year) %>%
-  mutate(atwar2 = lag(atwar),
+  mutate(war = car::recode(atwar, recodes = "1 = 1;NA = 0"),
+         war = ifelse(atwar_civil == 1, 1, war),
+         atwar2 = lag(atwar),
          atwar3 = lag(atwar, 2L),
-         atwar_n = ifelse(!is.na(atwar2), 1, ifelse(!is.na(atwar3), 1, 0)),
-         atwar = ifelse(atwar_n == 1, 1, atwar),
-         atwar = ifelse(is.na(atwar), 0, atwar))
+         atwar4 = lag(atwar, 3L),
+         atwar5 = lag(atwar, 4L),
+         atwar_n = ifelse(!is.na(atwar2), 1, ifelse(!is.na(atwar3), 1, ifelse(!is.na(atwar4), 1, ifelse(!is.na(atwar5), 1, 0)))),
+         atwar = atwar_n,
+         atwar2_civ = lag(atwar_civil),
+         atwar3_civ = lag(atwar_civil, 2L),
+         atwar4_civ = lag(atwar_civil, 3L),
+         atwar5_civ = lag(atwar_civil, 4L),
+         atwar_n_civ = ifelse(!is.na(atwar2_civ), 1, ifelse(!is.na(atwar3_civ), 1, ifelse(!is.na(atwar4_civ), 1, ifelse(!is.na(atwar5_civ), 1, 0)))),
+         atwar_civil = atwar_n_civ)
 
+# make a variable for any war & postwar time 
+war_ts <- war_ts %>%
+  mutate(war = ifelse(is.na(war), 0, war),
+         atwar_any = atwar,
+         atwar_any = ifelse(atwar_civil == 1, 1, atwar_any),
+         atwar_any = ifelse(war == 1, 1, atwar_any))
 
 # regime type from vdem data
 regime <- read.csv("data/vdem_regime__INTERPOLATED_consolidated.csv", header = TRUE) # actor attributes
@@ -308,10 +369,9 @@ A02_unemp <- subset(A02_unemp, !is.na(unemp_firstlaw))
 
 # Merge
 
-# Start with 1880
 
 A02_unemp <- A02_unemp %>%
-  mutate(unemp_firstlaw = ifelse(unemp_firstlaw < 1880, 1880, ifelse(unemp_firstlaw > 2010, NA, unemp_firstlaw))) # Must end at 2010 (network data limitation)
+  mutate(unemp_firstlaw = ifelse(unemp_firstlaw > 2010, NA, unemp_firstlaw)) # Must end at 2010 (network data limitation)
 
 covar_ <- data.frame(covar_base)
 head(covar_)
@@ -381,9 +441,7 @@ diffnet_culture[["lag_expo_culture"]] <- exposure(diffnet_culture, valued = F, l
 diffnet_culture[["adopted"]]  <- toa_mat(diffnet_culture)$cumadopt
 
 table(data.frame(diffnet_culture)$adopted) # don't care about no. adopted here
-summary(data.frame(diffnet_culture)$lag_w_expo_culture)
-# head(data.frame(diffnet_culture)) # exposure is NA for 1st 164 cases => 1880
-# tail(data.frame(diffnet_culture))
+
 
 
 # -------------------------
@@ -404,9 +462,7 @@ diffnet_colony <- edgelist_to_diffnet(
   timevar  = "year",
   keep.isolates = TRUE    # Keeping isolates (if there's any)
 )
-# diffnet_colony
-# plot(diffnet_colony)
-summary(diffnet_colony)
+
 
 # -------------------------------------------------------------------------
 # -- 5. get the respective exposure variables and time-of-adoption (toa)
@@ -416,9 +472,7 @@ diffnet_colony[["expo_colony"]] <- exposure(diffnet_colony, valued = F)
 
 diffnet_colony[["adopted"]]  <- toa_mat(diffnet_colony)$cumadopt
 
-# diffnet_colony
-# summary(diffnet_colony)
-summary(data.frame(diffnet_colony)$w_expo_colony)
+
 
 # -------------------------
 # - 4c) trade network -----
@@ -438,9 +492,7 @@ diffnet_trade <- edgelist_to_diffnet(
   timevar  = "year",
   keep.isolates = TRUE    # Keeping isolates (if there's any)
 )
-# diffnet_trade
-# plot(diffnet_trade)
-summary(diffnet_trade)
+
 
 
 # -------------------------------------------------------------------------
@@ -451,9 +503,7 @@ diffnet_trade[["lag_expo_trade"]] <- exposure(diffnet_trade, valued = F, lags = 
 
 diffnet_trade[["adopted"]]  <- toa_mat(diffnet_trade)$cumadopt
 
-# head(data.frame(diffnet_trade))
-# tail(data.frame(diffnet_trade))
-summary(data.frame(diffnet_trade)$lag_w_expo_trade)
+
 
 
 # -----------------------------
@@ -522,10 +572,10 @@ ftable(plot2)
 diff_data_culture$t <- (diff_data_culture$per - 1880 )
 summary(diff_data_culture$t)
 
-# -- create time periods for stepwise PC Rate model, use 33 for first group as the first law does not come into play until 1916
+# -- create time periods for stepwise PC Rate model, create 1880-1900 which we drop later because no countries adopt in this period
 summary(diff_data_culture$t)
-diff_data_culture$t0_33 <- ifelse(diff_data_culture$t < 33, 1, 0)
-diff_data_culture$t33_49 <- ifelse(diff_data_culture$t >= 33 
+diff_data_culture$t0_20 <- ifelse(diff_data_culture$t < 21, 1, 0)
+diff_data_culture$t21_49 <- ifelse(diff_data_culture$t >= 21 
                                    & diff_data_culture$t < 50, 1, 0)
 diff_data_culture$t50_74 <- ifelse(diff_data_culture$t >= 50 
                                    & diff_data_culture$t < 75, 1, 0)
@@ -572,6 +622,7 @@ cluster_id <- read.csv("data/clusterID_n.csv", header = TRUE)
 cluster_id <- cluster_id[,c(1,2,5)]
 
 names(cluster_id) <- c("id", "per", "cluster_id")
+diff_data <- merge(diff_data, cluster_id,by=c("id","per"))
 
 ```
 

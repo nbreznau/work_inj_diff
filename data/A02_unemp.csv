@@ -1,180 +1,180 @@
-country_name,cow_code,exist_unemp,**Source,region,**source,unemp_firstlaw,**source,,unemp_fl_no,**source,unemp_fl_programmtype,**source,unemp_fl_beneficiaries,**source,unemp_fl_financing,**source
-Bahrain,692,unemployment benefit programme,WSPR 2017,Arab States,WSPR 2017,2006,SSA 2008,,78,NATLEX,social insurance,SSA 2008,"Ciliv servants, private sector employees and first time job seekers",SSA 2008; UI Law 2006,Employer Employee State,UI Law 2006
-Iraq,645,severance payment but no unemployment benefit programme,WSPR 2017,Arab States,WSPR 2017,,,,,,,,,,,
-Jordan,663,unemployment benefit programme,WSPR 2017,Arab States,WSPR 2017,2010,SSA 2012,,7,NATLEX,social insurance,WSPR 2017,Employees,UI Law 2010,Employer Employee,UI Law 2010
-Kuwait,690,unemployment benefit programme,WSPR 2017,Arab States,WSPR 2017,2013,SSA 2014,,101,NATLEX,social insurance,WSPR 2017,"Kuwaiti employees in private, oil and gas sector",UI Law 2013,Employer Employee State,NATLEX
-Lebanon,660,no umemployment insurance anchored in legislation,WSPR 2017,Arab States,WSPR 2017,,,,,,,,,,,
-Oman,698,no umemployment insurance anchored in legislation,WSPR 2017,Arab States,WSPR 2017,,,,,,,,,,,
-Saudi Arabia,670,unemployment benefit programme,WSPR 2017,Arab States,WSPR 2017,2014,SSA 2014,,81,NATLEX,social insurance,WSPR 2017,Formal private sector workers; voluntary insurance for self-employed persons; some categories of public-sector workers,SSA 2014,Employer Employee,SSA 2014
-Syria,652,severance payment but no unemployment benefit programme,WSPR 2017,Arab States,WSPR 2017,,,,,,,,,,,
-Yemen,679,severance payment but no unemployment benefit programme,WSPR 2017,Arab States,WSPR 2017,,,,,,,,,,,
-Armenia,371,severance payment but no unemployment benefit programme,WSPR 2017,Central and Western Asia,WSPR 2017,1991,SSA 1997,,803-XII,UI Law 1991,social insurance,SSA 1997,Residents of working-age,SSA 1997,Employer Employee State,SSA 1997
-Azerbaijan,373,unemployment benefit programme,WSPR 2017,Central and Western Asia,WSPR 2017,2001,,first after independence,170-IIG,Law 2001,social insurance,WSPR 2017,residents of Azerbaijan,Law 2001,,
-Cyprus,352,unemployment benefit programme,WSPR 2017,Central and Western Asia,WSPR 2017,1956,SSA,,31,Law 1956,social insurance,WSPR 2017,Formal Private Sector,Law 1956,Employer Employee State,Law 1956
-Georgia,372,severance payment but no unemployment benefit programme,WSPR 2017,Central and Western Asia,WSPR 2017,1991,SSA 1997,,,,social insurance,SSA 1997,Citizens of working-age,SSA 1997,Employer State,SSA 1997
-Israel,666,unemployment benefit programme,WSPR 2017,Central and Western Asia,WSPR 2017,1972,Israel Ministry of Foreign Affairs a.o.,,,,social insurance,WSPR 2017,Formal Private Sector,Manheimer/Robinson 1984,,
-Kazakhstan,705,unemployment benefit programme,WSPR 2017,Central and Western Asia,WSPR 2017,2003,first after independence,,405,NATLEX,social insurance,WSPR 2017,Employees and Self-employed,Law 2003,Employer Self-employed State as employer,Law 2003
-Kyrgyzstan,703,unemployment benefit programme,WSPR 2017,Central and Western Asia,WSPR 2017,1998,first after independence,,113,Law 1998,social insurance,WSPR 2017,,,,
-Moldova,359,unemployment benefit programme,WSPR 2017,Central and Western Asia,WSPR 2017,1992,SSA 1997,,878,Law 1992,social insurance,WSPR 2017,Citizens of working-age,SSA 1997,Employer,SSA 1997
-Tajikistan,702,unemployment benefit programme,WSPR 2017,Central and Western Asia,WSPR 2017,2003,SSA 2012,,44,NATLEX,social insurance,SSA 2012,Employees Self-employed,SSA 2012,Employer,SSA 2012
-Turkey,640,unemployment benefit programme,WSPR 2017,Central and Western Asia,WSPR 2017,1999,SSA 2004,,4447,NATLEX,social insurance,WSPR 2017,Employees,OECD 2018,Employer Employee State,OECD 2018
-Turkmenistan,701,unemployment benefit programme,WSPR 2017,Central and Western Asia,WSPR 2017,1991,SSA 1997,,598-XII,SSA 1997,social insurance,WSPR 2017,Permanent residents of working-age,SSA 1997,Employer State,SSA 1997
-Uzbekistan,704,unemployment benefit programme,WSPR 2017,Central and Western Asia,WSPR 2017,1992,first after independence,,510-XXI,Law 1992,social insurance,WSPR 2017,,,,
-China,710,unemployment benefit programme,WSPR 2017,Eastern Asia,WSPR 2017,1986,SSA 2002,,,,social insurance,WSPR 2017,Employees in state-run enterprises,Law 1986,Employer,Law 1986
-Japan,740,unemployment benefit programme,WSPR 2017,Eastern Asia,WSPR 2017,,,,,,,,,,,
-Mongolia,712,unemployment benefit programme,WSPR 2017,Eastern Asia,WSPR 2017,1994,first after independence,,,,social insurance,WSPR 2017,,,,
-South Korea,732,unemployment benefit programme,WSPR 2017,Eastern Asia,WSPR 2017,1993,SSA 2002,,4644 Insuarance Act; 14570 Enforcement Decree,NATLEX,social insurance,WSPR 2017,Employees,Kwan 2000,Employer Employee,Kwan 2000
-Taiwan,713,unemployment benefit programme,WSPR 2017,Eastern Asia,WSPR 2017,1950,SSA 2018,,63669 - Rules for the Implementation 1998,Rules 1998,social insurance,WSPR 2017,Citizens if Taiwan in the Formal Private Sector,Rules 1998,Employer,Rules 1998
-Belarus,370,unemployment benefit programme,WSPR 2017,Eastern Europe,WSPR 2017,2006,first after independence,,125-3,Law 2006,social insurance,,Citizens of working-age residing permanently in Belarus,Law 2006,Employer State Self-employed persons,SSA 2010
-Bulgaria,355,unemployment benefit programme,WSPR 2017,Eastern Europe,WSPR 2017,1925,,,,,,,,,,
-Czech Republic,316,unemployment benefit programme,WSPR 2017,Eastern Europe,WSPR 2017,1918,US Department of Labor 1931,,63-1918,Rechcigl 1968,social assistance,Rechcigl 1968,Unemployed workers,Rechcigl 1968,Government,Rechcigl 1968
-Hungary,310,unemployment benefit programme,WSPR 2017,Eastern Europe,WSPR 2017,1957,SSA 1973,,No. 3 of 1957,ILO Legislative series 1957,social assistance,ILO Legislative series 1957,Employees in nonprivate employment,Law 1957,State,SSA 1973
-Romania,360,unemployment benefit programme,WSPR 2017,Eastern Europe,WSPR 2017,1991,SSA,,1,NATLEX,social insurance,WSPR 2017,"Employees , job-seekers discharged from military or graduated from school or university",NATLEX,Employee Employer State,NATLEX
-Russia,365,unemployment benefit programme,WSPR 2017,Eastern Europe,WSPR 2017,,,,,,,,,,,
-Slovakia,317,unemployment benefit programme,WSPR 2017,Eastern Europe,WSPR 2017,1921,US Department of Labor 1931,,63-1918,Rechcigl 1968,social assistance,Rechcigl 1968,Unemployed workers,Rechcigl 1968,Government,Rechcigl 1968
-Ukraine,369,unemployment benefit programme,WSPR 2017,Eastern Europe,WSPR 2017,2000,,first after independence,1533-III,Law 2000,social insurance,WSPR 2017,,,,
-Antigua & Barbuda,58,no umemployment insurance anchored in legislation,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,
-Argentina,160,unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,1991,VP ,,24013,VP,social insurance,WSPR 2017,Formal private sector workers,VP,Employer Employee,VP
-Bahamas,31,unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,2009,NATLEX,,2009-0002,NATLEX,social insurance,WSPR 2017,Employees becoming unemployed after deadline,USSA 2009,"Employee, Employer",USSA 2009
-Barbados,53,unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,1981,NIS,,,,social insurance,WSPR 2017,,SSA 1997,Employer Employee,SSA 1997
-Belize,80,severance payment but no unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,
-Bolivia,145,severance payment but no unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,
-Brazil,140,unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,1986,WB Cunn,,"2284/86, Decree 92608/86",ILO Notes Brazil,social insurance,WB Cunn,Formal private sector workers,ILO Notes Brazil,Employer ,ILO Notes Brazil
-Chile,155,unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,2001,WB Ace,,19728,WB Ace,mandatory individual savings,WSPR 2017,Formal private sector workers,WB Ace,Employer Employee State,WB Ace
-Colombia,100,unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,2002,WB Medina,,789,WB Medina,social insurance,WB Medina,Formal private sector workers enrolled in the Caja,WB Medina,Payroll tax,WB Medina
-Costa Rica,94,severance payment but no unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,
-Cuba,40,no umemployment insurance anchored in legislation,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,
-Dominica,54,no umemployment insurance anchored in legislation,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,
-Dominican Republic,42,no umemployment insurance anchored in legislation,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,
-Ecuador,130,unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,2001,SocPaLaAm,,55,SocPaLaAm,mandatory individual savings,WSPR 2017,Formal private sector workers,SocPaLaAm,"Employee, Employer",Ferrer/Riddell 2011
-El Salvador,92,severance payment but no unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,
-Grenada,55,severance payment but no unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,
-Guatemala,90,severance payment but no unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,
-Guyana,110,severance payment but no unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,
-Haiti,41,no umemployment insurance anchored in legislation,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,
-Honduras,91,unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,2015,USSSA 2017,,Decreto 56-2015,Law 2015,employer liability,WSPR 2017,Formal private sector workers,USSSA 2017,Employer,USSSA 2017
-Jamaica,51,no umemployment insurance anchored in legislation,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,
-Mexico,70,severance payment but no unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,
-Nicaragua,93,no umemployment insurance anchored in legislation,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,
-Panama,95,severance payment but no unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,
-Paraguay,150,no umemployment insurance anchored in legislation,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,
-Peru,135,severance payment but no unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,
-St. Kitts and Nevis,60,severance payment but no unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,
-St. Lucia,56,no umemployment insurance anchored in legislation,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,
-St. Vincent and the Grenadines,57,severance payment but no unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,
-Suriname,115,no umemployment insurance anchored in legislation,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,
-Trinidad and Tobago,52,severance payment but no unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,
-Uruguay,165,unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,1981,ILO Notes Uruguay,,15180/1981,"Decree-Law 15,180/1981",social insurance,ILO Notes Uruguay,Formal private sector workers,Ley 15180,Employer Employee,SocPaLaAm
-Venezuela,101,unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,1985,USSSA 2017,,609,,social insurance,WSPR 2017,Formal private sector workers,VP,Employer Employee,VP
-Canada,20,unemployment benefit programme,WSPR 2017,Norther America,WSPR 2017,,,,,,,,,,,
-United States of America,2,unemployment benefit programme,WSPR 2017,Norther America,WSPR 2017,,,,,,social insurance,WSPR 2017,,,,
-Algeria,615,unemployment benefit programme,WSPR 2017,Northern Africa,WSPR 2017,1994,Ruppert,,94-11,NATLEX,social insurance,WSPR 2017,Formal private sector,ILO Notes,Employer Employee,UI Law 1994
-Egypt,651,unemployment benefit programme,WSPR 2017,Northern Africa,WSPR 2017,1964,UIOP 1984,,63,Area Handbook fot the United Arab Republic Egypt 1970,social insurance,WSPR 2017,Formal private sector,SSA 1973,Employer Employee State,SSA 1973
-Libya,620,severance payment but no unemployment benefit programme,WSPR 2017,Northern Africa,WSPR 2017,,,,,,,,,,,
-Morocco,600,unemployment benefit programme,WSPR 2017,Northern Africa,WSPR 2017,2014,SSA 2015,,03 14,IOM 2018,social insurance,WSPR 2017,Formal private sector,SSA 2015,Employer Employee,SSA 2015
-Sudan,625,severance payment but no unemployment benefit programme,WSPR 2017,Northern Africa,WSPR 2017,,,,,,,,,,,
-Tunisia,616,unemployment benefit programme,WSPR 2017,Northern Africa,WSPR 2017,1982,SSA 1997,,82-1029,NATLEX,social assistance,WSPR 2017, non-agricultural salaried employees ,SSA 1997,Social Security Fund,UI Occasional Paper 1984
-Albania,339,no umemployment insurance anchored in legislation,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,,,,,,,,,,,
-Andorra,232,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,,,,,,,,,,,
-Austria,305,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,,,,,,,,,,,
-Belgium,211,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,,,,,,,,,,,
-Croatia,344,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,1922,Monthly Labor Review 1943,,,,social assistance,Law 1922,Unemployed workers,Law 1922,Government,Law 1922
-Denmark,390,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,,,,,,,,,,,
-Estonia,366,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,1991,SSA 1993,,Decree No. 2 and No. 64,Puur 1997,social assistance,SSA 1993,Unemployed in statutory working age,Puur 1997,Government,SSA 1993
-Finland,375,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,,,,,,,,,,,
-France,220,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,,,,,,,,,,,
-Germany,255,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,,,,,,,,,,,
-Greece,350,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,,,,,,social insurance,WSPR 2017,,,,
-Iceland,395,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,,,,,,social insurance,WSPR 2017,,,,
-Ireland,205,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,,,,,,,,,,,
-Italy,325,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,,,,,,,,,,,
-Latvia,367,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,1991,SSA 1993,,,,social insurance,WSPR 2017,Permanent residents in working age,SSA 1993,Employee Employer State,SSA 1993
-Liechtenstein,223,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,,,,,,social insurance,WSPR 2017,,,,
-Lithuania,368,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,1990,,first after independence,No. I-864,Law 1990,social insurance,WSPR 2017,Unemployed capable and available of work,Law 1990,Employer State,Law 1990
-Luxembourg,212,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,,,,,,social insurance,WSPR 2017,,,,
-Malta,338,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,1956,SSA 1973,,VI,ILO Legislative Series 1956,social insurance,WSPR 2017,Employees,SSA 1973,Employee Employer State,SSA 1973
-Netherlands,210,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,,,,,,,,,,,
-Norway,385,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,,,,,,,,,,,
-Portugal,235,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,,,,,,,,,,,
-Serbia,345,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,1922,Monthly Labor Review 1943,,,,social assistance,Law 1922,Unemployed workers,Law 1922,Government,Law 1922
-Slovenia,349,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,1922,Monthly Labor Review 1943,,,,social assistance,Law 1922,Unemployed workers,Law 1922,Government,Law 1922
-Spain,230,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,,,,,,,,,,,
-Sweden,380,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,,,,,,,,,,,
-Switzerland,225,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,,,,,,,,,,,
-United Kingdom,200,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,,,,,,,,,,,
-Australia,900,unemployment benefit programme,WSPR 2017,Oceania,WSPR 2017,,,,,,social assistance,WSPR 2017,,,,
-Federated States of Micronesia,987,no umemployment insurance anchored in legislation,WSPR 2017,Oceania,WSPR 2017,,,,,,,,,,,
-Fiji,950,no umemployment insurance anchored in legislation,SSA 2018,Oceania,WSPR 2017,,,,,,withdraw from provident fund,WSPR 2017,,,,
-Kiribati,946,unemployment benefit programme,WSPR 2017,Oceania,WSPR 2017,,,,,,withdraw from provident fund,WSPR 2017,,,,
-Marshall Islands,983,no umemployment insurance anchored in legislation,WSPR 2017,Oceania,WSPR 2017,,,,,,,,,,,
-New Zealand,920,unemployment benefit programme,WSPR 2017,Oceania,WSPR 2017,,,,,,social assistance,WSPR 2017,,,,
-Palau,986,no umemployment insurance anchored in legislation,WSPR 2017,Oceania,WSPR 2017,,,,,,,,,,,
-Papua New Guinea,910,no umemployment insurance anchored in legislation,WSPR 2017,Oceania,ILO 2006,,,,,,withdraw from provident fund,WSPR 2017,,,,
-Samoa,990,no umemployment insurance anchored in legislation,WSPR 2017,Oceania,WSPR 2017,,,,,,,,,,,
-Solomon Islands,940,no umemployment insurance anchored in legislation,WSPR 2017,Oceania,WSPR 2017,,,,,,withdraw from provident fund,WSPR 2017,,,,
-Vanuatu,935,severance payment but no unemployment benefit programme,WSPR 2017,Oceania,WSPR 2017,,,,,,,,,,,
-Brunei,835,no umemployment insurance anchored in legislation,WSPR 2017,South-Eastern Asia,WSPR 2017,,,,,,,,,,,
-Cambodia,811,severance payment but no unemployment benefit programme,WSPR 2017,South-Eastern Asia,WSPR 2017,,,,,,,,,,,
-Indonesia,850,severance payment but no unemployment benefit programme,WSPR 2017,South-Eastern Asia,WSPR 2017,,,,,,,,,,,
-Laos,812,unemployment benefit programme,WSPR 2017,South-Eastern Asia,WSPR 2017,2013,SSA 2016,,34/ NA,Law 2013,social insurance,WSPR 2017,"Civil servants, state employee, police and military personal",Law 2013,Employer Employee State,Law 2013
-Malaysia,820,severance payment but no unemployment benefit programme,WSPR 2017,South-Eastern Asia,WSPR 2017,,,,,,,,,,,
-Myanmar,775,unemployment benefit programme,WSPR 2017,South-Eastern Asia,WSPR 2017,2012,SSA 2016,,15,NATLEX,social insurance,WSPR 2017,Employees,Law 2012,Employer Employee State,SSA 2016
-Philippines,840,severance payment but no unemployment benefit programme,WSPR 2017,South-Eastern Asia,WSPR 2017,,,,,,,,,,,
-Singapore,830,no umemployment insurance anchored in legislation,WSPR 2017,South-Eastern Asia,WSPR 2017,,,,,,,,,,,
-Thailand,800,unemployment benefit programme,WSPR 2017,South-Eastern Asia,WSPR 2017,1990,SSA 2004,,B.E. 2547,NATLEX,social insurance,WSPR 2017,Employees aged 15 to 60,SSA 2004,Employer Employee State,SSA 2004
-Timor-Leste,,no umemployment insurance anchored in legislation,WSPR 2017,South-Eastern Asia,WSPR 2017,,,,,,,,,,,
-Vietnam,816,unemployment benefit programme,WSPR 2017,South-Eastern Asia,WSPR 2017,2006,SSA 2010,,127/2008/ND-CP,NATLEX,social insurance,WSPR 2017,Vietnamese citizens in the public and private sector with employment contract of 1 to 3 years or permament contracts,SSA 2010,Employer Employee State,SSA 2010
-Afghanistan,700,no umemployment insurance anchored in legislation,WSPR 2017,Southern Asia,WSPR 2017,,,,,,,,,,,
-Bangladesh,771,severance payment but no unemployment benefit programme,WSPR 2017,Southern Asia,WSPR 2017,,,,,,,,,,,
-Bhutan,760,no umemployment insurance anchored in legislation,WSPR 2017,Southern Asia,WSPR 2017,,,,,,,,,,,
-India,750,unemployment benefit programme,WSPR 2017,Southern Asia,WSPR 2017,2005,OECD; Ministry of Labour and Employment,,,,social insurance,WSPR 2017,Employees ,SSA 2006,Employer Employee State,SSA 2006
-Iran,630,unemployment benefit programme,WSPR 2017,Southern Asia,WSPR 2017,1987,SSA 2002,,1369/6/26 (1990 Unemployment Insurance Law),NATLEX,social insurance,WSPR 2017,Employees,Law 1990,Employer,SSA 2002; Law 1990
-Nepal,790,severance payment but no unemployment benefit programme,WSPR 2017,Southern Asia,WSPR 2017,,,,,,,,,,,
-Pakistan,770,severance payment but no unemployment benefit programme,WSPR 2017,Southern Asia,WSPR 2017,,,,,,,,,,,
-Sri Lanka,780,severance payment but no unemployment benefit programme,WSPR 2017,Southern Asia,WSPR 2017,,,,,,,,,,,
-Angola,540,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Benin,434,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Botswana,571,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Burkina Faso,439,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Burundi,516,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Cameroon,471,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Cape Verde,402,unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,2016,SSA 2017,,,,social insurance,WSPR 2017,Formal private sector,SSA 2017,Eemployer Employee State,SSA 2017
-Central African Republic,482,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Chad,483,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Congo,484,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Democratic Republic of the Congo,490,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Djibouti,522,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Equatorial Guinea,411,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Ethiopia,530,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Gabon,481,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Gambia,420,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Ghana,452,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Guinea,438,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Ivory Coast,437,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Kenya,501,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Lesotho,570,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Liberia,450,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Madagascar,580,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Malawi,553,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Mali,432,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Mauritania,435,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Mauritius,590,unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,1983,SSA 2005,,3,NATLEX,social insurance,WSPR 2017,unemployed household heads younger than age 60 and their dependents,UI Law 1983,Government,SSA 2005
-Mozambique,541,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Namibia,565,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Niger,436,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Nigeria,475,unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,1961,SSA 2003,,L.N. 142,NATLEX,withdraw from provident fund,WSPR 2017,Employees,SSA 1962,Employer Employee,SSA 1962
-Rwanda,517,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Sao Tome and Principe,403,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Senegal,433,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Seychelles,591,unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,1980,SSA 2005,,10,NATLEX,social assistance,WSPR 2017,Unemployed persons,Unemployment Fund Act 1980,,
-Sierra Leone,451,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Somalia,520,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-South Africa,560,unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,1937,SSA 1997,,25,ILO Legislative series 1937,social insurance,WSPR 2017,Employees in specific industries,UI Act 1937,Employer Employee State,UI Act 1937
-Swaziland,572,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Tanzania,510,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Togo,461,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Uganda,500,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Zambia,551,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Zimbabwe,552,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,
-Poland,290,unemployment benefit programme,WSPR 2017,Eastern Europe,WSPR 2017,,,,,,,,,,,
-Qatar,694,no umemployment insurance anchored in legislation,SSA 2018,Arab States,WSPR 2017,,,,,,,,,,,
+country_name,cow_code,exist_unemp,exist_source,region,region_source,unemp_firstlaw,firstlaw_source,,unemp_fl_no,no_source,unemp_fl_programmtype,program_source,unemp_fl_beneficiaries,unemp_fl_beneficiaries_sm,benef_source,unemp_fl_financing,unemp_fl_financing_sm,finance_source
+Bahrain,692,unemployment benefit programme,WSPR 2017,Arab States,WSPR 2017,2006,SSA 2008,,78,NATLEX,social insurance,SSA 2008,"Ciliv servants, private sector employees and first time job seekers",Employees,SSA 2008; UI Law 2006,Employer Employee State,Employer Employee State,UI Law 2006
+Iraq,645,severance payment but no unemployment benefit programme,WSPR 2017,Arab States,WSPR 2017,,,,,,,,,,,,,
+Jordan,663,unemployment benefit programme,WSPR 2017,Arab States,WSPR 2017,2010,SSA 2012,,7,NATLEX,social insurance,WSPR 2017,Employees,Employees,UI Law 2010,Employer Employee,Employer Employee,UI Law 2010
+Kuwait,690,unemployment benefit programme,WSPR 2017,Arab States,WSPR 2017,2013,SSA 2014,,101,NATLEX,social insurance,WSPR 2017,"Kuwaiti employees in private, oil and gas sector",Native employees,UI Law 2013,Employer Employee State,Employer Employee State,NATLEX
+Lebanon,660,no umemployment insurance anchored in legislation,WSPR 2017,Arab States,WSPR 2017,,,,,,,,,,,,,
+Oman,698,no umemployment insurance anchored in legislation,WSPR 2017,Arab States,WSPR 2017,,,,,,,,,,,,,
+Saudi Arabia,670,unemployment benefit programme,WSPR 2017,Arab States,WSPR 2017,2014,SSA 2014,,81,NATLEX,social insurance,WSPR 2017,Formal private sector workers; voluntary insurance for self-employed persons; some categories of public-sector workers,Employees,SSA 2014,Employer Employee,Employer Employee,SSA 2014
+Syria,652,severance payment but no unemployment benefit programme,WSPR 2017,Arab States,WSPR 2017,,,,,,,,,,,,,
+Yemen,679,severance payment but no unemployment benefit programme,WSPR 2017,Arab States,WSPR 2017,,,,,,,,,,,,,
+Armenia,371,severance payment but no unemployment benefit programme,WSPR 2017,Central and Western Asia,WSPR 2017,1991,SSA 1997,,803-XII,UI Law 1991,social insurance,SSA 1997,Residents of working-age,Resident employees,SSA 1997,Employer Employee State,Employer Employee State,SSA 1997
+Azerbaijan,373,unemployment benefit programme,WSPR 2017,Central and Western Asia,WSPR 2017,2001,,first after independence,170-IIG,Law 2001,social insurance,WSPR 2017,residents of Azerbaijan,Resident employees,Law 2001,,,
+Cyprus,352,unemployment benefit programme,WSPR 2017,Central and Western Asia,WSPR 2017,1956,SSA,,31,Law 1956,social insurance,WSPR 2017,Formal Private Sector,Employees,Law 1956,Employer Employee State,Employer Employee State,Law 1956
+Georgia,372,severance payment but no unemployment benefit programme,WSPR 2017,Central and Western Asia,WSPR 2017,1991,SSA 1997,,,,social insurance,SSA 1997,Citizens of working-age,Citizen employees,SSA 1997,Employer State,Employer State,SSA 1997
+Israel,666,unemployment benefit programme,WSPR 2017,Central and Western Asia,WSPR 2017,1972,Israel Ministry of Foreign Affairs a.o.,,,,social insurance,WSPR 2017,Formal Private Sector,Employees,Manheimer/Robinson 1984,,,
+Kazakhstan,705,unemployment benefit programme,WSPR 2017,Central and Western Asia,WSPR 2017,2003,first after independence,,405,NATLEX,social insurance,WSPR 2017,Employees and Self-employed,Employees,Law 2003,Employer,Employer,Law 2003
+Kyrgyzstan,703,unemployment benefit programme,WSPR 2017,Central and Western Asia,WSPR 2017,1998,first after independence,,113,Law 1998,social insurance,WSPR 2017,,,,,,
+Moldova,359,unemployment benefit programme,WSPR 2017,Central and Western Asia,WSPR 2017,1992,SSA 1997,,878,Law 1992,social insurance,WSPR 2017,Citizens of working-age,Citizen employees,SSA 1997,Employer,Employer,SSA 1997
+Tajikistan,702,unemployment benefit programme,WSPR 2017,Central and Western Asia,WSPR 2017,2003,SSA 2012,,44,NATLEX,social insurance,SSA 2012,Employees Self-employed,Employees,SSA 2012,Employer,Employer,SSA 2012
+Turkey,640,unemployment benefit programme,WSPR 2017,Central and Western Asia,WSPR 2017,1999,SSA 2004,,4447,NATLEX,social insurance,WSPR 2017,Employees,Employees,OECD 2018,Employer Employee State,Employer Employee State,OECD 2018
+Turkmenistan,701,unemployment benefit programme,WSPR 2017,Central and Western Asia,WSPR 2017,1991,SSA 1997,,598-XII,SSA 1997,social insurance,WSPR 2017,Permanent residents of working-age,Resident employees,SSA 1997,Employer State,Employer State,SSA 1997
+Uzbekistan,704,unemployment benefit programme,WSPR 2017,Central and Western Asia,WSPR 2017,1992,first after independence,,510-XXI,Law 1992,social insurance,WSPR 2017,,,,,,
+China,710,unemployment benefit programme,WSPR 2017,Eastern Asia,WSPR 2017,1986,SSA 2002,,,,social insurance,WSPR 2017,Employees in state-run enterprises,State employees,Law 1986,Employer,Employer,Law 1986
+Japan,740,unemployment benefit programme,WSPR 2017,Eastern Asia,WSPR 2017,1947,ILO 1955,,"Law No 146, Official Gazette, 1 December 1947, No. 502, p. 4",ILO Legislative Series ,social insurance,Law 1947,"Workers in enterprises with more than 5 employees  belonging to the following sectors: manufacturing; mining; transportation and handling of freight and passengers; selling; financial services; incineration, cleaning and butchery;  government and other public offices (with exceptions)   ",Employees,Law 1947,"Employer, employee, State (1/3 each)",Employer Employee State,Law 1947
+Mongolia,712,unemployment benefit programme,WSPR 2017,Eastern Asia,WSPR 2017,1994,first after independence,,,,social insurance,WSPR 2017,,,,,,
+South Korea,732,unemployment benefit programme,WSPR 2017,Eastern Asia,WSPR 2017,1993,SSA 2002,,4644 Insurance Act; 14570 Enforcement Decree,NATLEX,social insurance,WSPR 2017,Employees,Employees,Kwan 2000,Employer Employee,Employer Employee,Kwan 2000
+Taiwan,713,unemployment benefit programme,WSPR 2017,Eastern Asia,WSPR 2017,1950,SSA 2018,,63669 - Rules for the Implementation 1998,Rules 1998,social insurance,WSPR 2017,Citizens if Taiwan in the Formal Private Sector,Citizen employees,Rules 1998,Employer,Employer,Rules 1998
+Belarus,370,unemployment benefit programme,WSPR 2017,Eastern Europe,WSPR 2017,2006,first after independence,,125-3,Law 2006,social insurance,,Citizens of working-age residing permanently in Belarus,Citizen employees,Law 2006,Employer State Self-employed persons,Employer State,SSA 2010
+Bulgaria,355,unemployment benefit programme,WSPR 2017,Eastern Europe,WSPR 2017,1925,ILO Legislative Series,,"Act of 12th April, 1925. Bulgarian Law Gazette (???????? ???????) 1925, No. 26, p.1",ILO Legislative Series,social insurance,ILO Legislative Series,"All wage-earning and salaried employees (aged 15-60) liable to social insurance of any kind, seamen, and wage-earning employees in State, departmental, communal and public departments and undertakings (if their posts are not provided for in the estimates for the established staff of the department or undertaking in question and they are not covered by the Act respecting pensions for employees in institutions belonging to the State and local authorities). Excluded: domestic servants and agricultural workers except they are employed in agricultural undertakings which under the Act respecting agricultural holdings are deemed to be conducted on modern lines.",Employees,ILO Legislative Series,"Employer, employee, state",Employer Employee State,ILO Legislative Series
+Czech Republic,316,unemployment benefit programme,WSPR 2017,Eastern Europe,WSPR 2017,2004,NATLEX,first after independence,Employment Act No. 435/2004,NATLEX,social insurance,SSA 2006,Citizens of the Czech Republic and the EU and their dependents. Non-EU citizens who reside permanently in the Czech Republic.,Citizen employees,SSA 2006,Employer Employee Self-employed person. State pays any deficit,Employer Employee State,SSA 2006
+Hungary,310,unemployment benefit programme,WSPR 2017,Eastern Europe,WSPR 2017,1991,SSA 1997,first after independence,Act IV of 1991,SSA 2002,social insurance,SSA 2002,Wage earners and salaried employees,Employees,SSA 2002,Employee Employer,Employer Employee,SSA 2002
+Romania,360,unemployment benefit programme,WSPR 2017,Eastern Europe,WSPR 2017,1991,SSA,,1,NATLEX,social insurance,WSPR 2017,"Employees , job-seekers discharged from military or graduated from school or university",Employees,NATLEX,Employee Employer State,Employer Employee State,NATLEX
+Russia,365,unemployment benefit programme,WSPR 2017,Eastern Europe,WSPR 2017,1917,Rimlinger (1971),,"Decree of 11th December, 1917 (Polozhenie o strakhovanii na sluchay bezraboticy)",Decree 1917,social insurance,Decree 1917," All employees irrespective of age, sex and type of employment whose  salary does not exceed the triple regional average income",Employees,Decree 1917,"Employer contributions (in the future by means of progressive income, property and inheritance taxes)",Employer,Decree 1917
+Slovakia,317,unemployment benefit programme,WSPR 2017,Eastern Europe,WSPR 2017,1996,SSA 2002,first after independence,Act No. 387/1996 on Employment ,NATLEX,social insurance,SSA 2002,Unemployed job seekers,Employees,SSA 2002,Employee Employer. State funds special programs,Employer Employee State,SSA 2002
+Ukraine,369,unemployment benefit programme,WSPR 2017,Eastern Europe,WSPR 2017,2000,,first after independence,1533-III,Law 2000,social insurance,WSPR 2017,,,,,,
+Antigua & Barbuda,58,no umemployment insurance anchored in legislation,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,,,
+Argentina,160,unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,1991,VP ,,24013,VP,social insurance,WSPR 2017,Formal private sector workers,Employees,VP,Employer Employee,Employer Employee,VP
+Bahamas,31,unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,2009,NATLEX,,2009-0002,NATLEX,social insurance,WSPR 2017,Employees becoming unemployed after deadline,Employees,USSA 2009,"Employee, Employer",Employer Employee,USSA 2009
+Barbados,53,unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,1981,NIS,,,,social insurance,WSPR 2017,,,SSA 1997,Employer Employee,Employer Employee,SSA 1997
+Belize,80,severance payment but no unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,,,
+Bolivia,145,severance payment but no unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,,,
+Brazil,140,unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,1986,WB Cunn,,"2284/86, Decree 92608/86",ILO Notes Brazil,social insurance,WB Cunn,Formal private sector workers,Employees,ILO Notes Brazil,Employer ,Employer,ILO Notes Brazil
+Chile,155,unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,2001,WB Ace,,19728,WB Ace,mandatory individual savings,WSPR 2017,Formal private sector workers,Employees,WB Ace,Employer Employee State,Employer Employee State,WB Ace
+Colombia,100,unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,2002,WB Medina,,789,WB Medina,social insurance,WB Medina,Formal private sector workers enrolled in the Caja,Employees,WB Medina,Payroll tax,Employer,WB Medina
+Costa Rica,94,severance payment but no unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,,,
+Cuba,40,no umemployment insurance anchored in legislation,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,,,
+Dominica,54,no umemployment insurance anchored in legislation,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,,,
+Dominican Republic,42,no umemployment insurance anchored in legislation,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,,,
+Ecuador,130,unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,2001,Ferrer/Riddell 2011,,55,Ferrer/Riddell 2011,mandatory individual savings,WSPR 2017,Formal private sector workers,Employees,Ferrer/Riddell 2011,"Employee, Employer",Employer Employee,Ferrer/Riddell 2011
+El Salvador,92,severance payment but no unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,,,
+Grenada,55,severance payment but no unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,,,
+Guatemala,90,severance payment but no unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,,,
+Guyana,110,severance payment but no unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,,,
+Haiti,41,no umemployment insurance anchored in legislation,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,,,
+Honduras,91,unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,2015,USSSA 2017,,Decreto 56-2015,Law 2015,employer liability,WSPR 2017,Formal private sector workers,Employees,USSSA 2017,Employer,Employer,USSSA 2017
+Jamaica,51,no umemployment insurance anchored in legislation,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,,,
+Mexico,70,severance payment but no unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,,,
+Nicaragua,93,no umemployment insurance anchored in legislation,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,,,
+Panama,95,severance payment but no unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,,,
+Paraguay,150,no umemployment insurance anchored in legislation,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,,,
+Peru,135,severance payment but no unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,,,
+St. Kitts and Nevis,60,severance payment but no unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,,,
+St. Lucia,56,no umemployment insurance anchored in legislation,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,,,
+St. Vincent and the Grenadines,57,severance payment but no unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,,,
+Suriname,115,no umemployment insurance anchored in legislation,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,,,
+Trinidad and Tobago,52,severance payment but no unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,,,,,,,,,,,,,
+Uruguay,165,unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,1981,ILO Notes Uruguay,,15180/1981,"Decree-Law 15,180/1981",social insurance,ILO Notes Uruguay,Formal private sector workers,Employees,Ley 15180,Employer Employee,Employer Employee,Ley 15180
+Venezuela,101,unemployment benefit programme,WSPR 2017,Latin America and the Caribbean,WSPR 2017,1985,USSSA 2017,,609,,social insurance,WSPR 2017,Formal private sector workers,Employees,VP,Employer Employee,Employer Employee,VP
+Canada,20,unemployment benefit programme,WSPR 2017,Norther America,WSPR 2017,1940,ILO 1955,,"4 Geo. VI, ch. 44",ILO Legislative Series,social insurance,Law 1940,"Employees in industrial and commercial sectors. Excluded: agriculture, forestry, hunting and fishing; lumbering and logging; transportation by water or by air; domestic services; teaching; government employees and public service, employment with remuneration > 2000 dollars per year, employment in the service of husband, employees paid fpr playing any game",Employees,Law 1940,"Employer, employee, state (1/5)",Employer Employee State,Law 1940
+United States of America,2,unemployment benefit programme,WSPR 2017,Norther America,WSPR 2017,1935,ILO 1955,,"Public—No.271, 74th Congress] [H. R .7260], approved 14th August, 1935 (Social Security Act)",ILO Legislative Series,social insurance,WSPR 2017,"Unemployment insurance (including coverage) is regulated by the states. In 1937, all 48 states  have enacted legislations.",Employees,ILO 1955,"State levies a pay-roll tax of 1 percent in 1936 (2 percent in 1937, and 3 percent in 1938) on employers of eight or more persons. Employers paying taxes receive a credit against the tax (up to 90%) ",Employer,ILO Legislative Series
+Algeria,615,unemployment benefit programme,WSPR 2017,Northern Africa,WSPR 2017,1994,Ruppert,,94-11,NATLEX,social insurance,WSPR 2017,Formal private sector,Employees,ILO Notes,Employer Employee,Employer Employee,UI Law 1994
+Egypt,651,unemployment benefit programme,WSPR 2017,Northern Africa,WSPR 2017,1964,UIOP 1984,,63,Area Handbook fot the United Arab Republic Egypt 1970,social insurance,WSPR 2017,Formal private sector,Employees,SSA 1973,Employer Employee State,Employer Employee State,SSA 1973
+Libya,620,severance payment but no unemployment benefit programme,WSPR 2017,Northern Africa,WSPR 2017,,,,,,,,,,,,,
+Morocco,600,unemployment benefit programme,WSPR 2017,Northern Africa,WSPR 2017,2014,SSA 2015,,03 14,IOM 2018,social insurance,WSPR 2017,Formal private sector,Employees,SSA 2015,Employer Employee,Employer Employee,SSA 2015
+Sudan,625,severance payment but no unemployment benefit programme,WSPR 2017,Northern Africa,WSPR 2017,,,,,,,,,,,,,
+Tunisia,616,no umemployment insurance anchored in legislation,WSPR 2017,Northern Africa,WSPR 2017,,,,,,,,,,,,,
+Albania,339,no umemployment insurance anchored in legislation,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,,,,,,,,,,,,,
+Andorra,232,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,,,,,,,,,,,,,
+Austria,305,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,1920,ILO 1955,,Staatsgesetzblatt 153/1920,Law 1920,social insurance,Law 1920,"Unemployed blue and white collar workers in the private sector covered by mandatory health insurance (nationals only until July 1,1921). Agriculture and domestic service exluded.  Benefit was restricted to needy unemployed.",Employees,Law 1920,"State, employers, employees (1/3 each)",Employer Employee State,Law 1920
+Belgium,211,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,1920,ILO 1955,,"Royal Order, December 30, 1920",U.S. Department of Labor (1931),Ghent system,ILO 1955,Voluntary insurance open to  all workers operated by approved unemployment funds,Employees,U.S.Department of Labor (1931),"Employees, state",Employee State,U.S. Departmet of Labor (1931)
+Croatia,344,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,1996,SSA 1997,first after independence ,Employment Act of 28 June 1996,NATLEX,social insurance,SSA 1997,"Employed persons, public employees, and military personnel",Employees,SSA 1997,"Employee Employer State (periodic subsidies, total or partial benefits for certain categories of persons)",Employer Employee State,SSA 1997
+Denmark,390,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,1907,U.S. Department of Labo Labor (1931),,"Act of April 9, 1907",U.S. Department of Labor (1931),Ghent system,U.S. Department of Labor (1931),Voluntary insurance open to  all workers operated by approved unemployment funds,Employees,U.S.Department of Labor (1931),"Employees, government",Employee State,U.S.Department of Labor (1931)
+Estonia,366,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,1991,SSA 1993,,Decree No. 2 and No. 64,Puur 1997,social assistance,SSA 1993,Unemployed in statutory working age,Employees,Puur 1997,Government,State,SSA 1993
+Finland,375,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,1917,ILO 1955,,Order of 2nd November 1917,ILO 1955,Ghent system,ILO 1955,Voluntary insurance open to any workers and laboreres aged 15 to 65,Employees,U.S. Department of Labor (1931),"Government, employees. States grants subsidies to benefit societies equalling 1/2 of  the benefits paid to to singles and 2/3 of the sums paid to members with dependants.   ",State,ILO 1955
+France,220,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,1905,Social Security Board (1938),,"French Finance Act, Loi du 22 avril 1905",Social Security Board (1938),Ghent system,Social Security Board (1938),"Voluntary system through approved unemploymen funds. No restrictions in terms of trade, age and sex",Employees,U.S. Department of Labor (1931),"Government, employees. States grants subsidies to unemployment funds equalling 16 to 24 % of  the benefits paid by the funds  ",State,U.S. Department of Labor (1931)
+Germany,255,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,1927,ILO 1955,,"Reichsgesetzblatt 1927 I, S. 187",Law 1927,social insurance,Law 1927,All employees covered by mandatory health insurance. Some exceptions for agricultural workers and shipping,Employees,Law 1927,"Employer, employee (1/2 each)",Employer Employee,Law 1927
+Greece,350,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,1945,ILO 1955,,Law No. 118,ILO Legislative Series,social insurance,Law 1945,All persons employed in industrial undertakings within the area of the province of Attica,Employees,Law 1945,Employers,Employer,Law 1945
+Iceland,395,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,1956,Juliusdottir (2002),,Act 29 of 1956,Juliusdottir (2002),Ghent system,Edling (2006),Employees in the private sector,Employees,Edling (2006),"Employers, state (bulk of costs)",Employer State,Edling (2006)
+Ireland,205,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,1923,ILO Legislative Series,,No. 17 of 1923,Law 1923,social insurance,ILO 1955,Most manual workers and lower-paid salaried employees (Ireland has taken over the British legislation enacted 1920 and 1921),Employees,ILO 1955,"Employers, employee, state",Employer Employee State,ILO 1955
+Italy,325,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,1919,ILO Legislative Series,,"Decreto-legge 19 ottobre 1919, n. 2214. ",ILO Legislative Series,social insurance,ILO Legislative Series,Manual workers of both sexes and non-manual workers in private undertakings up to a certain salary. Insurance only covers workers  aged 15-65. Excluded from compulsory insurance: home workers and domestic services;  regular workers employed by the state,Employees,ILO Legislative Series,"Employers, employee, state",Employer Employee State,ILO Legislative Series
+Latvia,367,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,1991,SSA 1993,,,,social insurance,WSPR 2017,Permanent residents in working age,Resident employees,SSA 1993,Employee Employer State,Employer Employee State,SSA 1993
+Liechtenstein,223,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,,,,,,social insurance,WSPR 2017,,,,,,
+Lithuania,368,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,1990,,first after independence,No. I-864,Law 1990,social insurance,WSPR 2017,Unemployed capable and available of work,Employees,Law 1990,Employer State,Employer State,Law 1990
+Luxembourg,212,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,1921,ILO (1922),,"Memorial du Grand-Duche de Luxemborg 1921, No. 55, p. 1003",Law 1921,social insurance,WSPR 2017, Involuntary unemployed of both sexes and aged 16 and over with residency in the Grand Duchy. Excluded are workers receiving welfare benefits and seasonal workers.,Employees,Law 1921,"Employee, Employer, State (State and commune cover 50% of cost) ",Employer Employee State,Law 1921
+Malta,338,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,1956,SSA 1973,,VI,ILO Legislative Series 1956,social insurance,WSPR 2017,Employees,Employees,SSA 1973,Employee Employer State,Employer Employee State,SSA 1973
+Netherlands,210,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,1916,ILO 1955,,"Order of December 2, Staatsblad van het Koninkrijk der Nederlanden 1916, No. 522.",Brok (2012),Ghent system,ILO 1955,Voluntary insurance open to all employees and trades,Employees,U.S. Department of Labor (1931),"Employee, State (government and communes). State grants subsidies to unemployemnt funds  equalling 50% of paid contributions",Employee State,ILO 1955
+Norway,385,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,1906,U.S.Department of Labor (1931),,"Act of June 12, 1906",U.S.Department of Labor (1931),Ghent system,U.S.Department of Labor (1931),Voluntary insurance open to  all workers operated by approved unemployment funds,Employees,U.S. Department of Labor (1931),"Employee, State",Employee State,U.S. Department of Labor (1931)
+Portugal,235,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,1974,SSA 1975,,,,social insurance,SSA 1975,"Employed persons except domestic servants, temporary and casual labor",Employees,SSA 1975,Employee Employer State,Employer Employee State,SSA 1975
+Serbia,345,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,2009,NATLEX,first after independence,Act of 13 May 2009,NATLEX,social insurance,Act 2009,Employees and self-employed people between 15 years of age and the age eligible for retirement,Employees,Act 2009,Employee Employer State,Employer Employee State,Act 2009
+Slovenia,349,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,2010,NATLEX,first after independence,Labour Market Regulations Act of 28 September 2010 (Text No. 4304),NATLEX,social insurance,Act 2010,"Employed persons, including public-sector employees and self-employed persons. Voluntary coverage for citizens employed by foreign employers in certain foreign countries and their family members.",Employees,Act 2010,Employee Employer State,Employer Employee State,Act 2010
+Spain,230,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,1919,ILO 1955,,"Gaceta de Madrid, Boletin del Instituto de Reformas Sociales, num. CLXXIX 1919, p. 620  ",ILO Legislative Series,Ghent system,Law 1919,"Voluntary insurance open to employees with salary < 4,000 peseta",Employees,Law 1919,"Government and employees. The state grants a subsidy, equal to the total amount of the actual premiums collected, to workers' friendly societies operating an insurance against involuntary unemployment. Subsidies are tied to certain criteria spelled out in this Royal Decree.",Employee State,Law 1919
+Sweden,380,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,1934,ILO 1955,,"Svensk Författningssamling, No 264, S. 490",ILO Legislative Series,Ghent system,Law 1934,Voluntary insurance open to employees aged 16 and over,Employees,Law 1934,Government and employees. The state grants a subsidy to recognised unemployment funds. Subsidies are tied to certain criteria spelled out in the Law.,Employee State,Law 1934
+Switzerland,225,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,1924,ILO 1955,,"Bundesblatt 1924/III, S. 562-567",Law 1924,,Law 1924,"Unemployed salaried employees who are members of private or public unemployment funds operated by unions, cantons or municipalities",Employees,ILO 1955,Government: The Federal government provided subsidies to private and public unemployment funds operated at the local and cantonal level. These funds had to fulfil certain criteria spelled out by this federal law. Federal subsidies covered 30-40% of daily benefit paid to the unemployed,State,Law 1924
+United Kingdom,200,unemployment benefit programme,WSPR 2017,"Northern, Southern and Western Europe",WSPR 2017,1911,ILO 1955,,1 & 2 Geo. 5. Ch. 55,Law 1911,social insurance,Law 1911,Workmen in 7 trades whose risk of unemployment is serious: building; construction of works; shipbuilding; mechanical engineering; ironfounding; construction of vehicles; sawmilling,Employees,Law 1911,Employee Employer State (1/3 each),Employer Employee State,Law 1911
+Australia,900,unemployment benefit programme,WSPR 2017,Oceania,WSPR 2017,1944,ILO 1955,,No. 10 of 1944,Law 1944,social assistance,WSPR 2017,"Universal but means-tested benefit. Every person who  (a) has attained the age of 16 years but has not attained the age of 65 years, or, in the case of a female 60 years; (b) is residing in Australia  for not less than one year. Married women and Aboriginal natives are excluded.",Resident employees,Law 1944,Government,State,Law 1944
+Federated States of Micronesia,987,no umemployment insurance anchored in legislation,WSPR 2017,Oceania,WSPR 2017,,,,,,,,,,,,,
+Fiji,950,no umemployment insurance anchored in legislation,SSA 2018,Oceania,WSPR 2017,,,,,,withdraw from provident fund,WSPR 2017,,,,,,
+Kiribati,946,unemployment benefit programme,WSPR 2017,Oceania,WSPR 2017,,,,,,withdraw from provident fund,WSPR 2017,,,,,,
+Marshall Islands,983,no umemployment insurance anchored in legislation,WSPR 2017,Oceania,WSPR 2017,,,,,,,,,,,,,
+New Zealand,920,unemployment benefit programme,WSPR 2017,Oceania,WSPR 2017,1938,ILO 1955,,2 Geo VI 1938 No. 7,Law 1938,social assistance,Law 1938,Universal but means-tested benefit that is payable to a person 16 years of age and over who has been in New Zealand for at least 12 months. Married women are excluded if husband is unable to support her. ,Resident employees,Law 1938,Government,State,
+Palau,986,no umemployment insurance anchored in legislation,WSPR 2017,Oceania,WSPR 2017,,,,,,,,,,,,,
+Papua New Guinea,910,no umemployment insurance anchored in legislation,WSPR 2017,Oceania,ILO 2006,,,,,,withdraw from provident fund,WSPR 2017,,,,,,
+Samoa,990,no umemployment insurance anchored in legislation,WSPR 2017,Oceania,WSPR 2017,,,,,,,,,,,,,
+Solomon Islands,940,no umemployment insurance anchored in legislation,WSPR 2017,Oceania,WSPR 2017,,,,,,withdraw from provident fund,WSPR 2017,,,,,,
+Vanuatu,935,severance payment but no unemployment benefit programme,WSPR 2017,Oceania,WSPR 2017,,,,,,,,,,,,,
+Brunei,835,no umemployment insurance anchored in legislation,WSPR 2017,South-Eastern Asia,WSPR 2017,,,,,,,,,,,,,
+Cambodia,811,severance payment but no unemployment benefit programme,WSPR 2017,South-Eastern Asia,WSPR 2017,,,,,,,,,,,,,
+Indonesia,850,severance payment but no unemployment benefit programme,WSPR 2017,South-Eastern Asia,WSPR 2017,,,,,,,,,,,,,
+Laos,812,unemployment benefit programme,WSPR 2017,South-Eastern Asia,WSPR 2017,2013,SSA 2016,,34/ NA,Law 2013,social insurance,WSPR 2017,"Civil servants, state employee, police and military personal",State employees,Law 2013,Employer Employee State,Employer Employee State,Law 2013
+Malaysia,820,severance payment but no unemployment benefit programme,WSPR 2017,South-Eastern Asia,WSPR 2017,,,,,,,,,,,,,
+Myanmar,775,unemployment benefit programme,WSPR 2017,South-Eastern Asia,WSPR 2017,2012,SSA 2016,,15,NATLEX,social insurance,WSPR 2017,Employees,Employees,Law 2012,Employer Employee State,Employer Employee State,SSA 2016
+Philippines,840,severance payment but no unemployment benefit programme,WSPR 2017,South-Eastern Asia,WSPR 2017,,,,,,,,,,,,,
+Singapore,830,no umemployment insurance anchored in legislation,WSPR 2017,South-Eastern Asia,WSPR 2017,,,,,,,,,,,,,
+Thailand,800,unemployment benefit programme,WSPR 2017,South-Eastern Asia,WSPR 2017,1990,SSA 2004,,B.E. 2547,NATLEX,social insurance,WSPR 2017,Employees aged 15 to 60,Employees,SSA 2004,Employer Employee State,Employer Employee State,SSA 2004
+Timor-Leste,,no umemployment insurance anchored in legislation,WSPR 2017,South-Eastern Asia,WSPR 2017,,,,,,,,,,,,,
+Vietnam,816,unemployment benefit programme,WSPR 2017,South-Eastern Asia,WSPR 2017,2006,SSA 2010,,127/2008/ND-CP,NATLEX,social insurance,WSPR 2017,Vietnamese citizens in the public and private sector with employment contract of 1 to 3 years or permament contracts,Citizen employees,SSA 2010,Employer Employee State,Employer Employee State,SSA 2010
+Afghanistan,700,no umemployment insurance anchored in legislation,WSPR 2017,Southern Asia,WSPR 2017,,,,,,,,,,,,,
+Bangladesh,771,severance payment but no unemployment benefit programme,WSPR 2017,Southern Asia,WSPR 2017,,,,,,,,,,,,,
+Bhutan,760,no umemployment insurance anchored in legislation,WSPR 2017,Southern Asia,WSPR 2017,,,,,,,,,,,,,
+India,750,unemployment benefit programme,WSPR 2017,Southern Asia,WSPR 2017,2005,OECD; Ministry of Labour and Employment,,,,social insurance,WSPR 2017,Employees ,Employees ,SSA 2006,Employer Employee State,Employer Employee State,SSA 2006
+Iran,630,unemployment benefit programme,WSPR 2017,Southern Asia,WSPR 2017,1987,SSA 2002,,1369/6/26 (1990 Unemployment Insurance Law),NATLEX,social insurance,WSPR 2017,Employees,Employees ,Law 1990,Employer,Employer,SSA 2002; Law 1990
+Nepal,790,severance payment but no unemployment benefit programme,WSPR 2017,Southern Asia,WSPR 2017,,,,,,,,,,,,,
+Pakistan,770,severance payment but no unemployment benefit programme,WSPR 2017,Southern Asia,WSPR 2017,,,,,,,,,,,,,
+Sri Lanka,780,severance payment but no unemployment benefit programme,WSPR 2017,Southern Asia,WSPR 2017,,,,,,,,,,,,,
+Angola,540,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Benin,434,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Botswana,571,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Burkina Faso,439,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Burundi,516,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Cameroon,471,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Cape Verde,402,unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,2016,SSA 2017,,,,social insurance,WSPR 2017,Formal private sector,Employees ,SSA 2017,Eemployer Employee State,Employer Employee State,SSA 2017
+Central African Republic,482,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Chad,483,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Congo,484,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Democratic Republic of the Congo,490,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Djibouti,522,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Equatorial Guinea,411,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Ethiopia,530,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Gabon,481,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Gambia,420,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Ghana,452,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Guinea,438,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Ivory Coast,437,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Kenya,501,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Lesotho,570,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Liberia,450,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Madagascar,580,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Malawi,553,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Mali,432,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Mauritania,435,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Mauritius,590,unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,1983,SSA 2005,,3,NATLEX,social insurance,WSPR 2017,unemployed household heads younger than age 60 and their dependents,Employees ,UI Law 1983,Government,State,SSA 2005
+Mozambique,541,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Namibia,565,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Niger,436,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Nigeria,475,unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,1961,SSA 2003,,L.N. 142,NATLEX,withdraw from provident fund,WSPR 2017,Employees,Employees ,SSA 1962,Employer Employee,Employer Employee,SSA 1962
+Rwanda,517,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Sao Tome and Principe,403,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Senegal,433,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Seychelles,591,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Sierra Leone,451,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Somalia,520,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+South Africa,560,unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,1937,SSA 1997,,Act No. 25,ILO Legislative series,social insurance,WSPR 2017,"Employees in 8  industries. Government employees (incl. railways), agricultural workes, labourers and persons employed under the Native Labour Regulation Act of 1911 are excluded",Native employees,Law 1937,"Employer Employee State, state covers 25% of the total contributions paid by employer and employees",Employer Employee State,Law 1937
+Swaziland,572,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Tanzania,510,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Togo,461,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Uganda,500,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Zambia,551,severance payment but no unemployment benefit programme,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Zimbabwe,552,no umemployment insurance anchored in legislation,WSPR 2017,Sub-Saharan Africa,WSPR 2017,,,,,,,,,,,,,
+Poland,290,unemployment benefit programme,WSPR 2017,Eastern Europe,WSPR 2017,1924,ILO 1955,,"Law Gazette (Dziennik Ustaw) 1924, No. 67, poz. 650, str. 989 ",ILO Legislative series,social insurance,Law 1924,Workers over 18 in industrial and commercial undertakings with more than 5 employees,Employees ,Law 1924,"Employer, employee, State (50%)",,Law 1924
+Qatar,694,no umemployment insurance anchored in legislation,SSA 2018,Arab States,WSPR 2017,,,,,,,,,,,,,

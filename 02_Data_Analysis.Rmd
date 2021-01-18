@@ -16,7 +16,7 @@ load("data/unemp.Rdata")
 
 1918 is the first adoption, so the first time-dummy should capture most years before that. All countries that are non-adopters, plus those that adopted after 2010 are recoded to 3000
 
-```{r main_models, warning = F, message = F}
+```{r finalprep, warning = F, message = F}
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
 # - 8. !! estimate discrete-time logistic hazard model !!
@@ -26,23 +26,34 @@ load("data/unemp.Rdata")
 # --- check toa 1880 !!!
 # head(diff_data)
 
+# First law is in 1918, so start with 1915 for the time-series
 
-# Recode non-adopters to 3000
+diff_data <- diff_data[diff_data$per > 1900,]
+
+# Create a relative GDP measure, this puts the country in its global position and follows this changing position over time
+diff_data <- diff_data %>%
+  group_by(per) %>%
+  mutate(gdp_year_mean = mean(gdp10000, na.rm = T)) %>%
+  ungroup()
+
+diff_data <- diff_data %>%
+  mutate(gdp_rel = gdp10000 - gdp_year_mean)
+# Recode non-adopters to 2500
 diff_data$toa[is.na(diff_data$toa)] <- 3000
+```
 
+
+```{r main_models, warning = F, message = F}
 model1 <- glm(adopted ~ 
-              + t0_33 
-              + t33_49 
+              + t21_49 
               + t50_74 
               + t75_99 
               + t100_130  
-              + existence
-              + lag_w_expo_culture 
-              + w_expo_colony
-              + lag_w_expo_trade
-              + gdp10000
+              #+ lag_w_expo_culture 
+              #+ w_expo_colony
+              #+ lag_w_expo_trade
+              + gdp_rel
               + regime
-              + atwar
               + 0,
       dat    = diff_data, 
       subset = (per <= toa), # - extremely important !
@@ -51,92 +62,176 @@ summary(model1)
 exp(coef(model1))
 
 model2 <- glm(adopted ~ 
-                + t0_33 
-              + t33_49 
+              + t21_49 
               + t50_74 
               + t75_99 
               + t100_130  
-              + existence
-              + lag_w_expo_culture 
-              + w_expo_colony
-              + lag_w_expo_trade
-              + lag_w_expo_proximity
-              + gdp10000
+              + gdp_rel
               + regime
-              + atwar
+              + atwar_any
               + 0,
               dat    = diff_data, 
               subset = (per <= toa),
               family = binomial(link="logit"))
+
+model3 <- glm(adopted ~ 
+              + t21_49 
+              + t50_74 
+              + t75_99 
+              + t100_130  
+              + gdp_rel
+              + regime
+              + atwar_any
+              + gdp_rel*atwar_any
+              + 0,
+              dat    = diff_data, 
+              subset = (per <= toa),
+              family = binomial(link="logit"))
+
+model3a <- glm(adopted ~ 
+              + t21_49 
+              + t50_74 
+              + t75_99 
+              + t100_130  
+              + gdp_rel
+              + regime
+              + atwar_any
+              + regime*atwar_any
+              + 0,
+              dat    = diff_data, 
+              subset = (per <= toa),
+              family = binomial(link="logit"))
+
+model4 <- glm(adopted ~ 
+              + t21_49 
+              + t50_74 
+              + t75_99 
+              + t100_130  
+              + gdp_rel
+              + regime
+              + atwar_any
+              + gdp_rel*atwar_any
+              + lag_w_expo_proximity
+              + 0,
+              dat    = diff_data, 
+              subset = (per <= toa),
+              family = binomial(link="logit"))
+
+model4a <- glm(adopted ~ 
+              + t21_49 
+              + t50_74 
+              + t75_99 
+              + t100_130  
+              + gdp_rel
+              + regime
+              + atwar_any
+              #+ gdp_rel*atwar_any
+              + lag_w_expo_proximity
+              + 0,
+              dat    = diff_data, 
+              subset = (per <= toa),
+              family = binomial(link="logit"))
+
+model5 <- glm(adopted ~ 
+              + t21_49 
+              + t50_74 
+              + t75_99 
+              + t100_130  
+              + gdp_rel
+              + regime
+              + atwar_any
+              + gdp_rel*atwar_any
+              + lag_w_expo_culture 
+              + 0,
+              dat    = diff_data, 
+              subset = (per <= toa),
+              family = binomial(link="logit"))
+
+model5a <- glm(adopted ~ 
+              + t21_49 
+              + t50_74 
+              + t75_99 
+              + t100_130  
+              + gdp_rel
+              + regime
+              + atwar_any
+              #+ gdp_rel*atwar_any
+              + lag_w_expo_culture 
+              + 0,
+              dat    = diff_data, 
+              subset = (per <= toa),
+              family = binomial(link="logit"))
+
 #summary(model2)
 #exp(coef(model2))
-stargazer(model1,model2,
-          type = "html", 
-          title = "Discrete Time Hazard/Diffusion Models of /nWork-Injury Law, 1880-2010 in 173 countries",
-          dep.var.labels=c("First Work-Injury Law"),
-          covariate.labels=c("(1880-1912)", 
-                             "(1912-1929)",
+stargazer(model1,model2,model3,model3a,model4,model4a,model5,model5a,
+          type = "text", 
+          title = "Discrete Time Hazard/Diffusion Models of /nUnemployment Law, 1880-2010 in 164 countries",
+          dep.var.labels=c("First Unemp Law"),
+          covariate.labels=c("(1901-1929)",
                              "(1930-1954)",
                              "(1955-1979)",
                              "(1980-2010)",
-                             "State Existed", 
-                             "Network Exposure: Culture (t-1)",
-                             "Network Exposure: Colonial",
-                             "Network Exposure: Trade (t-1)",
-                             "Network Exposrue: Spatial Proximity",
-                             "GDPpc 10k USD",
+                             "Relative GDP",
                              "Democratization",
-                             "War(t thru t-2)"
+                             "War and Aftermath",
+                             "Network Exposure: Spatial Proximity",
+                             "Network Exposure: Culture (t-1)",
+                             "GDP*War",
+                             "Dem*War"
                              ),
           out="results/Tbl1.htm")
 
-webshot("results/Tbl1.htm", file = "results/Tbl1.png")
+# webshot("results/Tbl1.htm", file = "results/Tbl1.png")
 
-knitr::include_graphics("results/Tbl1.png")
+# knitr::include_graphics("results/Tbl1.png")
 
 ```
+
+
 
 
 ```{r Tbl1_OR, warning = F, message = F}
 #we add a command to present odd-ratios
 
-stargazer(model1,model2,
-          type = "html", 
+stargazer(model1,model2,model3a,model4,model5,
+          type = "text", 
           title = "Discrete Time Hazard/Diffusion Models of /nUnemployment, 1880-2010 in 173 countries",
           dep.var.labels=c("Introduction Unemployment Law"),
-          covariate.labels=c("(1880-1912)", 
-                             "(1912-1929)",
+          covariate.labels=c("(1901-1929)",
                              "(1930-1954)",
                              "(1955-1979)",
                              "(1980-2010)",
-                             "State Existed", 
-                             "Network Exposure: Culture (t-1)",
-                             "Network Exposure: Colonial",
-                             "Network Exposure: Trade (t-1)",
-                             "Network Exposrue: Spatial Proximity",
-                             "GDPpc 10k USD",
+                             "Relative GDP",
                              "Democratization",
-                             "War (t thru t-2)"
+                             "War and Aftermath",
+                             "Network Exposure: Spatial Proximity",
+                             "Network Exposure: Culture (t-1)",
+                             "GDP*War",
+                             "Dem*War"
                              ),
           apply.coef=exp, t.auto=F, p.auto=F, report = "vct*",
           out="results/Tbl1_OR.htm")
 
-webshot("results/Tbl1_OR.htm", file = "results/Tbl1_OR.png")
+# webshot("results/Tbl1_OR.htm", file = "results/Tbl1_OR.png")
 
-knitr::include_graphics("results/Tbl1_OR.png")
+# knitr::include_graphics("results/Tbl1_OR.png")
 ```
 
 ```{r coefplots}
 agg_png(filename = "results/Fig1_coeff.png", height = 600, width = 1000, res = 144)
-plot_coefs(model1,model2, coefs = c("Network Exposure: Culture (t-1)" = "lag_w_expo_culture",
-                                    "Network Exposure: Colonial" = "lag_w_expo_colony",
-                                    "Network Exposure: Trade (t-1)" = "lag_w_expo_trade",
-                                    "Network Exposrue: Spatial Proximity" = "lag_w_expo_proximity", 
-                                    "State Existed" = "existence",
-                                    "GDPpc 10k USD" = "gdp10000", 
-                                    "Democratization" = "regime",
-                                    "War (t thru t-2)" = "atwar"),
-           colors = "Qual3", title = "Logit Coefficients for Unemployment Law Models")
+plot_coefs(model2,model4a,model5a, 
+           #exp = T,
+           coefs = c("Relative GDP" = "gdp_rel",
+                             "Democratization" = "regime",
+                             "War and Aftermath" = "atwar_any",
+                             "Network Exposure: Spatial Proximity" = "lag_w_expo_proximity",
+                             "Network Exposure: Culture (t-1)" = "lag_w_expo_culture"),
+           #colors = c("springgreen","forestgreen","darkorange"), 
+           title = "Logit Coefficients for Unemployment Law Models") +
+  xlab(label = "Coefficients & 99%CI") +
+  coord_cartesian(xlim = c(-0.5,3.5)) +
+  theme(legend.position = "none")
 dev.off()
 
 knitr::include_graphics("results/Fig1_coeff.png")
