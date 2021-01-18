@@ -11,7 +11,7 @@ University of Bremen
 ```{r setup}
 rm(list = ls(all = T))
 
-pacman::p_load('netdiffuseR','stargazer','tidyverse','dplyr','countrycode','sandwich','lmtest','jtools','ragg','ggpubr')
+pacman::p_load('netdiffuseR','stargazer','tidyverse','dplyr','countrycode','sandwich','lmtest','jtools','ragg','ggpubr','rvest','nnet','knitr')
 
 load("data/.Rdata")
 
@@ -62,6 +62,11 @@ treat_plot <- treat_plot %>%
 
 ### First Law
 
+We run three models:
+1. Without main test variable nation formation and without spatial proximity
+2. With main test variable nation formation but without spatial proximity
+3. All
+
 ```{r main_models, warning = F, message = F}
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
@@ -78,7 +83,6 @@ model1 <- glm(adopted ~
               + t49_74 
               + t75_99 
               + t100_130  
-              + existence
               + lag_w_expo_culture 
               + w_expo_colony
               + lag_w_expo_trade
@@ -92,6 +96,23 @@ summary(model1)
 exp(coef(model1))
 
 model2 <- glm(adopted ~ 
+              + t0_22 
+              + t23_48 
+              + t49_74 
+              + t75_99 
+              + t100_130  
+              + existence
+              + lag_w_expo_culture 
+              + w_expo_colony
+              + lag_w_expo_trade
+              + gdp10000
+              + regime
+              + 0,
+              dat    = diff_data, 
+              subset = (per <= toa),
+              family = binomial(link="logit"))
+
+model3 <- glm(adopted ~ 
                 + t0_22 
               + t23_48 
               + t49_74 
@@ -108,11 +129,12 @@ model2 <- glm(adopted ~
               dat    = diff_data, 
               subset = (per <= toa),
               family = binomial(link="logit"))
+
 #summary(model2)
 #exp(coef(model2))
-stargazer(model1,model2,
-          type = "html", 
-          title = "Discrete Time Hazard/Diffusion Models of /nWork-Injury Law, 1880-2010 in 173 countries",
+stargazer(model1,model2,model3,
+          type = "text", 
+          title = "Discrete Time Hazard/Diffusion Models of /nWork-Injury Law, 1880-2010 in 164 countries",
           dep.var.labels=c("First Work-Injury Law"),
           covariate.labels=c("(1880-1902)", 
                              "(1903-1928)",
@@ -142,7 +164,6 @@ model1_socins <- glm(adopted ~
               + t49_74 
               + t75_99 
               + t100_130  
-              + existence
               + lag_w_expo_culture 
               + w_expo_colony
               + lag_w_expo_trade
@@ -165,6 +186,23 @@ model2_socins <- glm(adopted ~
               + lag_w_expo_culture 
               + w_expo_colony
               + lag_w_expo_trade
+              + gdp10000
+              + regime
+              + 0,
+              dat    = diff_data_socins, 
+              subset = (per <= toa),
+              family = binomial(link="logit"))
+
+model3_socins <- glm(adopted ~ 
+                + t0_22 
+              + t23_48 
+              + t49_74 
+              + t75_99 
+              + t100_130  
+              + existence
+              + lag_w_expo_culture 
+              + w_expo_colony
+              + lag_w_expo_trade
               + lag_w_expo_proximity
               + gdp10000
               + regime
@@ -175,8 +213,8 @@ model2_socins <- glm(adopted ~
 #summary(model2)
 #exp(coef(model2))
 stargazer(model1_socins,model2_socins,
-          type = "html", 
-          title = "Discrete Time Hazard/Diffusion Models of /nWork-Injury Law, 1880-2010 in 173 countries",
+          type = "text", 
+          title = "Discrete Time Hazard/Diffusion Models of /nWork-Injury Law, 1880-2010 in 164 countries",
           dep.var.labels=c("First Work-Injury Social Insurance Law"),
           covariate.labels=c("(1880-1902)", 
                              "(1903-1928)",
@@ -204,7 +242,7 @@ knitr::include_graphics("results/Tbl2.htm")
 #we add a command to present odd-ratios
 
 stargazer(model1,model2,
-          type = "html", 
+          type = "text", 
           title = "Discrete Time Hazard/Diffusion Models of /nWork-Injury Law, 1880-2010 in 173 countries",
           dep.var.labels=c("First Work-Injury Law"),
           covariate.labels=c("(1880-1902)", 
@@ -232,7 +270,7 @@ knitr::include_graphics("results/Tbl1_OR.htm")
 #we add a command to present odd-ratios
 
 stargazer(model1_socins,model2_socins,
-          type = "html", 
+          type = "text", 
           title = "Discrete Time Hazard/Diffusion Models of /nWork-Injury Law, 1880-2010 in 173 countries",
           dep.var.labels=c("First Work-Injury Social Insurance Law"),
           covariate.labels=c("(1880-1902)", 
@@ -351,66 +389,36 @@ ggplot(treat_plot, aes(formation, n_id, fill = law_seq)) +
 # --- the trade spheres network
 # ---------------------------------------------
 
-s <- 12345
-cols <- c("lightblue","green", "blue")
-oldpar <- par(no.readonly = T)
-coords <- set.seed(s);plot(diffnet_trade, main="Trade and Work-Injury Law")
+#s <- 12345
+#cols <- c("lightblue","green", "blue")
+#oldpar <- par(no.readonly = T)
+#coords <- set.seed(s);plot(diffnet_trade, main="Trade and Work-Injury Law")
 ```
 
 
 ```{r net2}
 
-plot_hazard(diffnet_trade, ylim=c(0,1))
-```
-
-
-```{r net2}
-plot_infectsuscep(diffnet_trade)
+# plot_hazard(diffnet_trade, ylim=c(0,1))
 ```
 
 
 ```{r net3}
-# network threshold: required proportion or number of neighbors that leads you to adopt
-plot_threshold(diffnet_trade, undirected = FALSE, vertex.size = 1/5)
+# plot_infectsuscep(diffnet_trade)
 ```
 
 
 ```{r net4}
-# Classify Adopters
-diffnet.toa(diffnet_trade)[diffnet_trade$toa==max(diffnet_trade$toa, na.rm = TRUE)] <- NA
-out <- classify_adopters(diffnet_trade)
-
-
-# This is one way to combine adopters ad thresholds in one object
-round(
-  with(out, ftable(toa, thr, dnn=c("Time of Adoption", "Threshold")))/
-    nnodes(diffnet_trade[!is.na(diffnet_trade$toa)])*100, digits=2)
-# ftable(out)
-
-ids <- unique(edgelist_cultural_spheres$ego_id) 
-ids <- as.data.frame(ids)
-
-ids1 <- unique(edgelist_cultural_spheres$alter_id) 
-ids1 <- as.data.frame(ids1)
-
-colnames(ids1)[1] <- "ids"
-ids <- rbind(ids, ids1)
-ids <- unique(ids)
-ids$ids <- as.character(ids$ids)
-
-ids <- sort(ids)
-
-# Adopter types and threshols combined
-thresholds <- cbind(as.data.frame(classify(diffnet_culture)), diffnet_culture$toa, ids)
-head(thresholds)
+# network threshold: required proportion or number of neighbors that leads you to adopt
+# plot_threshold(diffnet_trade, undirected = FALSE, vertex.size = 1/5)
 ```
+
 
 ```{r net1_trade}
 
 
 
 
-plot_threshold(diffnet_trade, undirected = FALSE, vertex.size = 1/5)
+# plot_threshold(diffnet_trade, undirected = FALSE, vertex.size = 1/5)
 
 ```
 
@@ -429,25 +437,20 @@ plot_threshold(diffnet_trade, undirected = FALSE, vertex.size = 1/5)
 m1 <- lmtest::coeftest(model1, vcov = vcovCL(model1, type="HC3", cluster =~ cluster_id))
 # unclear error taking place here
 
+m2 <- lmtest::coeftest(model2, vcov = vcovCL(model2, type="HC3", cluster=~ cluster_id))
 
-m1               
-summary(model1)
+m3 <- lmtest::coeftest(model3, vcov = vcovCL(model3, type="HC3", cluster=~ cluster_id))
 
-m2 <- coeftest(model2, vcov = vcovCL(model2, type="HC3", cluster=~ cluster_id))
+m4 <- lmtest::coeftest(model1_socins, vcov = vcovCL(model1_socins, type="HC3", cluster=~ cluster_id))
 
-m2
+m5 <- lmtest::coeftest(model2_socins, vcov = vcovCL(model2_socins, type="HC3", cluster=~ cluster_id))
 
-m3 <- coeftest(model3, vcov = vcovCL(model3, type="HC3", cluster=~ cluster_id))
+m6 <- lmtest::coeftest(model3_socins, vcov = vcovCL(model3_socins, type="HC3", cluster=~ cluster_id))
 
-m3
-
-m4 <- coeftest(model4, vcov = vcovCL(model4, type="HC3", cluster=~ cluster_id))
-
-m4
 
 # step 2: run stargazer3 with the following specification: 
 
-# 1. odds.rations = T !SPELLING! 
+# 1. odds.ratios = T 
 
 # 2. stargazer3(list(m1, m2)...) this is the output of the coeftest function with the corrected
 # standard erors!! NOT THE GLM OUTPUT !!
@@ -464,22 +467,23 @@ m4
 
 # change the title, the dep.var.labels and the covariate.labels accordingly
 
-stargazer3(list(m1, m2, m3, m4), odds.ratios = T, origin_model = list(model1, model2, model3, model4), type = "html", se = list(NA, NA, NA, NA),
-           title = "Diffusion of Work-Inury Law - Cultural Spheres Network",
-           dep.var.labels=c("Introduction of Compulsory Schooling"),
-           covariate.labels=c("rate t(0-24)", 
-                              "rate t(25-49)",
-                              "rate t(50-74)",
-                              "rate t(75-99)",
-                              "rate t(100-130)",
-                              "state existed (=1,else=0)", 
-                              "GDP per capita / 10000 USD",
-                              "democratization" ,
-                              "cultural spheres netw.: w. exposure (lag 1 year)",
-                              "colonies netw.: exposure ",
-                              "trade net: w. exposure (lag 1 year)",
-                              "spatial proximity netw.: w. exposure "
-                              ),
+stargazer3(list(m1, m2, m3, m4, m5, m6), odds.ratios = T, origin_model = list(model1, model2, model3, model1_socins, model2_socins, model3_socins), type = "text", se = list(NA, NA, NA, NA, NA, NA),
+           title = "Diffusion of Work-Injury Laws, 164 Countries, 1880-2010",
+           column.labels=c("------", "First Law", "------", "--", "First Social Insurance", "--"),
+          covariate.labels=c("(1880-1902)", 
+                             "(1903-1928)",
+                             "(1929-1954)",
+                             "(1955-1979)",
+                             "(1980-2010)",
+                             "State Founded (last 4 years)", 
+                             "Network Exposure: Culture (t-1)",
+                             "Network Exposure: Colonial",
+                             "Network Exposure: Trade (t-1)",
+                             "Network Exposrue: Spatial Proximity",
+                             "GDPpc 10k USD",
+                             "Democratization" 
+                             ),
+          #add.lines = list(c("Countries", length(unique(diff_data$id)), length(unique(diff_data$id)), length(unique(diff_data$id)), length(unique(diff_data$id)), length(unique(diff_data$id)), length(unique(diff_data$id)))),
            out="results/models_final2.htm")
 
 # ---------------------------------------------
@@ -487,53 +491,11 @@ stargazer3(list(m1, m2, m3, m4), odds.ratios = T, origin_model = list(model1, mo
 # --- the cultural spheres network
 # ---------------------------------------------
 
-s <- 12345
-cols <- c("lightblue","green", "blue")
-oldpar <- par(no.readonly = T)
-coords <- set.seed(s);plot(diffnet_culture, main="culture & education")
+Tbl1 <- as.data.frame(read_html("results/models_final2.htm") %>% html_table(fill=TRUE))
 
+Tbl1 <- Tbl1[Tbl1$X7 != "",]
 
-bmp(filename = "results/culture_edu.bmp") # - create folder, mac users adjust
-plot_diffnet(diffnet_culture, 
-             slices = c(1,50,100,130), layout=coords)
-dev.off()
-
-plot_adopters(diffnet_culture, 
-              include.legend = FALSE, what = c("adopt", "cumadopt"))
-plot_hazard(diffnet_culture, ylim=c(0,1))
-plot_infectsuscep(diffnet_culture)
-
-# network threshold: required proportion or number of neighbors that leads you to adopt
-plot_threshold(diffnet_culture, undirected = FALSE, vertex.size = 1/5)
-
-# Classify Adopters
-diffnet.toa(diffnet_culture)[diffnet_culture$toa==max(diffnet_culture$toa, na.rm = TRUE)] <- NA
-out <- classify_adopters(diffnet_culture)
-out
-
-# This is one way to combine adopters ad thresholds in one object
-round(
-  with(out, ftable(toa, thr, dnn=c("Time of Adoption", "Threshold")))/
-    nnodes(diffnet_culture[!is.na(diffnet_culture$toa)])*100, digits=2)
-ftable(out)
-
-ids <- unique(edgelist_cultural_spheres$ego_id) 
-ids <- as.data.frame(ids)
-
-ids1 <- unique(edgelist_cultural_spheres$alter_id) 
-ids1 <- as.data.frame(ids1)
-
-colnames(ids1)[1] <- "ids"
-ids <- rbind(ids, ids1)
-ids <- unique(ids)
-ids$ids <- as.character(ids$ids)
-
-ids <- sort(ids)
-
-# Adopter types and threshols combined
-thresholds <- cbind(as.data.frame(classify(diffnet_culture)), diffnet_culture$toa, ids)
-head(thresholds)
-
+write.csv(Tbl1, file = "results/Tbl1.csv")
 
 ```
 

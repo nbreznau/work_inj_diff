@@ -708,6 +708,8 @@ cluster_id <- read.csv("data/clusterID_n.csv", header = TRUE)
 cluster_id <- cluster_id[,c(1,2,5)]
 
 names(cluster_id) <- c("id", "per", "cluster_id")
+diff_data <- merge(diff_data, cluster_id,by=c("id","per"))
+diff_data_socins <- merge(diff_data_socins, cluster_id,by=c("id","per"))
 
 ```
 
