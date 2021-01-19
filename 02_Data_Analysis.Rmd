@@ -320,12 +320,12 @@ plot2 <- plot_coefs(model2_socins,model3_socins,
   xlab(label = "Coefficient + 95%CI")
 
 
-agg_png(filename = "results/Fig1.png", height = 600, width = 1200, res = 144)
+agg_png(filename = "results/Fig2.png", height = 600, width = 1200, res = 144)
 ggarrange(plot1, plot2, widths = c(1,0.75))
 
 dev.off()
 
-knitr::include_graphics("results/Fig1.png")
+knitr::include_graphics("results/Fig2.png")
 
 
 ```
@@ -375,24 +375,26 @@ treat_plot <- treat_plot %>%
   ungroup()
 
 
-
+agg_png(filename = "results/Fig1.png", height = 300, width = 500, res = 72)
 ggplot(treat_plot, aes(formation, rev(n_id), fill = law_seq)) +
   geom_tile() +
   scale_fill_manual(breaks = c("1", "2", "3"),
-  values = c("Grey","chocolate4","seagreen4"),
+  values = c("grey25","chocolate4","seagreen4"),
   labels = c("None", "Employer\nLiability", "Social\nInsurance"),
   ) +
   ylab(label = "Country") +
   xlab(label = "Time in Years\n(centered by year of state formation)") +
   xlim(-25,50) +
   geom_vline(xintercept = -0.5, size = 1) +
-  geom_rect(mapping = aes(xmin))
   theme_classic() +
   theme(axis.text.y = element_blank(),
         axis.line = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_blank())
+        legend.title = element_blank(),
+        panel.background = element_rect(color = "grey", fill = "grey"))
+dev.off()
 
+knitr::include_graphics("results/Fig1.png")
 
 ```
 
