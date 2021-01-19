@@ -9,7 +9,7 @@ output:
 ```{r setup}
 rm(list = ls(all = T))
 
-pacman::p_load('netdiffuseR','stargazer','tidyverse','dplyr','countrycode','sandwich','lmtest','jtools','ragg','webshot','kableExtra','knitr')
+pacman::p_load('netdiffuseR','stargazer','tidyverse','dplyr','countrycode','sandwich','lmtest','jtools','ragg','webshot','kableExtra','knitr','rvest','nnet')
 
 load("data/unemp.Rdata")
 ```
@@ -194,9 +194,9 @@ stargazer(model1,model2,model3,model3a,model4,model4a,model5,model5a,
 ```{r Tbl1_OR, warning = F, message = F}
 #we add a command to present odd-ratios
 
-stargazer(model2,model4a,model5a,
+stargazer(model1,model2,model4a,model5a,
           type = "text", 
-          title = "Discrete Time Hazard/Diffusion Models of /nUnemployment, 1880-2010 in 173 countries",
+          title = "Discrete Time Hazard/Diffusion Models of Unemployment, 1880-2010 in 164 countries. Odd-Ratios Shown",
           dep.var.labels=c("Introduction Unemployment Law"),
           covariate.labels=c("(1901-1929)",
                              "(1930-1954)",
@@ -211,12 +211,12 @@ stargazer(model2,model4a,model5a,
           apply.coef=exp, t.auto=F, p.auto=F, report = "vct*",
           out="results/Tbl1_OR.htm")
 
-# webshot("results/Tbl1_OR.htm", file = "results/Tbl1_OR.png")
+webshot("results/Tbl1_OR.htm", file = "results/Tbl1_OR.png")
 
 # knitr::include_graphics("results/Tbl1_OR.png")
 ```
 
-```{r coefplots}
+```{r coefplots, echo = T}
 agg_png(filename = "results/Fig1_coeff.png", height = 600, width = 1000, res = 144)
 plot_coefs(model2,model4a,model5a, 
            #exp = T,
@@ -240,114 +240,80 @@ knitr::include_graphics("results/Fig1_coeff.png")
 # omit.coefs = c("t0_25","t25_49","t50_74","t75_99","t100_130")
 ```
 
-As the model is quite overloaded with variables, I remove culture, colonial ties and spatial proximity and re-run the analysis (model3), an then again with GDP removed (model4).
-```{r m3m4}
-model3 <- glm(adopted ~ 
-              + t0_33 
-              + t33_49 
-              + t50_74 
-              + t75_99 
-              + t100_130  
-              + existence
-              + lag_w_expo_trade
-              + gdp10000
-              + regime
-              + atwar
-              + 0,
-      dat    = diff_data, 
-      subset = (per <= toa), # - extremely important !
-      family = binomial(link="logit"))
-# summary(model3)
-exp(coef(model3))
+### Percentage Adoption by War
 
-model4 <- glm(adopted ~ 
-              + t0_33 
-              + t33_49 
-              + t50_74 
-              + t75_99 
-              + t100_130  
-              + existence
-              + lag_w_expo_trade
-              + regime
-              + atwar
-              + 0,
-      dat    = diff_data, 
-      subset = (per <= toa), # - extremely important !
-      family = binomial(link="logit"))
-# summary(model4)
-exp(coef(model4))
+```{r pwar}
+pwar <- subset(diff_data, select = c(id, atwar_any, per, adopted))
+pwar_c <- pwar %>%
+  group_by(id) %>%
+  summarise(adopt_any = max(adopted),
+            war_any = max(atwar_any),
+            adopt_any = ifelse(is.na(adopt_any), 0 , adopt_any),
+            war_any = ifelse(is.na(war_any), 0, war_any))
 
-stargazer(model4,model3,model1,model2,
-          type = "html", 
-          title = "Discrete Time Hazard/Diffusion Models of /nUnemployment Law, 1880-2010 in 173 countries",
-          dep.var.labels=c("Introduction Unemployment Law"),
-          covariate.labels=c("(1880-1912)", 
-                             "(1912-1929)",
-                             "(1930-1954)",
-                             "(1955-1979)",
-                             "(1980-2010)",
-                             "State Existed", 
-                             "Network Exposure: Culture (t-1)",
-                             "Network Exposure: Colonial",
-                             "Network Exposure: Trade (t-1)",
-                             "Network Exposrue: Spatial Proximity",
-                             "GDPpc 10k USD",
-                             "Democratization",
-                             "War (t thru t-2)"
-                             ),
-          apply.coef=exp, t.auto=F, p.auto=F, report = "vct*",
-          out="results/Tbl2_OR.htm")
+pwar_cwar <- pwar %>%
+  subset(atwar_any == 1) %>%
+  group_by(id) %>%
+  summarise(adopt_war = max(adopted),
+            adopt_war = ifelse(is.na(adopt_war), 0, adopt_war))
 
-webshot("results/Tbl2_OR.htm", file = "results/Tbl2_OR.png")
+pwar_c <- left_join(pwar_c, pwar_cwar, by = "id")
 
-knitr::include_graphics("results/Tbl2_OR.png")
+# create table
+Tbl2 <- as.data.frame(matrix(nrow = 5, ncol = 4))
+colnames(Tbl2) <- c(" ", "Countries","Adopted Unemployment","Adopted during War or Aftermath")
 
+Tbl2[1,] <- c("War", as.numeric(length(pwar_c$war_any[pwar_c$war_any == 1])), as.numeric(sum(pwar_c$adopt_any[pwar_c$war_any == 1])), as.numeric(sum(pwar_cwar$adopt_war)))
+
+Tbl2[3,] <- c("No War", as.numeric(length(pwar_c$war_any[pwar_c$war_any == 0])), as.numeric(sum(pwar_c$adopt_any[pwar_c$war_any == 0])), 0)
+
+Tbl2[5,] <- c("Total", as.numeric(Tbl2[1,2]) + as.numeric(Tbl2[3,2]), as.numeric(Tbl2[1,3]) + as.numeric(Tbl2[3,3]), as.numeric(Tbl2[1,4]) + as.numeric(Tbl2[3,4]))
+
+# column percentages
+Tbl2[2,] <- c("col pct",
+              paste0(round(100*(as.numeric(Tbl2[1,2])/as.numeric(Tbl2[5,2])),0),"%"),
+              paste0(round(100*(as.numeric(Tbl2[1,3])/as.numeric(Tbl2[5,3])),0),"%"),
+              paste0(round(100*(as.numeric(Tbl2[1,4])/as.numeric(Tbl2[5,4])),0),"%"))
+
+Tbl2[4,] <- c("col pct",
+              paste0(round(100*(as.numeric(Tbl2[3,2])/as.numeric(Tbl2[5,2])),0),"%"),
+              paste0(round(100*(as.numeric(Tbl2[3,3])/as.numeric(Tbl2[5,3])),0),"%"),
+              paste0(round(100*(as.numeric(Tbl2[3,4])/as.numeric(Tbl2[5,4])),0),"%"))
+
+write.csv(Tbl2, file = "results/Tbl2.csv")
 ```
 
 
-Everthing below here is just 'playing around' with visualizations. Except the very end where I try to apply robust standard errors, but for some reason it does not run. 
-
-```{r net2}
-# ---------------------------------------------
-# --- some functions of netdiffuseR, here for 
-# --- the cultural spheres network
-# ---------------------------------------------
-
-s <- 12345
-cols <- c("lightblue","green", "blue")
-oldpar <- par(no.readonly = T)
-coords <- set.seed(s);plot(diffnet_trade, main="Trade and Unemployment")
-```
 
 
-```{r net2a}
+```{r net1, echo = T}
 # bmp(filename = "results/culture_edu.bmp") # - create folder, mac users adjust
 # plot_diffnet(diffnet_culture, 
 #             slices = c(1,50,100,130), layout=coords)
 #dev.off()
 
-# plot_adopters(diffnet_culture, 
-#              include.legend = FALSE, what = c("adopt", "cumadopt"))
-plot_hazard(diffnet_trade, ylim=c(0,1))
+plot_adopters(diffnet_proximity, 
+              include.legend = FALSE, what = c("adopt", "cumadopt"), ylim = c(0,0.45), xlim = c(1900,2010))
 ```
 
 
-```{r net2b}
-plot_infectsuscep(diffnet_trade)
+```{r net2, echo = T}
+plot_hazard(diffnet_proximity, ylim=c(0,0.1), xlim=c(1900,2010))
+
+```
+
+
+```{r net3, echo = T}
+plot_infectsuscep(diffnet_proximity, logscale = T)
+# why is the log scale dropping cases?
 ```
 
 
 ```{r net3}
 # network threshold: required proportion or number of neighbors that leads you to adopt
-plot_threshold(diffnet_trade
+plot_threshold(diffnet_proximity
                , undirected = FALSE, vertex.size = 1/5)
 ```
-```{r net3a}
-# network threshold: required proportion or number of neighbors that leads you to adopt
-plot_threshold(diffnet_trade, undirected = FALSE, vertex.size = 1/5)
-```
-
-
 
 
 ```{r se_corrections}
@@ -362,62 +328,41 @@ plot_threshold(diffnet_trade, undirected = FALSE, vertex.size = 1/5)
 # step 1: calculate corrected standard errors and save output as an object: 
 
 
-m1 <- lmtest::coeftest(model1, vcov = vcovCL(model1, type="HC3", cluster =~ cluster_id))
+m1 <- lmtest::coeftest(model2, vcov = vcovCL(model2, type="HC3", cluster =~ cluster_id))
 # unclear error taking place here
 
 
-m1               
-summary(model1)
-
-m2 <- coeftest(model2, vcov = vcovCL(model2, type="HC3", cluster=~ cluster_id))
-
-m2
-
-m3 <- coeftest(model3, vcov = vcovCL(model3, type="HC3", cluster=~ cluster_id))
-
-m3
-
-m4 <- coeftest(model4, vcov = vcovCL(model4, type="HC3", cluster=~ cluster_id))
-
-m4
-
-# step 2: run stargazer3 with the following specification: 
-
-# 1. odds.rations = T !SPELLING! 
-
-# 2. stargazer3(list(m1, m2)...) this is the output of the coeftest function with the corrected
-# standard erors!! NOT THE GLM OUTPUT !!
-
-# 3. origin_model: GLM output. This is nessesary to add the model fit statistics to the table.
+m2 <- coeftest(model4a, vcov = vcovCL(model4a, type="HC3", cluster=~ cluster_id))
 
 
-# BEWARE of the covariate label order!! All your models need the independent variables
-# in the same order. If you have multiple models, add the ALL independent variable names to the function call below under covariate.labels!!
-# If one model has less variables, this space will be empty only for that model.
+m3 <- coeftest(model5a, vcov = vcovCL(model5a, type="HC3", cluster=~ cluster_id))
+
+
 
 # cheatsheets for starger modification: https://www.jakeruss.com/cheatsheets/stargazer/
 # these work with stargazer 3 as well. 
 
 # change the title, the dep.var.labels and the covariate.labels accordingly
 
-stargazer3(list(m1, m2, m3, m4), odds.ratios = T, origin_model = list(model1, model2, model3, model4), type = "html", se = list(NA, NA, NA, NA),
+stargazer3(list(m1, m2, m3), odds.ratios = T, origin_model = list(model2, model4a, model5a), type = "text", se = list(NA, NA, NA),
            title = "Diffusion of Work-Inury Law - Cultural Spheres Network",
            dep.var.labels=c("Introduction of Unemployment"),
-           covariate.labels=c("rate t(0-33)", 
-                              "rate t(33-49)",
-                              "rate t(50-74)",
-                              "rate t(75-99)",
-                              "rate t(100-130)",
-                              "state existed (=1,else=0)", 
-                              "GDP per capita / 10000 USD",
-                              "democratization" ,
-                              "cultural spheres netw.: w. exposure (lag 1 year)",
-                              "colonies netw.: exposure ",
-                              "trade net: w. exposure (lag 1 year)",
-                              "spatial proximity netw.: w. exposure "
-                              ),
+           covariate.labels=c("(1901-1929)",
+                             "(1930-1954)",
+                             "(1955-1979)",
+                             "(1980-2010)",
+                             "Relative GDP",
+                             "Democratization",
+                             "War and Aftermath",
+                             "Network Exposure: Spatial Proximity",
+                             "Network Exposure: Culture (t-1)"),
            out="results/models_final2.htm")
 
+
+```
+
+
+```{r other}
 # ---------------------------------------------
 # --- some functions of netdiffuseR, here for 
 # --- the cultural spheres network
