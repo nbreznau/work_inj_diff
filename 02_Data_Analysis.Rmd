@@ -21,32 +21,27 @@ knitr::opts_chunk$set(echo = T)
 ## 1. Final Data Touch Ups
 
 
+
 ```{r final_cleaning, warning = F, message = F}
 # Recode non-adopters to 2500
 diff_data$toa[is.na(diff_data$toa)] <- 2500
 diff_data_socins$toa[is.na(diff_data_socins$toa)] <- 2500
 
-# change 'state existed' to, state founded in last 4 years
+# change 'state existed' to, state founded in last 4 years. We also take the year before formation to account for measurement error in law and state formation timing.
 
 # FIRST LAW
 diff_data <- diff_data %>%
   group_by(id) %>%
-  mutate(existence = ifelse(existence - lag(existence) == 1, t, 0),
-         existence = max(existence, na.rm = T),
-         existence = ifelse(existence == 0, 1880, existence),
-         existence = ifelse((t - existence) > -1 & (t - existence) < 5, 1, 0))
+  mutate(existence = ifelse(existence < 1880, 1880, existence),
+         existence = ifelse((per - existence) > -2 & (per - existence) < 5, 1, 0))
 
 # SOCINS
 diff_data_socins <- diff_data_socins %>%
   group_by(id) %>%
-  mutate(year_nation = ifelse(existence - lag(existence) == 1, per, 0),
-         existence = ifelse(existence - lag(existence) == 1, t, 0),
-         year_nation = max(year_nation, na.rm = T),
-         year_nation = ifelse(year_nation == 0, 1880, year_nation),
-         existence = max(existence, na.rm = T),
-         existence = ifelse(existence == 0, 1880, existence),
+  mutate(existence = ifelse(existence < 1880, 1880, existence),
+         year_nation = existence,
          formation = per - year_nation, # for treatment effect plot
-         existence = ifelse((t - existence) > -1 & (t - existence) < 5, 1, 0))
+         existence = ifelse((per - existence) > -2 & (per - existence) < 5, 1, 0))
 
 treat_plot <- select(diff_data_socins, toa, id, per, formation, year_nation)
 colnames(treat_plot) <- c("socins" ,"id","per","formation","year_nation")
@@ -84,7 +79,7 @@ model1 <- glm(adopted ~
               + t75_99 
               + t100_130  
               + lag_w_expo_culture 
-              + w_expo_colony
+              #+ w_expo_colony
               + lag_w_expo_trade
               + gdp10000
               + regime
@@ -103,7 +98,7 @@ model2 <- glm(adopted ~
               + t100_130  
               + existence
               + lag_w_expo_culture 
-              + w_expo_colony
+              #+ w_expo_colony
               + lag_w_expo_trade
               + gdp10000
               + regime
@@ -120,7 +115,7 @@ model3 <- glm(adopted ~
               + t100_130  
               + existence
               + lag_w_expo_culture 
-              + w_expo_colony
+              #+ w_expo_colony
               + lag_w_expo_trade
               + lag_w_expo_proximity
               + gdp10000
@@ -143,9 +138,9 @@ stargazer(model1,model2,model3,
                              "(1980-2010)",
                              "State Founded (last 4 years)", 
                              "Network Exposure: Culture (t-1)",
-                             "Network Exposure: Colonial",
+                             #"Network Exposure: Colonial",
                              "Network Exposure: Trade (t-1)",
-                             "Network Exposrue: Spatial Proximity",
+                             "Network Exposure: Spatial Proximity",
                              "GDPpc 10k USD",
                              "Democratization" 
                              ),
@@ -212,9 +207,9 @@ model3_socins <- glm(adopted ~
               family = binomial(link="logit"))
 #summary(model2)
 #exp(coef(model2))
-stargazer(model1_socins,model2_socins,
+stargazer(model1_socins,model2_socins,model3_socins,
           type = "text", 
-          title = "Discrete Time Hazard/Diffusion Models of /nWork-Injury Law, 1880-2010 in 164 countries",
+          title = "Discrete Time Hazard/Diffusion Models of /nWork-Injury Law, 1880-2010 in 152 countries",
           dep.var.labels=c("First Work-Injury Social Insurance Law"),
           covariate.labels=c("(1880-1902)", 
                              "(1903-1928)",
@@ -223,7 +218,7 @@ stargazer(model1_socins,model2_socins,
                              "(1980-2010)",
                              "State Founded (last 4 years)", 
                              "Network Exposure: Culture (t-1)",
-                             "Network Exposure: Colonial",
+                             #"Network Exposure: Colonial",
                              "Network Exposure: Trade (t-1)",
                              "Network Exposrue: Spatial Proximity",
                              "GDPpc 10k USD",
@@ -231,7 +226,6 @@ stargazer(model1_socins,model2_socins,
                              ),
           out="results/Tbl2.htm")
 
-knitr::include_graphics("results/Tbl2.htm")
 ```
 
 ### Odd-Ratios
@@ -243,7 +237,7 @@ knitr::include_graphics("results/Tbl2.htm")
 
 stargazer(model1,model2,
           type = "text", 
-          title = "Discrete Time Hazard/Diffusion Models of /nWork-Injury Law, 1880-2010 in 173 countries",
+          title = "Discrete Time Hazard/Diffusion Models of /nWork-Injury Law, 1880-2010 in 152 countries",
           dep.var.labels=c("First Work-Injury Law"),
           covariate.labels=c("(1880-1902)", 
                              "(1903-1928)",
@@ -252,16 +246,15 @@ stargazer(model1,model2,
                              "(1980-2010)",
                              "State Founded (last 3 years)", 
                              "Network Exposure: Culture (t-1)",
-                             "Network Exposure: Colonial",
+                             #"Network Exposure: Colonial",
                              "Network Exposure: Trade (t-1)",
-                             "Network Exposrue: Spatial Proximity",
+                             "Network Exposure: Spatial Proximity",
                              "GDPpc 10k USD",
                              "Democratization" 
                              ),
           apply.coef=exp, t.auto=F, p.auto=F, report = "vct*",
           out="results/Tbl1_OR.htm")
 
-knitr::include_graphics("results/Tbl1_OR.htm")
 ```
 
 #### Social insurance
@@ -269,9 +262,9 @@ knitr::include_graphics("results/Tbl1_OR.htm")
 ```{r Tbl2_OR_socins, warning = F, message = F}
 #we add a command to present odd-ratios
 
-stargazer(model1_socins,model2_socins,
+stargazer(model1_socins,model2_socins,model3_socins,
           type = "text", 
-          title = "Discrete Time Hazard/Diffusion Models of /nWork-Injury Law, 1880-2010 in 173 countries",
+          title = "Discrete Time Hazard/Diffusion Models of /nWork-Injury Law, 1880-2010 in 152 countries",
           dep.var.labels=c("First Work-Injury Social Insurance Law"),
           covariate.labels=c("(1880-1902)", 
                              "(1903-1928)",
@@ -280,26 +273,27 @@ stargazer(model1_socins,model2_socins,
                              "(1980-2010)",
                              "State Founded (last 4 years)", 
                              "Network Exposure: Culture (t-1)",
-                             "Network Exposure: Colonial",
+                             #"Network Exposure: Colonial",
                              "Network Exposure: Trade (t-1)",
-                             "Network Exposrue: Spatial Proximity",
+                             "Network Exposure: Spatial Proximity",
                              "GDPpc 10k USD",
                              "Democratization" 
                              ),
           apply.coef=exp, t.auto=F, p.auto=F, report = "vct*",
           out="results/Tbl2_OR.htm")
 
-knitr::include_graphics("results/Tbl2_OR.htm")
 ```
 
 ### Coef Plots
 
 #### First Law
 
-```{r coefplots}
+```{r coefplots, echo = T}
 
-plot1 <- plot_coefs(model1,model2, coefs = c("A. Network Exposure:\n    Culture (t-1)" = "lag_w_expo_culture",
-                                    "B. Network Exposure:\n    Colonial" = "w_expo_colony",
+plot1 <- plot_coefs(model2,model3, 
+                    ci.level = 0.99,
+                    coefs = c("A. Network Exposure:\n    Culture (t-1)" = "lag_w_expo_culture",
+                                    #"B. Network Exposure:\n    Colonial" = "w_expo_colony",
                                     "C. Network Exposure:\n    Trade (t-1)" = "lag_w_expo_trade",
                                     "D. Network Exposure:\n    Spatial Proximity" = "lag_w_expo_proximity", 
                                     "E. State Founded\n    (last 4 years)" = "existence",
@@ -309,7 +303,7 @@ plot1 <- plot_coefs(model1,model2, coefs = c("A. Network Exposure:\n    Culture 
   theme(legend.position = "none",
         axis.text.y = element_text(hjust = 0)) +
   labs(title = "                          First Law") +
-  xlab(label = "Coefficient + 95%CI")
+  xlab(label = "Coefficient + 99%CI")
 
 
 ```
@@ -317,13 +311,22 @@ plot1 <- plot_coefs(model1,model2, coefs = c("A. Network Exposure:\n    Culture 
 #### Social insurance
 
 
-```{r coefplots_socins}
+```{r coefplots_socins, echo = T}
 
-plot2 <- plot_coefs(model1_socins,model2_socins, coefs = c("A" = "lag_w_expo_culture", "B" = "w_expo_colony", "C" = "lag_w_expo_trade", "D" = "lag_w_expo_proximity", "E" = "existence", "F" = "gdp10000", "G" = "regime"), colors = "Qual3") +
+plot2 <- plot_coefs(model2_socins,model3_socins,
+                    ci.level = 0.99,
+                    coefs = c("A" = "lag_w_expo_culture", 
+                              #"B" = "w_expo_colony", 
+                              "C" = "lag_w_expo_trade", 
+                              "D" = "lag_w_expo_proximity", 
+                              "E" = "existence", 
+                              "F" = "gdp10000", 
+                              "G" = "regime"), 
+                    colors = "Qual3") +
   coord_cartesian(xlim = c(-0.5,5)) + 
   theme(legend.position = "none") +
   labs(title = "    First Social Insurance Law") +
-  xlab(label = "Coefficient + 95%CI")
+  xlab(label = "Coefficient + 99%CI")
 
 
 agg_png(filename = "results/Fig1.png", height = 600, width = 1200, res = 144)
@@ -340,7 +343,7 @@ knitr::include_graphics("results/Fig1.png")
 
 Plot sequences centered at the formation of nation states
 
-```{r nation_plot}
+```{r nation_plot, echo = T}
 
 # remove missing
 treat_plot <- subset(treat_plot, formation != "Inf")
@@ -368,48 +371,51 @@ treat_plot <- treat_plot %>%
 ggplot(treat_plot, aes(formation, n_id, fill = law_seq)) +
   geom_tile() +
   scale_fill_manual(breaks = c("1", "2", "3"),
-  values = c("1","2","3"),
+  values = c("Grey","Brown","Darkgreen"),
   labels = c("None", "Liability", "Social\nInsurance"),
-  #colors = c("Grey","Brown","Darkgreen")
   ) +
   ylab(label = "Country") +
   xlab(label = "Time in Years\n(centered by year of state formation)") +
-  xlim(-50,50) +
+  xlim(-25,50) +
+  geom_vline(xintercept = 0) +
   theme(axis.text.y = element_blank())
 
 
 ```
 
 
+#### Adoption and Cumulative Adoption over time
 
+Note that here it doesn't matter which diffnet object we use, the underlying adoption data are identical
 
-```{r net1}
-# ---------------------------------------------
-# --- some functions of netdiffuseR, here for 
-# --- the trade spheres network
-# ---------------------------------------------
+##### First Law
 
-#s <- 12345
-#cols <- c("lightblue","green", "blue")
-#oldpar <- par(no.readonly = T)
-#coords <- set.seed(s);plot(diffnet_trade, main="Trade and Work-Injury Law")
+```{r net1_first, echo = T}
+plot_adopters(diffnet_proximity, 
+              include.legend = FALSE, what = c("adopt", "cumadopt"))
 ```
 
+##### Social Insurance
+
+```{r net1_socins}
+plot_adopters(diffnet_proximity_socins, 
+              include.legend = FALSE, what = c("adopt"), ylim = c(0,0.02))
+```
 
 ```{r net2}
 
-# plot_hazard(diffnet_trade, ylim=c(0,1))
+plot_hazard(diffnet_proximity_socins, ylim=c(0,0.2))
 ```
 
 
 ```{r net3}
-# plot_infectsuscep(diffnet_trade)
+plot_infectsuscep(diffnet_trade_socins, logscale = F)
 ```
 
 
 ```{r net4}
 # network threshold: required proportion or number of neighbors that leads you to adopt
-# plot_threshold(diffnet_trade, undirected = FALSE, vertex.size = 1/5)
+plot_threshold(diffnet_trade_socins, undirected = FALSE, vertex.size = 1/5)
 ```
 
 

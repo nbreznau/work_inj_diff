@@ -64,8 +64,6 @@ http://www.barkhof.uni-bremen.de/~mwindzio/capital_distance_edgelist.zip
 ## 1. Network Data
 
 ```{r windzio_data, warning=F, message=F}
-
-
 #--- 1. Networks here ---------------
 
 
@@ -127,11 +125,57 @@ plot(d)
 polygon(d, col="red", border="blue")
 trade_edgelist <- trade_dyadic
 
-# -- trade: is country non-existent in a particular moment? 
-# regime type from vdem data
-existence <- read.csv("data/trade_existence_dummy.csv", header = TRUE) # actor attributes
-# head(existence) 
-names(existence)[names(existence)=="iso3_ego"] <- "iso3"
+# -- we want this to be "independence" therefore, we use our own data to create this variable.
+
+A02_workinj <- read.csv("data/A02_workinj.csv", header = TRUE)
+
+# These data have missing cases, fix by using the empty frame
+
+A02_workinj <- select(A02_workinj, country_name, cow_code, iso3, year, independence)
+
+# Replace missing cow_codes
+A02_workinj$cow2 <- countrycode(A02_workinj$iso3, 'iso3c','cown')
+
+# Find mismatches
+# A02_workinj2 <- subset(A02_workinj, A02_workinj$cow_code != A02_workinj$cow2)
+# Fix
+A02_workinj <- A02_workinj %>%
+  mutate(cow_code = ifelse(cow2==817, 816, cow_code),
+         cow_code = ifelse(is.na(cow_code), cow2, cow_code),
+         cow_code = ifelse(country_name == "Serbia", 345, cow_code),
+         iso3 = ifelse(cow_code == 816, "VNM", ifelse(cow_code == 345, "SRB", iso3)))
+```
+
+The GWIP  presents us with a conundrum regarding treatment of the former Soveit Union states. Many were independent states on paper, but were under the centralized control of the Russian Communist party. Socialism is conceptually the same as social insurance when it comes to protections for workers. They do not pay into an insurance system; however, they are subjected to total state employment control. This means that their needs should be taken care of, as if they were in a social insurance system. Therefore, the first laws occur starting in 1922 for non-Russian Soviet states, as they form and/or join the USSR. However, the official independence of these states comes after the dissolution of the USSR in 1991. This means that we either recode the first laws to 1991 or record their independence dates to 1922, or before, depending on the case. We run our models with both versions of the recode but settle on the pre-USSR independence coding as these were national groups aiming to form states and joined the USSR as part of this process or through Russian force. This issue only applies to Belarus, Kyrgyzstan, Croatia and Slovenia.  
+
+```{r fixes, warning=F, message=F}
+
+A02_workinj <- A02_workinj %>%
+  mutate(independence = ifelse(iso3 == "BLR" | iso3 == "KGZ", 1922, ifelse(iso3 == "HRV" | iso3 == "SVN", 1937, independence)))
+
+existence <- select(A02_workinj, iso3, year, independence)
+
+colnames(existence) <- c("iso3", "year", "existence")
+
+# now make 0/1 for existence
+existence_c <- existence %>%
+  group_by(iso3) %>%
+  summarize(existence = max(existence, na.rm = T))
+
+existence <- select(existence, -c(existence))
+
+existence <- left_join(existence, existence_c, by = "iso3")
+
+existence <- existence %>%
+         mutate(exist = ifelse(year < existence, 0, 1))
+
+
+
+
+
+A02_workinj <- select(A02_workinj, country_name, cow_code, iso3, year,)
+
+
 
 
 
@@ -234,21 +278,10 @@ Fill in former Serbian republics at some point (basically as 'Serbia' in the GWI
 # ----- Project A 02 -----------------
 
 # Introduction of work regulations
-A02_workinj <- read.csv("data/A02_workinj.csv", header = TRUE)
+# we already load this data above to create the 'existence' variable.
+# A02_workinj <- read.csv("data/A02_workinj.csv", header = TRUE)
 
-# These data have missing cases, fix by using the empty frame
-A02_workinj <- select(A02_workinj, country_name, cow_code, iso3, year)
 
-# Replace missing cow_codes
-A02_workinj$cow2 <- countrycode(A02_workinj$iso3, 'iso3c','cown')
-
-# Find mismatches
-# A02_workinj2 <- subset(A02_workinj, A02_workinj$cow_code != A02_workinj$cow2)
-# Fix
-A02_workinj <- A02_workinj %>%
-  mutate(cow_code = ifelse(cow2==817, 816, cow_code),
-         cow_code = ifelse(is.na(cow_code), cow2, cow_code),
-         cow_code = ifelse(country_name == "Serbia", 345, cow_code))
 
 # unique(A02_workinj$cow_code) 165 OK!
 
@@ -320,12 +353,11 @@ keep in mind which networks we have
 
 ### FIRST LAW
 
+
 ```{r 4_netdiff_culture, warning = F, message = F}
-# -------------------------
-# - 4a) cultural spheres --
-# -------------------------
-# - here comes the core: creating the diffnet object
-#head(edgelist_cultural_spheres)
+
+# cultural spheres --
+
 dim(edgelist_cultural_spheres)
 diffnet_culture <- edgelist_to_diffnet(
   edgelist = edgelist_cultural_spheres[,1:2], # As usual, a two column dataset [,1:2]
@@ -635,8 +667,8 @@ table(diff_data_culture_socins$adopted) # don't care about n. of cases
 # FIRST LAW
 diff_data_culture <- diff_data_culture %>%
 mutate(t = per - 1880,
-       t0_22 = ifelse(t < 25, 1, 0), # stage one Europe, emergence (1880-1902)
-       t23_48 = ifelse(t >= 25 & t < 50, 1, 0), # 2 Russian/Soviet Revolution + WWI (1903-1928)
+       t0_22 = ifelse(t < 23, 1, 0), # stage one Europe, emergence (1880-1902)
+       t23_48 = ifelse(t >= 23 & t < 50, 1, 0), # 2 Russian/Soviet Revolution + WWI (1903-1928)
        t49_74 = ifelse(t >= 50 & t < 75, 1, 0), # WW2 + Marshall Plan (1929-1954)
        t75_99 = ifelse(t >= 75 & t < 100, 1, 0),
        t100_130 = ifelse(t >= 100, 1, 0))
@@ -645,8 +677,8 @@ mutate(t = per - 1880,
 #SOC INS
 diff_data_culture_socins <- diff_data_culture_socins %>%
 mutate(t = per - 1880,
-       t0_22 = ifelse(t < 25, 1, 0), # stage one Europe, emergence (1880-1902)
-       t23_48 = ifelse(t >= 25 & t < 50, 1, 0), # 2 Russian/Soviet Revolution + WWI (1903-1928)
+       t0_22 = ifelse(t < 23, 1, 0), # stage one Europe, emergence (1880-1902)
+       t23_48 = ifelse(t >= 23 & t < 50, 1, 0), # 2 Russian/Soviet Revolution + WWI (1903-1928)
        t49_74 = ifelse(t >= 50 & t < 75, 1, 0), # WW2 + Marshall Plan (1929-1955)
        t75_99 = ifelse(t >= 75 & t < 100, 1, 0),
        t100_130 = ifelse(t >= 100, 1, 0))
@@ -747,6 +779,11 @@ summary(diff_data_socins$lag_w_expo_culture)
 
 ## 7. Save Data
 ```{r savepoint}
+# drop missing cases
+diff_data <- diff_data[diff_data$existence != "-Inf",]
+
+diff_data_socins <- diff_data_socins[diff_data_socins$existence != "-Inf",]
+
 rm(trade_dyadic, trade_dyadic_consolidated, trade_edgelist, diff_data_culture, capital_distance_edgelist, d, ddat, edgelist_cultural_spheres, existence, gdp, regime, colonial_ties_edgelist)
 
 save.image(file = "data/.Rdata")
