@@ -47,6 +47,23 @@ treat_plot <- select(diff_data_socins, toa, id, per, formation, year_nation)
 colnames(treat_plot) <- c("socins" ,"id","per","formation","year_nation")
 treat_plot <- left_join(treat_plot, diff_data, by = c("id","per"))
 
+# Create a relative GDP measure, this puts the country in its global position and follows this changing position over time
+diff_data <- diff_data %>%
+  group_by(per) %>%
+  mutate(gdp_year_mean = mean(gdp10000, na.rm = T)) %>%
+  ungroup()
+
+diff_data <- diff_data %>%
+  mutate(gdp_rel = gdp10000 - gdp_year_mean)
+
+diff_data_socins <- diff_data_socins %>%
+  group_by(per) %>%
+  mutate(gdp_year_mean = mean(gdp10000, na.rm = T)) %>%
+  ungroup()
+
+diff_data_socins <- diff_data_socins %>%
+  mutate(gdp_rel = gdp10000 - gdp_year_mean)
+
 # create sequence variable (1= no law, 2 = liability/fund, 3 = social insurance)
 treat_plot <- treat_plot %>%
   mutate(law_seq = ifelse(per < toa, 1, 2),
@@ -119,6 +136,25 @@ model3 <- glm(adopted ~
               + lag_w_expo_trade
               + lag_w_expo_proximity
               + gdp10000
+              + regime
+              + 0,
+              dat    = diff_data, 
+              subset = (per <= toa),
+              family = binomial(link="logit"))
+
+model3a <- glm(adopted ~ 
+                + t0_22 
+              + t23_48 
+              + t49_74 
+              + t75_99 
+              + t100_130  
+              + existence
+              + lag_w_expo_culture 
+              #+ w_expo_colony
+              + lag_w_expo_trade
+              + lag_w_expo_proximity
+              + gdp10000
+              + gdp10000*existence
               + regime
               + 0,
               dat    = diff_data, 
@@ -228,63 +264,11 @@ stargazer(model1_socins,model2_socins,model3_socins,
 
 ```
 
-### Odd-Ratios
 
-#### First law
-
-```{r Tbl1_OR, warning = F, message = F}
-#we add a command to present odd-ratios
-
-stargazer(model1,model2,
-          type = "text", 
-          title = "Discrete Time Hazard/Diffusion Models of /nWork-Injury Law, 1880-2010 in 152 countries",
-          dep.var.labels=c("First Work-Injury Law"),
-          covariate.labels=c("(1880-1902)", 
-                             "(1903-1928)",
-                             "(1929-1954)",
-                             "(1955-1979)",
-                             "(1980-2010)",
-                             "State Founded (last 3 years)", 
-                             "Network Exposure: Culture (t-1)",
-                             #"Network Exposure: Colonial",
-                             "Network Exposure: Trade (t-1)",
-                             "Network Exposure: Spatial Proximity",
-                             "GDPpc 10k USD",
-                             "Democratization" 
-                             ),
-          apply.coef=exp, t.auto=F, p.auto=F, report = "vct*",
-          out="results/Tbl1_OR.htm")
-
-```
-
-#### Social insurance
-
-```{r Tbl2_OR_socins, warning = F, message = F}
-#we add a command to present odd-ratios
-
-stargazer(model1_socins,model2_socins,model3_socins,
-          type = "text", 
-          title = "Discrete Time Hazard/Diffusion Models of /nWork-Injury Law, 1880-2010 in 152 countries",
-          dep.var.labels=c("First Work-Injury Social Insurance Law"),
-          covariate.labels=c("(1880-1902)", 
-                             "(1903-1928)",
-                             "(1929-1954)",
-                             "(1955-1979)",
-                             "(1980-2010)",
-                             "State Founded (last 4 years)", 
-                             "Network Exposure: Culture (t-1)",
-                             #"Network Exposure: Colonial",
-                             "Network Exposure: Trade (t-1)",
-                             "Network Exposure: Spatial Proximity",
-                             "GDPpc 10k USD",
-                             "Democratization" 
-                             ),
-          apply.coef=exp, t.auto=F, p.auto=F, report = "vct*",
-          out="results/Tbl2_OR.htm")
-
-```
 
 ### Coef Plots
+
+We run thse at 99% confidence but label it at 95, because in the robust clustered standard errors in Table 1, they only make the 95% CI cutoff (they are close). I haven't found an easy way to use robust se's in a coef_plot so this is the next best option
 
 #### First Law
 
@@ -294,16 +278,19 @@ plot1 <- plot_coefs(model2,model3,
                     ci.level = 0.99,
                     coefs = c("A. Network Exposure:\n    Culture (t-1)" = "lag_w_expo_culture",
                                     #"B. Network Exposure:\n    Colonial" = "w_expo_colony",
-                                    "C. Network Exposure:\n    Trade (t-1)" = "lag_w_expo_trade",
-                                    "D. Network Exposure:\n    Spatial Proximity" = "lag_w_expo_proximity", 
-                                    "E. State Founded\n    (last 4 years)" = "existence",
-                                    "F. GDPpc 10k USD" = "gdp10000", 
-                                    "G. Democratization" = "regime"), colors = "Qual3") +
+                                    "B. Network Exposure:\n    Trade (t-1)" = "lag_w_expo_trade",
+                                    "C. Network Exposure:\n    Spatial Proximity" = "lag_w_expo_proximity", 
+                                    "D. State Founded\n    (last 4 years)" = "existence",
+                                    "E. GDP per cap" = "gdp10000", 
+                                    "F. Democratization" = "regime"), colors = "Qual3") +
+  annotate(geom = "text", x = 2, y = 4.2, label = "OR ~ 31", size = 3) +
+  annotate(geom = "text", x = 2, y = 3, label = "OR ~ 2.2", size = 3) +
+  annotate(geom = "text", x = 1, y = 1, label = "OR ~ 1.2", size = 3) +
   coord_cartesian(xlim = c(-0.5,5)) + 
   theme(legend.position = "none",
         axis.text.y = element_text(hjust = 0)) +
   labs(title = "                          First Law") +
-  xlab(label = "Coefficient + 99%CI")
+  xlab(label = "Coefficient + 95%CI")
 
 
 ```
@@ -315,22 +302,26 @@ plot1 <- plot_coefs(model2,model3,
 
 plot2 <- plot_coefs(model2_socins,model3_socins,
                     ci.level = 0.99,
-                    coefs = c("A" = "lag_w_expo_culture", 
+                    coefs = c("A." = "lag_w_expo_culture", 
                               #"B" = "w_expo_colony", 
-                              "C" = "lag_w_expo_trade", 
-                              "D" = "lag_w_expo_proximity", 
-                              "E" = "existence", 
-                              "F" = "gdp10000", 
-                              "G" = "regime"), 
+                              "B." = "lag_w_expo_trade", 
+                              "C." = "lag_w_expo_proximity", 
+                              "D." = "existence", 
+                              "E." = "gdp10000", 
+                              "F." = "regime"), 
                     colors = "Qual3") +
+  annotate(geom = "text", x = 2.1, y = 4.2, label = "OR ~ 20", size = 3) +
+  annotate(geom = "text", x = 2.4, y = 3, label = "OR ~ 3.6", size = 3) +
+  annotate(geom = "text", x = 0.9, y = 1, label = "OR ~ 1.1", size = 3) +
+  annotate(geom = "text", x = 3.2, y = 5, label = "OR ~ 5.1", size = 3) +
   coord_cartesian(xlim = c(-0.5,5)) + 
   theme(legend.position = "none") +
   labs(title = "    First Social Insurance Law") +
-  xlab(label = "Coefficient + 99%CI")
+  xlab(label = "Coefficient + 95%CI")
 
 
 agg_png(filename = "results/Fig1.png", height = 600, width = 1200, res = 144)
-ggarrange(plot1, plot2, widths = c(1,0.8))
+ggarrange(plot1, plot2, widths = c(1,0.75))
 
 dev.off()
 
@@ -338,6 +329,23 @@ knitr::include_graphics("results/Fig1.png")
 
 
 ```
+
+### Table of adoption
+
+```{r pcts, warning = F, message = F}
+diff_data_ex <- diff_data[diff_data$existence == 1, ] %>%
+  group_by(id) %>%
+  mutate(e = ifelse(toa == per, 1, 0)) %>%
+  summarise(enacted = max(e))
+
+diff_data_ex_socins <- diff_data_socins[diff_data_socins$existence == 1, ] %>%
+  group_by(id) %>%
+  mutate(e = ifelse(toa == per, 1, 0)) %>%
+  summarise(enacted = max(e))
+  
+```
+
+Of the 152 countries, `r sum(diff_data_ex$enacted)` enacted a first law and `r sum(diff_data_ex_socins$enacted)` enacted a first social insurance during the first 5 years of nation state formation.
 
 ### Treatment plot
 
@@ -368,17 +376,22 @@ treat_plot <- treat_plot %>%
 
 
 
-ggplot(treat_plot, aes(formation, n_id, fill = law_seq)) +
+ggplot(treat_plot, aes(formation, rev(n_id), fill = law_seq)) +
   geom_tile() +
   scale_fill_manual(breaks = c("1", "2", "3"),
-  values = c("Grey","Brown","Darkgreen"),
-  labels = c("None", "Liability", "Social\nInsurance"),
+  values = c("Grey","chocolate4","seagreen4"),
+  labels = c("None", "Employer\nLiability", "Social\nInsurance"),
   ) +
   ylab(label = "Country") +
   xlab(label = "Time in Years\n(centered by year of state formation)") +
   xlim(-25,50) +
-  geom_vline(xintercept = 0) +
-  theme(axis.text.y = element_blank())
+  geom_vline(xintercept = -0.5, size = 1) +
+  geom_rect(mapping = aes(xmin))
+  theme_classic() +
+  theme(axis.text.y = element_blank(),
+        axis.line = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_blank())
 
 
 ```
