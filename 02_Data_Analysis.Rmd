@@ -11,7 +11,7 @@ University of Bremen
 ```{r setup}
 rm(list = ls(all = T))
 
-pacman::p_load('netdiffuseR','stargazer','tidyverse','dplyr','countrycode','sandwich','lmtest','jtools','ragg','ggpubr','rvest','nnet','knitr')
+pacman::p_load('netdiffuseR','stargazer','tidyverse','dplyr','countrycode','sandwich','lmtest','jtools','ragg','ggpubr','rvest','nnet','knitr','Hmisc','survminer','survival')
 
 load("data/.Rdata")
 
@@ -47,22 +47,33 @@ treat_plot <- select(diff_data_socins, toa, id, per, formation, year_nation)
 colnames(treat_plot) <- c("socins" ,"id","per","formation","year_nation")
 treat_plot <- left_join(treat_plot, diff_data, by = c("id","per"))
 
-# Create a relative GDP measure, this puts the country in its global position and follows this changing position over time
+# Create relative GDP and ag measures, this puts the country in its global position and follows this changing position over time. Without this change, a lower GDP/higher agricutlrue percent simply predicts year (i.e. lower/higher reflets an earlier year). Also create within country GDP (and trim GDP outliers).
+
 diff_data <- diff_data %>%
   group_by(per) %>%
-  mutate(gdp_year_mean = mean(gdp10000, na.rm = T)) %>%
+  mutate(gdp_year_mean = mean(gdp10000, na.rm = T),
+         ag_year_mean = mean(pct_ag_01_i, na.rm = T)) %>%
   ungroup()
 
 diff_data <- diff_data %>%
-  mutate(gdp_rel = gdp10000 - gdp_year_mean)
+  mutate(gdp_rel = gdp10000 - gdp_year_mean,
+         ag_rel = pct_ag_01_i - ag_year_mean) %>%
+  group_by(id) %>%
+  mutate(gdp_id_mean = mean(gdp10000, na.rm = T),
+         gdp_within = gdp10000 - gdp_id_mean)
 
 diff_data_socins <- diff_data_socins %>%
   group_by(per) %>%
-  mutate(gdp_year_mean = mean(gdp10000, na.rm = T)) %>%
+  mutate(gdp_year_mean = mean(gdp10000, na.rm = T),
+         ag_year_mean = mean(pct_ag_01_i, na.rm = T)) %>%
   ungroup()
 
 diff_data_socins <- diff_data_socins %>%
-  mutate(gdp_rel = gdp10000 - gdp_year_mean)
+  mutate(gdp_rel = gdp10000 - gdp_year_mean,
+         ag_rel = pct_ag_01_i - ag_year_mean) %>%
+  group_by(id) %>%
+  mutate(gdp_id_mean = mean(gdp10000, na.rm = T),
+         gdp_within = gdp10000 - gdp_id_mean)
 
 # create sequence variable (1= no law, 2 = liability/fund, 3 = social insurance)
 treat_plot <- treat_plot %>%
@@ -78,6 +89,8 @@ We run three models:
 1. Without main test variable nation formation and without spatial proximity
 2. With main test variable nation formation but without spatial proximity
 3. All
+
+We tested relative GDP, within-country GDP variance and regular GDP, none produced any effects at all.
 
 ```{r main_models, warning = F, message = F}
 # -----------------------------------------------------------------
@@ -196,7 +209,7 @@ model1_socins <- glm(adopted ~
               + t75_99 
               + t100_130  
               + lag_w_expo_culture 
-              + w_expo_colony
+              #+ w_expo_colony
               + lag_w_expo_trade
               + gdp10000
               + regime
@@ -215,7 +228,7 @@ model2_socins <- glm(adopted ~
               + t100_130  
               + existence
               + lag_w_expo_culture 
-              + w_expo_colony
+              #+ w_expo_colony
               + lag_w_expo_trade
               + gdp10000
               + regime
@@ -232,7 +245,7 @@ model3_socins <- glm(adopted ~
               + t100_130  
               + existence
               + lag_w_expo_culture 
-              + w_expo_colony
+              #+ w_expo_colony
               + lag_w_expo_trade
               + lag_w_expo_proximity
               + gdp10000
@@ -268,7 +281,7 @@ stargazer(model1_socins,model2_socins,model3_socins,
 
 ### Coef Plots
 
-We run thse at 99% confidence but label it at 95, because in the robust clustered standard errors in Table 1, they only make the 95% CI cutoff (they are close). I haven't found an easy way to use robust se's in a coef_plot so this is the next best option
+We run these at 99% confidence but label it at 95, because in the robust clustered standard errors in Table 1, they only make the 95% CI cutoff (they are close). I haven't found an easy way to use robust se's in a coef_plot so this is the next best option as they are very similar
 
 #### First Law
 
@@ -397,15 +410,153 @@ dev.off()
 knitr::include_graphics("results/Fig1.png")
 
 ```
+### Sesitivity Analysis
+
+Including Agriculture instead of GDP. This still needs work as the period 1990 to 2010 seems to have mostly been interpolated and therefore, not of much use. *Try linear interpolation rather than simply filling in the most recent values* because some countries have no observations until later and this relly messes up the data.
+
+```{r sens}
+model3_sens <- glm(adopted ~ 
+              + t0_22 
+              + t23_48 
+              + t49_74 
+              + t75_99 
+              + t100_130  
+              + existence
+              #+ lag_w_expo_culture 
+              #+ w_expo_colony
+              + lag_w_expo_trade
+              + lag_w_expo_proximity
+              #+ ag_rel
+              + regime
+              + 0,
+              dat    = diff_data, 
+              subset = (per <= toa),
+              family = binomial(link="logit"))
+
+model3_socins_sens <- glm(adopted ~ 
+                + t0_22 
+              + t23_48 
+              + t49_74 
+              + t75_99 
+              + t100_130  
+              + existence
+              #+ lag_w_expo_culture 
+              #+ w_expo_colony
+              + lag_w_expo_trade
+              + lag_w_expo_proximity
+              + ag_rel
+              + regime
+              + 0,
+              dat    = diff_data_socins, 
+              subset = (per <= toa),
+              family = binomial(link="logit"))
+#summary(model2)
+#exp(coef(model2))
+stargazer(model3_sens,model3_socins_sens,
+          type = "text", 
+          title = "Discrete Time Hazard/Diffusion Models of /nWork-Injury Law, 1880-2010 in 83 countries",
+          dep.var.labels=c("First Work-Injury Social Insurance Law"),
+
+          out="results/Tbl3_ag_sens.htm")
+```
 
 
 #### Adoption and Cumulative Adoption over time
 
 Note that here it doesn't matter which diffnet object we use, the underlying adoption data are identical
 
+
 ##### First Law
 
+Create groups within the data. High/Low GDP in 1900 & 2000.
+
+> mean(diff_data$gdp10000[diff_data$per == 1900], na.rm = T)
+[1] 0.1851475
+> mean(diff_data$gdp10000[diff_data$per == 2000], na.rm = T)
+[1] 1.214281
+
+```{r net_groups}
+gdp_groups <- diff_data %>%
+  select(gdp10000, lag_w_expo_proximity, id, per, adopted) %>%
+  mutate(gdp_1900 = ifelse(gdp10000 <= 0.2 & per == 1900, 1, 0),
+         gdp_2000 = ifelse(gdp10000 <= 1.4 & per == 2000, 1, 0),
+         proximity = ifelse(lag_w_expo_proximity <= 0.5 & adopted == 1 & lag(adopted) == 0, 1, 0)) %>%
+  group_by(id) %>%
+  summarise(gdp1900 = max(gdp_1900, na.rm = T),
+            gdp2000 = max(gdp_2000, na.rm = T),
+            proxim = max(proximity, na.rm = T))
+
+diff_data_gdp <- left_join(diff_data, gdp_groups, by = "id")
+diff_data_socins_gdp <- left_join(diff_data_socins, gdp_groups, by = "id")
+
+# remove NA
+diff_data_gdp <- diff_data_gdp[!is.na(diff_data_gdp$adopted),]
+
+
+
+# change to survival data, remove objects after adoption
+ diff_data_gdp <- diff_data_gdp %>%
+  group_by(id) %>%
+  mutate(cut = adopted + lag(adopted),
+         cut = ifelse(is.na(cut), 0, cut)) %>%
+  subset(cut == 1) %>%
+  ungroup()
+
+ diff_data_socins_gdp <- diff_data_socins_gdp %>%
+  group_by(id) %>%
+  mutate(cut = adopted + lag(adopted),
+         cut = ifelse(is.na(cut), 0, cut)) %>%
+  subset(cut == 1) %>%
+  ungroup()
+
+# create Cox regression object
+fit1 <- survfit(Surv(per, adopted) ~ gdp1900, data = diff_data_gdp)
+
+fit3 <- survfit(Surv(per, adopted) ~ gdp1900, data = diff_data_socins_gdp)
+
+```
+
+
+```{r surv1}
+agg_png(filename = "results/Fig3_A.png", height = 400, width = 400, res = 72)
+
+ggsurvplot(fit1, data = diff_data_gdp, 
+           fun = "event",
+           conf.int = T,
+           palette = "jco",
+           xlim = c(1880,2010),
+           break.time.by = 20,
+           xlab = "Year",
+           legend.labs = c("Start GDP High","Start GDP Low"),
+           title = "First Law",
+           ylab = "")
+dev.off()
+knitr::include_graphics("results/Fig3_A.png")
+```
+
+
+
+```{r surv3}
+agg_png(filename = "results/Fig3_B.png", height = 400, width = 400, res = 72)
+
+ggsurvplot(fit3, data = diff_data_socins_gdp, 
+           fun = "event",
+           conf.int = T,
+           palette = "jco",
+           xlim = c(1880,2010),
+           break.time.by = 20,
+           xlab = "Year",
+           legend.labs = c("Start GDP High","Start GDP Low"),
+           title = "First Social Insurance",
+           ylab = "")
+dev.off()
+knitr::include_graphics("results/Fig3_B.png")
+
+```
+
+
 ```{r net1_first, echo = T}
+
 plot_adopters(diffnet_proximity, 
               include.legend = FALSE, what = c("adopt", "cumadopt"))
 ```

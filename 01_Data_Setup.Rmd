@@ -16,7 +16,7 @@ We setup the data to analyze both the first law (often employer liability), and 
 rm(list = ls(all = T))
 
 
-pacman::p_load('netdiffuseR','stargazer','tidyverse','dplyr','countrycode','sandwich','lmtest')
+pacman::p_load('netdiffuseR','stargazer','tidyverse','dplyr','countrycode','sandwich','lmtest','Hmisc')
 
 # stargazer 3 (define manually to make code faster)
 # source("http://www.barkhof.uni-bremen.de/~mwindzio/modified_stargazer.R")
@@ -149,7 +149,6 @@ A02_workinj <- A02_workinj %>%
 The GWIP  presents us with a conundrum regarding treatment of the former Soveit Union states. Many were independent states on paper, but were under the centralized control of the Russian Communist party. Socialism is conceptually the same as social insurance when it comes to protections for workers. They do not pay into an insurance system; however, they are subjected to total state employment control. This means that their needs should be taken care of, as if they were in a social insurance system. Therefore, the first laws occur starting in 1922 for non-Russian Soviet states, as they form and/or join the USSR. However, the official independence of these states comes after the dissolution of the USSR in 1991. This means that we either recode the first laws to 1991 or record their independence dates to 1922, or before, depending on the case. We run our models with both versions of the recode but settle on the pre-USSR independence coding as these were national groups aiming to form states and joined the USSR as part of this process or through Russian force. This issue only applies to Belarus, Kyrgyzstan, Croatia and Slovenia.  
 
 ```{r fixes, warning=F, message=F}
-
 A02_workinj <- A02_workinj %>%
   mutate(independence = ifelse(iso3 == "BLR" | iso3 == "KGZ", 1922, ifelse(iso3 == "HRV" | iso3 == "SVN", 1937, independence)))
 
@@ -174,11 +173,42 @@ existence <- existence %>%
 
 
 A02_workinj <- select(A02_workinj, country_name, cow_code, iso3, year,)
+```
+
+Collier and Messick (1975) argue that percent labor force in agriculture is key to the introduction of work-injury law. This measure should be an indicator of industrialization/modernization. Therefore we import the Banks time-series data here. It is available for a smaller set of countries, but provides a robustness check.
+
+```{r pct_ag}
+pct_ag <- read_csv(file = "data/CNTSDATA_2020_Ag_only.csv")
+
+pct_ag <- select(pct_ag, iso3, year, pct_ag_01)
+
+# linear interpolate non-complete-missing series
+pct_ag <- pct_ag %>%
+  group_by(iso3) %>%
+  filter(any(!is.na(pct_ag_01))) %>%
+  subset(iso3 != "ARE") %>% # have only one value
+  subset(iso3 != "BGD") %>%
+  subset(iso3 != "BWA") %>%
+  subset(iso3 != "CHN") %>%
+  subset(iso3 != "CMR") %>%
+  subset(iso3 != "FJI") %>%
+  subset(iso3 != "GAB") %>%
+  subset(iso3 != "GUY") %>%
+  subset(iso3 != "MWI") %>%
+  mutate(pct_ag_01_i = zoo::na.approx(pct_ag_01, na.rm = F),
+         pct_ag_01_i = zoo::na.fill(pct_ag_01_i, "extend")) %>%
+  ungroup()
+
+# put together
+A02_workinj <- left_join(A02_workinj, pct_ag, by = c("iso3", "year")) 
 
 
 
+```
 
 
+
+```{r fixes2, warning=F, message=F}
 #----- 1c) colonial ties from CEPI --
 
 # - this is only a cross-sectional network ! 
@@ -285,7 +315,7 @@ Fill in former Serbian republics at some point (basically as 'Serbia' in the GWI
 
 # unique(A02_workinj$cow_code) 165 OK!
 
-# Import 'correct' GWIP data
+# Make sure gwip data is up to date
 gwip <- read.csv("data/gwip_v1.csv")
 gwip <- select(gwip, -c(country_name))
 
@@ -310,7 +340,7 @@ mutate(labor_workinjury_firstlaw = ifelse(labor_workinjury_firstlaw < 1880, 1880
 covar_ <- data.frame(covar_base)
 head(covar_)
 
-A02_2 <- data.frame(subset(  A02_workinj, select = c(iso3,labor_workinjury_firstlaw,labor_workinjury_first_socins,year)  ))
+A02_2 <- data.frame(subset(  A02_workinj, select = c(iso3,labor_workinjury_firstlaw,labor_workinjury_first_socins,year,pct_ag_01_i)  ))
 covar_ <- merge(covar_, A02_2,by=c("iso3","year")) 
 # head(covar_)
 
@@ -704,7 +734,7 @@ diffnet_culture_df_socins <- data.frame(diffnet_culture_socins)
 
 
 # -------------------------------------------------------
-# -------------- merge everthing together ---------------
+# -------------- merge everything together ---------------
 # -------------------------------------------------------
 # --- merge id is now "id",  automatically generated in netdiffuseR objects
 
