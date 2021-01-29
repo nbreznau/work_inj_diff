@@ -287,13 +287,15 @@ plot1 <- plot_coefs(model2,model3,
                                     "C. Network Exposure:\n    Spatial Proximity" = "lag_w_expo_proximity", 
                                     "D. State Founded\n    (last 4 years)" = "existence",
                                     "E. GDP per cap" = "gdp10000", 
-                                    "F. Democratization" = "regime"), colors = "Qual3") +
+                                    "F. Democratization" = "regime"), colors = "Qual1") +
   annotate(geom = "text", x = 2, y = 4.2, label = "OR ~ 31", size = 3) +
   annotate(geom = "text", x = 2, y = 3, label = "OR ~ 2.2", size = 3) +
   annotate(geom = "text", x = 1, y = 1, label = "OR ~ 1.2", size = 3) +
   coord_cartesian(xlim = c(-0.5,5)) + 
   theme(legend.position = "none",
-        axis.text.y = element_text(hjust = 0)) +
+        axis.text.y = element_text(color = "black", hjust = 0),
+        axis.title = element_text(color = "black"),
+        title = element_text(color = "black")) +
   labs(title = "                          First Law") +
   xlab(label = "Coefficient + 95%CI")
 
@@ -314,13 +316,16 @@ plot2 <- plot_coefs(model2_socins,model3_socins,
                               "D." = "existence", 
                               "E." = "gdp10000", 
                               "F." = "regime"), 
-                    colors = "Qual3") +
+                    colors = "Qual1") +
   annotate(geom = "text", x = 2.1, y = 4.2, label = "OR ~ 20", size = 3) +
   annotate(geom = "text", x = 2.4, y = 3, label = "OR ~ 3.6", size = 3) +
   annotate(geom = "text", x = 0.9, y = 1, label = "OR ~ 1.1", size = 3) +
   annotate(geom = "text", x = 3.2, y = 5, label = "OR ~ 5.1", size = 3) +
   coord_cartesian(xlim = c(-0.5,5)) + 
-  theme(legend.position = "none") +
+  theme(legend.position = "none",
+        axis.text.y = element_text(color = "black", hjust = 0),
+        axis.title = element_text(color = "black"),
+        title = element_text(color = "black")) +
   labs(title = "    First Social Insurance Law") +
   xlab(label = "Coefficient + 95%CI")
 
@@ -354,7 +359,7 @@ all <- diff_data_socins %>% group_by(id) %>% summarise(enacted_ever = max(adopte
   
 ```
 
-Of the 152 countries, `r sum(diff_data_ex$enacted)` enacted a first law and `r sum(diff_data_ex_socins$enacted)` enacted a first social insurance during the first 5 years of nation state formation. Of the `r sum(diff_data_socins$enacted_ever)` countries that ever enacted work-injury social insurance up to 2010, `r round(100*(sum(diff_data_ex_socins$enacted) /sum(all$enacted_ever)),1)` did so during state formation.
+Of the 150 countries, `r sum(diff_data_ex$enacted)` enacted a first law and `r sum(diff_data_ex_socins$enacted)` enacted a first social insurance during the first 5 years of nation state formation. Of the `r sum(all$enacted_ever)` countries that ever enacted work-injury social insurance up to 2010, `r round(100*(sum(diff_data_ex_socins$enacted) /sum(all$enacted_ever)),1)` did so during state formation.
 
 ### Treatment plot
 
@@ -384,16 +389,16 @@ treat_plot <- treat_plot %>%
   ungroup()
 
 
-agg_png(filename = "results/Fig1.png", height = 300, width = 500, res = 72)
+agg_png(filename = "results/Fig1.png", height = 600, width = 750, res = 144)
 ggplot(treat_plot, aes(formation, rev(n_id), fill = law_seq)) +
   geom_tile() +
   scale_fill_manual(breaks = c("1", "2", "3"),
   values = c("grey25","chocolate4","seagreen4"),
-  labels = c("None", "Employer\nLiability", "Social\nInsurance"),
+  labels = c("None", "Employer Liability", "Social Insurance"),
   ) +
   ylab(label = "Country") +
   xlab(label = "Time in Years\n(centered by year of state formation)") +
-  xlim(-25,50) +
+  xlim(-25,75) +
   geom_vline(xintercept = -0.5, size = 1) +
   theme_classic() +
   theme(axis.text.y = element_blank(),
@@ -515,7 +520,7 @@ fit3 <- survfit(Surv(per, adopted) ~ gdp1900, data = diff_data_socins_gdp)
 
 
 ```{r surv1}
-agg_png(filename = "results/Fig3_A.png", height = 400, width = 400, res = 72)
+agg_png(filename = "results/Fig3_A.png", height = 600, width = 600, res = 144)
 
 ggsurvplot(fit1, data = diff_data_gdp, 
            fun = "event",
@@ -534,7 +539,7 @@ knitr::include_graphics("results/Fig3_A.png", dpi = 48)
 
 
 ```{r surv3}
-agg_png(filename = "results/Fig3_B.png", height = 400, width = 400, res = 72)
+agg_png(filename = "results/Fig3_B.png", height = 600, width = 600, res = 144)
 
 ggsurvplot(fit3, data = diff_data_socins_gdp, 
            fun = "event",
@@ -657,6 +662,63 @@ Tbl1 <- as.data.frame(read_html("results/models_final2.htm") %>% html_table(fill
 Tbl1 <- Tbl1[Tbl1$X7 != "",]
 
 write.csv(Tbl1, file = "results/Tbl1.csv")
+
+```
+
+### Sensitivity Analysis
+
+Colonial Legacies have an influence that, after the colony ends is essentially constant when colonies become independent. 
+
+Thus, the influence of a previous colony that has already ended at that time becomes smaller proportionally to the currently existing colony. When the country then becomes completely independent, the influence no longer differs proportionally from each other. It is thus frozen in its strength. 
+
+Colonial legacies have an overall declining strength on the diffusion process. 
+Thus, we calculated a non_normalized version of exposure. Influence of current and past colonies is still weighted and exposure calculated proportionally. However, exposure is constantly declining with more time after independence. Furthermore, we create a situation in which exposure can be larger than 1, depending on the weights of the network ties. 
+
+Then we re-run our main models with this variable included.
+
+```{r sens2}
+model3_sens2 <- glm(adopted ~ 
+                + t0_22 
+              + t23_48 
+              + t49_74 
+              + t75_99 
+              + t100_130  
+              + existence
+              + lag_w_expo_culture 
+              + non_normalized_w_expo_colony
+              + lag_w_expo_trade
+              + lag_w_expo_proximity
+              + gdp10000
+              + regime
+              + 0,
+              dat    = diff_data, 
+              subset = (per <= toa),
+              family = binomial(link="logit"))
+
+
+model3_socins_sens2 <- glm(adopted ~ 
+                + t0_22 
+              + t23_48 
+              + t49_74 
+              + t75_99 
+              + t100_130  
+              + existence
+              + lag_w_expo_culture 
+              + non_normalized_w_expo_colony
+              + lag_w_expo_trade
+              + lag_w_expo_proximity
+              + gdp10000
+              + regime
+              + 0,
+              dat    = diff_data_socins, 
+              subset = (per <= toa),
+              family = binomial(link="logit"))
+#summary(model2)
+#exp(coef(model2))
+stargazer(model3_sens2,model3_socins_sens2,
+          type = "text", 
+          title = "Discrete Time Hazard/Diffusion Models of /nWork-Injury Law, 1880-2010 in 152 countries",
+          out = "results/Tbl_sens_non.htm")
 
 ```
 

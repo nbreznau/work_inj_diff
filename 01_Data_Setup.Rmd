@@ -159,7 +159,7 @@ colnames(existence) <- c("iso3", "year", "existence")
 # now make 0/1 for existence
 existence_c <- existence %>%
   group_by(iso3) %>%
-  summarize(existence = max(existence, na.rm = T))
+  dplyr::summarize(existence = max(existence, na.rm = T))
 
 existence <- select(existence, -c(existence))
 
@@ -172,7 +172,7 @@ existence <- existence %>%
 
 
 
-A02_workinj <- select(A02_workinj, country_name, cow_code, iso3, year,)
+A02_workinj <- select(A02_workinj, country_name, cow_code, iso3, year)
 ```
 
 Collier and Messick (1975) argue that percent labor force in agriculture is key to the introduction of work-injury law. This measure should be an indicator of industrialization/modernization. Therefore we import the Banks time-series data here. It is available for a smaller set of countries, but provides a robustness check.
@@ -450,6 +450,8 @@ diffnet_colony[["lag_expo_colony"]] <- exposure(diffnet_colony, valued = F)
 
 diffnet_colony[["adopted"]]  <- toa_mat(diffnet_colony)$cumadopt
 
+diffnet_colony[["non_normalized_w_expo_colony"]] <- exposure(diffnet_colony, valued = T, normalized = FALSE)
+
 # diffnet_colony
 # summary(diffnet_colony)
 summary(data.frame(diffnet_colony)$w_expo_colony)
@@ -599,6 +601,8 @@ diffnet_colony_socins[["lag_expo_colony"]] <- exposure(diffnet_colony_socins, va
 
 diffnet_colony_socins[["adopted"]]  <- toa_mat(diffnet_colony_socins)$cumadopt
 
+diffnet_colony_socins[["non_normalized_w_expo_colony"]] <- exposure(diffnet_colony_socins, valued = T, normalized = FALSE)
+
 summary(data.frame(diffnet_colony_socins)$w_expo_colony)
 ```
 
@@ -739,7 +743,7 @@ diffnet_culture_df_socins <- data.frame(diffnet_culture_socins)
 # --- merge id is now "id",  automatically generated in netdiffuseR objects
 
 # FIRST LAW
-d <- subset(  diffnet_colony_df, select = c(id,per,w_expo_colony, lag_expo_colony)  )
+d <- subset(  diffnet_colony_df, select = c(id,per,w_expo_colony, lag_expo_colony, non_normalized_w_expo_colony))
 diff_data <- merge(diff_data, d,by=c("id","per")) 
 d <- subset(  diffnet_trade_df, select = c(id,per,lag_w_expo_trade, lag_expo_trade)  )
 diff_data <- merge(diff_data, d,by=c("id","per")) 
@@ -747,7 +751,7 @@ d <- subset(  diffnet_proximity_df, select = c(id,per,lag_w_expo_proximity, lag_
 diff_data <- merge(diff_data, d,by=c("id","per")) 
 
 # SOC INS
-d <- subset(  diffnet_colony_df_socins, select = c(id,per,w_expo_colony, lag_expo_colony)  )
+d <- subset(  diffnet_colony_df_socins, select = c(id,per,w_expo_colony, lag_expo_colony, non_normalized_w_expo_colony)  )
 diff_data_socins <- merge(diff_data_socins, d,by=c("id","per")) 
 d <- subset(  diffnet_trade_df_socins, select = c(id,per,lag_w_expo_trade, lag_expo_trade)  )
 diff_data_socins <- merge(diff_data_socins, d,by=c("id","per")) 
