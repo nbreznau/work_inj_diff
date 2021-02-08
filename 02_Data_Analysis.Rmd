@@ -454,7 +454,7 @@ model3_socins_sens <- glm(adopted ~
 
 stargazer(model3_sens,model3_socins_sens,
           type = "text", 
-          title = "Discrete Time Hazard/Diffusion Models of /nWork-Injury Law, 1880-2010 in 83 countries",
+          title = "Discrete Time Hazard/Diffusion Models of /nWork-Injury Law, 1880-2010 in 151 countries",
           dep.var.labels=c("First Work-Injury Social Insurance Law"),
 
           out="results/Tbl3_ag_sens.htm")
@@ -588,82 +588,6 @@ plot_infectsuscep(diffnet_trade_socins, logscale = F)
 plot_threshold(diffnet_trade_socins, undirected = FALSE, vertex.size = 1/5)
 ```
 
-```{r se_corrections}
-# ---------------------------------------------
-# --- Calculate the  corrected standard errors
-# --- the cultural spheres network
-# ---------------------------------------------
-
-# Standard error correction: Huber-White standard errors are calculated AFTER the model
-# and used to re-calculate the significance
-
-# step 1: calculate corrected standard errors and save output as an object: 
-
-
-m1 <- lmtest::coeftest(model1, vcov = vcovCL(model1, type="HC3", cluster =~ cluster_id))
-# unclear error taking place here
-
-m2 <- lmtest::coeftest(model2, vcov = vcovCL(model2, type="HC3", cluster=~ cluster_id))
-
-m3 <- lmtest::coeftest(model3, vcov = vcovCL(model3, type="HC3", cluster=~ cluster_id))
-
-m4 <- lmtest::coeftest(model1_socins, vcov = vcovCL(model1_socins, type="HC3", cluster=~ cluster_id))
-
-m5 <- lmtest::coeftest(model2_socins, vcov = vcovCL(model2_socins, type="HC3", cluster=~ cluster_id))
-
-m6 <- lmtest::coeftest(model3_socins, vcov = vcovCL(model3_socins, type="HC3", cluster=~ cluster_id))
-
-
-# step 2: run stargazer3 with the following specification: 
-
-# 1. odds.ratios = T 
-
-# 2. stargazer3(list(m1, m2)...) this is the output of the coeftest function with the corrected
-# standard erors!! NOT THE GLM OUTPUT !!
-
-# 3. origin_model: GLM output. This is nessesary to add the model fit statistics to the table.
-
-
-# BEWARE of the covariate label order!! All your models need the independent variables
-# in the same order. If you have multiple models, add the ALL independent variable names to the function call below under covariate.labels!!
-# If one model has less variables, this space will be empty only for that model.
-
-# cheatsheets for starger modification: https://www.jakeruss.com/cheatsheets/stargazer/
-# these work with stargazer 3 as well. 
-
-# change the title, the dep.var.labels and the covariate.labels accordingly
-
-stargazer3(list(m1, m2, m3, m4, m5, m6), odds.ratios = T, origin_model = list(model1, model2, model3, model1_socins, model2_socins, model3_socins), type = "text", se = list(NA, NA, NA, NA, NA, NA),
-           title = "Diffusion of Work-Injury Laws, 164 Countries, 1880-2010",
-           column.labels=c("------", "First Law", "------", "--", "First Social Insurance", "--"),
-          covariate.labels=c("(1880-1902)", 
-                             "(1903-1928)",
-                             "(1929-1954)",
-                             "(1955-1979)",
-                             "(1980-2010)",
-                             "State Founded (last 4 years)", 
-                             "Network Exposure: Culture (t-1)",
-                             "Network Exposure: Colonial",
-                             "Network Exposure: Trade (t-1)",
-                             "Network Exposrue: Spatial Proximity",
-                             "GDPpc 10k USD",
-                             "Democratization" 
-                             ),
-          #add.lines = list(c("Countries", length(unique(diff_data$id)), length(unique(diff_data$id)), length(unique(diff_data$id)), length(unique(diff_data$id)), length(unique(diff_data$id)), length(unique(diff_data$id)))),
-           out="results/models_final2.htm")
-
-# ---------------------------------------------
-# --- some functions of netdiffuseR, here for 
-# --- the cultural spheres network
-# ---------------------------------------------
-
-Tbl1 <- as.data.frame(read_html("results/models_final2.htm") %>% html_table(fill=TRUE))
-
-Tbl1 <- Tbl1[Tbl1$X7 != "",]
-
-write.csv(Tbl1, file = "results/Tbl1.csv")
-
-```
 
 ### Sensitivity Analysis
 
@@ -722,3 +646,122 @@ stargazer(model3_sens2,model3_socins_sens2,
 
 ```
 
+## Corrected Standard Errors
+
+
+```{r se_corrections}
+# ---------------------------------------------
+# --- Calculate the  corrected standard errors
+# --- the cultural spheres network
+# ---------------------------------------------
+
+# Standard error correction: Huber-White standard errors are calculated AFTER the model
+# and used to re-calculate the significance
+
+# step 1: calculate corrected standard errors and save output as an object: 
+
+
+m1 <- lmtest::coeftest(model1, vcov = vcovCL(model1, type="HC3", cluster =~ cluster_id))
+# unclear error taking place here
+
+m2 <- lmtest::coeftest(model2, vcov = vcovCL(model2, type="HC3", cluster=~ cluster_id))
+
+m3 <- lmtest::coeftest(model3, vcov = vcovCL(model3, type="HC3", cluster=~ cluster_id))
+
+m3x <- lmtest::coeftest(model3_sens2, vcov = vcovCL(model3_sens2, type="HC3", cluster=~ cluster_id))
+
+m4 <- lmtest::coeftest(model1_socins, vcov = vcovCL(model1_socins, type="HC3", cluster=~ cluster_id))
+
+m5 <- lmtest::coeftest(model2_socins, vcov = vcovCL(model2_socins, type="HC3", cluster=~ cluster_id))
+
+m6 <- lmtest::coeftest(model3_socins, vcov = vcovCL(model3_socins, type="HC3", cluster=~ cluster_id))
+
+m6x <- lmtest::coeftest(model3_socins_sens2, vcov = vcovCL(model3_socins_sens2, type="HC3", cluster=~ cluster_id))
+# step 2: run stargazer3 with the following specification: 
+
+# 1. odds.ratios = T 
+
+# 2. stargazer3(list(m1, m2)...) this is the output of the coeftest function with the corrected
+# standard erors!! NOT THE GLM OUTPUT !!
+
+# 3. origin_model: GLM output. This is nessesary to add the model fit statistics to the table.
+
+
+# BEWARE of the covariate label order!! All your models need the independent variables
+# in the same order. If you have multiple models, add the ALL independent variable names to the function call below under covariate.labels!!
+# If one model has less variables, this space will be empty only for that model.
+
+# cheatsheets for starger modification: https://www.jakeruss.com/cheatsheets/stargazer/
+# these work with stargazer 3 as well. 
+
+# change the title, the dep.var.labels and the covariate.labels accordingly
+```
+
+### Appendix Table 1
+
+```{r se_corrections1}
+stargazer3(list(m1, m2, m3, m3x), odds.ratios = T, origin_model = list(model1, model2, model3, model3_sens2), type = "text", se = list(NA, NA, NA, NA),
+           title = "Diffusion of Work-Injury Laws, 151 Countries, 1880-2010",
+          covariate.labels=c("(1880-1902)", 
+                             "(1903-1928)",
+                             "(1929-1954)",
+                             "(1955-1979)",
+                             "(1980-2010)",
+                             "State Founded (last 4 years)", 
+                             "Network Exposure: Culture (t-1)",
+                             "Network Exposure: Colonial",
+                             "Network Exposure: Trade (t-1)",
+                             "Network Exposrue: Spatial Proximity",
+                             "GDPpc 10k USD",
+                             "Democratization" 
+                             ),
+          #add.lines = list(c("Countries", length(unique(diff_data$id)), length(unique(diff_data$id)), length(unique(diff_data$id)), length(unique(diff_data$id)), length(unique(diff_data$id)), length(unique(diff_data$id)))),
+           out="results/Tbl_Apdx_1.htm")
+
+# ---------------------------------------------
+# --- some functions of netdiffuseR, here for 
+# --- the cultural spheres network
+# ---------------------------------------------
+
+Tbl1 <- as.data.frame(read_html("results/Tbl_Apdx_1.htm") %>% html_table(fill=TRUE))
+
+Tbl1 <- Tbl1[Tbl1$X5 != "",]
+
+write.csv(Tbl1, file = "results/Tbl1.csv")
+
+```
+
+
+### Appendix Table 2
+
+```{r se_corrections2}
+stargazer3(list(m4, m5, m6, m6x), odds.ratios = T, origin_model = list(model1_socins, model2_socins, model3_socins, model3_socins_sens2), type = "text", se = list(NA, NA, NA, NA),
+           title = "Diffusion of Work-Injury Laws, 151 Countries, 1880-2010",
+          covariate.labels=c("(1880-1902)", 
+                             "(1903-1928)",
+                             "(1929-1954)",
+                             "(1955-1979)",
+                             "(1980-2010)",
+                             "State Founded (last 4 years)", 
+                             "Network Exposure: Culture (t-1)",
+                             "Network Exposure: Colonial",
+                             "Network Exposure: Trade (t-1)",
+                             "Network Exposrue: Spatial Proximity",
+                             "GDPpc 10k USD",
+                             "Democratization" 
+                             ),
+          #add.lines = list(c("Countries", length(unique(diff_data$id)), length(unique(diff_data$id)), length(unique(diff_data$id)), length(unique(diff_data$id)), length(unique(diff_data$id)), length(unique(diff_data$id)))),
+           out="results/Tbl_Apdx_2.htm")
+
+# ---------------------------------------------
+# --- some functions of netdiffuseR, here for 
+# --- the cultural spheres network
+# ---------------------------------------------
+
+Tbl2 <- as.data.frame(read_html("results/Tbl_Apdx_2.htm") %>% html_table(fill=TRUE))
+
+Tbl2 <- Tbl2[Tbl2$X5 != "",]
+
+write.csv(Tbl2, file = "results/Tbl2.csv")
+
+```
