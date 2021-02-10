@@ -598,7 +598,7 @@ Thus, the influence of a previous colony that has already ended at that time bec
 Colonial legacies have an overall declining strength on the diffusion process. 
 Thus, we calculated a non_normalized version of exposure. Influence of current and past colonies is still weighted and exposure calculated proportionally. However, exposure is constantly declining with more time after independence. Furthermore, we create a situation in which exposure can be larger than 1, depending on the weights of the network ties. 
 
-Then we re-run our main models with this variable included.
+Then we re-run our main models with each version of colonialism.
 
 ```{r sens2}
 model3_sens2 <- glm(adopted ~ 
@@ -610,6 +610,24 @@ model3_sens2 <- glm(adopted ~
               + existence
               + lag_w_expo_culture 
               + non_normalized_w_expo_colony
+              + lag_w_expo_trade
+              + lag_w_expo_proximity
+              + gdp10000
+              + regime
+              + 0,
+              dat    = diff_data, 
+              subset = (per <= toa),
+              family = binomial(link="logit"))
+
+model3_sens3 <- glm(adopted ~ 
+                + t0_22 
+              + t23_48 
+              + t49_74 
+              + t75_99 
+              + t100_130  
+              + existence
+              + lag_w_expo_culture 
+              + w_expo_colony
               + lag_w_expo_trade
               + lag_w_expo_proximity
               + gdp10000
@@ -637,11 +655,29 @@ model3_socins_sens2 <- glm(adopted ~
               dat    = diff_data_socins, 
               subset = (per <= toa),
               family = binomial(link="logit"))
+
+model3_socins_sens3 <- glm(adopted ~ 
+                + t0_22 
+              + t23_48 
+              + t49_74 
+              + t75_99 
+              + t100_130  
+              + existence
+              + lag_w_expo_culture 
+              + w_expo_colony
+              + lag_w_expo_trade
+              + lag_w_expo_proximity
+              + gdp10000
+              + regime
+              + 0,
+              dat    = diff_data_socins, 
+              subset = (per <= toa),
+              family = binomial(link="logit"))
 #summary(model2)
 #exp(coef(model2))
-stargazer(model3_sens2,model3_socins_sens2,
+stargazer(model3_sens2, model3_sens3, model3_socins_sens2, model3_socins_sens3,
           type = "text", 
-          title = "Discrete Time Hazard/Diffusion Models of /nWork-Injury Law, 1880-2010 in 152 countries",
+          title = "Discrete Time Hazard/Diffusion Models of /nWork-Injury Law, 1880-2010 in 151 countries",
           out = "results/Tbl_sens_non.htm")
 
 ```
@@ -670,6 +706,8 @@ m3 <- lmtest::coeftest(model3, vcov = vcovCL(model3, type="HC3", cluster=~ clust
 
 m3x <- lmtest::coeftest(model3_sens2, vcov = vcovCL(model3_sens2, type="HC3", cluster=~ cluster_id))
 
+m3xx <- lmtest::coeftest(model3_sens3, vcov = vcovCL(model3_sens3, type="HC3", cluster=~ cluster_id))
+
 m4 <- lmtest::coeftest(model1_socins, vcov = vcovCL(model1_socins, type="HC3", cluster=~ cluster_id))
 
 m5 <- lmtest::coeftest(model2_socins, vcov = vcovCL(model2_socins, type="HC3", cluster=~ cluster_id))
@@ -677,6 +715,8 @@ m5 <- lmtest::coeftest(model2_socins, vcov = vcovCL(model2_socins, type="HC3", c
 m6 <- lmtest::coeftest(model3_socins, vcov = vcovCL(model3_socins, type="HC3", cluster=~ cluster_id))
 
 m6x <- lmtest::coeftest(model3_socins_sens2, vcov = vcovCL(model3_socins_sens2, type="HC3", cluster=~ cluster_id))
+
+m6xx <- lmtest::coeftest(model3_socins_sens3, vcov = vcovCL(model3_socins_sens3, type="HC3", cluster=~ cluster_id))
 # step 2: run stargazer3 with the following specification: 
 
 # 1. odds.ratios = T 
@@ -700,7 +740,7 @@ m6x <- lmtest::coeftest(model3_socins_sens2, vcov = vcovCL(model3_socins_sens2, 
 ### Appendix Table 1
 
 ```{r se_corrections1}
-stargazer3(list(m1, m2, m3, m3x), odds.ratios = T, origin_model = list(model1, model2, model3, model3_sens2), type = "text", se = list(NA, NA, NA, NA),
+stargazer3(list(m1, m2, m3, m3x, m3xx), odds.ratios = T, origin_model = list(model1, model2, model3, model3_sens2, model3_sens3), type = "text", se = list(NA, NA, NA, NA, NA),
            title = "Diffusion of Work-Injury Laws, 151 Countries, 1880-2010",
           covariate.labels=c("(1880-1902)", 
                              "(1903-1928)",
@@ -709,7 +749,8 @@ stargazer3(list(m1, m2, m3, m3x), odds.ratios = T, origin_model = list(model1, m
                              "(1980-2010)",
                              "State Founded (last 4 years)", 
                              "Network Exposure: Culture (t-1)",
-                             "Network Exposure: Colonial",
+                             "Network Exposure: Colonial (non-norm)",
+                             "Network Exposure: Colonial (norm)",
                              "Network Exposure: Trade (t-1)",
                              "Network Exposrue: Spatial Proximity",
                              "GDPpc 10k USD",
@@ -725,7 +766,7 @@ stargazer3(list(m1, m2, m3, m3x), odds.ratios = T, origin_model = list(model1, m
 
 Tbl1 <- as.data.frame(read_html("results/Tbl_Apdx_1.htm") %>% html_table(fill=TRUE))
 
-Tbl1 <- Tbl1[Tbl1$X5 != "",]
+Tbl1 <- Tbl1[Tbl1$X6 != "" | Tbl1$X5 != "",]
 
 write.csv(Tbl1, file = "results/Tbl1.csv")
 
@@ -735,7 +776,7 @@ write.csv(Tbl1, file = "results/Tbl1.csv")
 ### Appendix Table 2
 
 ```{r se_corrections2}
-stargazer3(list(m4, m5, m6, m6x), odds.ratios = T, origin_model = list(model1_socins, model2_socins, model3_socins, model3_socins_sens2), type = "text", se = list(NA, NA, NA, NA),
+stargazer3(list(m4, m5, m6, m6x, m6xx), odds.ratios = T, origin_model = list(model1_socins, model2_socins, model3_socins, model3_socins_sens2, model3_socins_sens3), type = "text", se = list(NA, NA, NA, NA, NA),
            title = "Diffusion of Work-Injury Laws, 151 Countries, 1880-2010",
           covariate.labels=c("(1880-1902)", 
                              "(1903-1928)",
@@ -744,7 +785,8 @@ stargazer3(list(m4, m5, m6, m6x), odds.ratios = T, origin_model = list(model1_so
                              "(1980-2010)",
                              "State Founded (last 4 years)", 
                              "Network Exposure: Culture (t-1)",
-                             "Network Exposure: Colonial",
+                             "Network Exposure: Colonial (non-norm)",
+                             "Network Exposure: Colonial (norm)",
                              "Network Exposure: Trade (t-1)",
                              "Network Exposrue: Spatial Proximity",
                              "GDPpc 10k USD",
@@ -760,7 +802,7 @@ stargazer3(list(m4, m5, m6, m6x), odds.ratios = T, origin_model = list(model1_so
 
 Tbl2 <- as.data.frame(read_html("results/Tbl_Apdx_2.htm") %>% html_table(fill=TRUE))
 
-Tbl2 <- Tbl2[Tbl2$X5 != "",]
+Tbl2 <- Tbl2[Tbl2$X6 != "" | Tbl2$X5 != "",]
 
 write.csv(Tbl2, file = "results/Tbl2.csv")
 

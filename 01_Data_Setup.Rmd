@@ -341,7 +341,9 @@ covar_ <- data.frame(covar_base)
 head(covar_)
 
 A02_2 <- data.frame(subset(  A02_workinj, select = c(iso3,labor_workinjury_firstlaw,labor_workinjury_first_socins,year,pct_ag_01_i)  ))
-covar_ <- merge(covar_, A02_2,by=c("iso3","year")) 
+
+# here we have to drop 13 countries because we do not have relevant work-injury data
+covar_x <- merge(covar_, A02_2,by=c("iso3","year"))
 # head(covar_)
 
 # FIRST LAW
